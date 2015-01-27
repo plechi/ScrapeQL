@@ -27,6 +27,41 @@ Feature Backlog:
  - implement standalone server (like a DB server)
  - implement new language features like subqueries, functions,...
 
+#Sample
+
+This is how it (could) look like (i call it SrQL):
+
+```sql
+LOAD "http://example.com/"; /*fetch HTML from example.com*/
+SELECT 'selector' AS mainselector FROM ':root'; /*same as SELECT FIRST statement*/
+SELECT FIRST 'h1' AS header FROM genericname; 
+SELECT EVERY 
+    'selector' AS name1, 
+    'selector' AS name2, 
+    CONCAT('selector1','selector2',"FIXSTRING") AS name3, 
+    header AS name4 
+    FROM genericname INTO listvariable;
+
+OUTPUT listvariable;
+
+```
+produces something like this:
+
+```
++--------+--------+--------+--------+
+| name1  | name2  | name3  | name4  |
++--------+--------+--------+--------+
+| val1.0 | val2.0 | val3.0 | val4.0 |
++--------+--------+--------+--------+
+| val1.1 | val2.1 | val3.1 | val4.1 |
++--------+--------+--------+--------+
+| val1.2 | val2.2 | val3.2 | val4.2 |
++--------+--------+--------+--------+
+|  ...   |  ...   |  ...   |  ...   |
++--------+--------+--------+--------+
+
+```
+
 #Disclaimer
 Scraping Websites is illegal in some countries. Please handle this tool with care!
 
