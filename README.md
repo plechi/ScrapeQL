@@ -43,7 +43,6 @@ SELECT EVERY /*select list of repeating elements which are all children of #main
     FROM mainselector INTO listvariable;
 
 OUTPUT listvariable; /*'print' variable to output*/
-
 ```
 produces something like this:
 
@@ -61,7 +60,6 @@ produces something like this:
 +--------+--------+--------+--------+
 |  ...   |  ...   |  ...   |  ...   |
 +--------+--------+--------+--------+
-
 ```
 
 #Disclaimer
