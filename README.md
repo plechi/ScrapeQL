@@ -35,19 +35,21 @@ This is how it (could) look like (i call it SrQL):
 LOAD "http://example.com/"; /*fetch HTML from example.com*/
 SELECT '#maindiv' AS mainselector FROM ':root'; /*same as SELECT FIRST statement*/
 SELECT FIRST 'h1' AS header FROM genericname; /*make 'global' variable genericname*/
-SELECT EVERY /*select list of repeating elements of #maindiv*/
+SELECT EVERY /*select list of repeating elements which are all children of #maindiv*/
     'selector' AS name1, 
     'selector' AS name2, 
     CONCAT('selector1','selector2',"FIXSTRING") AS name3, 
     header AS name4 
     FROM mainselector INTO listvariable;
 
-OUTPUT listvariable;
+OUTPUT listvariable; /*'print' variable to output*/
 
 ```
 produces something like this:
 
 ```
++-----------------------------------+
+| listvariable                      |
 +--------+--------+--------+--------+
 | name1  | name2  | name3  | name4  |
 +--------+--------+--------+--------+
