@@ -33,14 +33,14 @@ This is how it (could) look like (i call it SrQL):
 
 ```sql
 LOAD "http://example.com/"; /*fetch HTML from example.com*/
-SELECT 'selector' AS mainselector FROM ':root'; /*same as SELECT FIRST statement*/
-SELECT FIRST 'h1' AS header FROM genericname; 
-SELECT EVERY 
+SELECT '#maindiv' AS mainselector FROM ':root'; /*same as SELECT FIRST statement*/
+SELECT FIRST 'h1' AS header FROM genericname; /*make 'global' variable genericname*/
+SELECT EVERY /*select list of repeating elements of #maindiv*/
     'selector' AS name1, 
     'selector' AS name2, 
     CONCAT('selector1','selector2',"FIXSTRING") AS name3, 
     header AS name4 
-    FROM genericname INTO listvariable;
+    FROM mainselector INTO listvariable;
 
 OUTPUT listvariable;
 
