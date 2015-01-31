@@ -24,35 +24,48 @@
 package at.plechinger.scrapeql.query.functions;
 
 import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.variable.SelectorVariable;
 import at.plechinger.scrapeql.query.variable.StringVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
 import com.google.common.base.Preconditions;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import org.jsoup.nodes.Element;
 
 /**
  *
  * @author Lukas Plechinger
  */
-class AttrFunction implements FunctionDefinition {
+class DateFunction implements FunctionDefinition {
 
-    private static final String NAME = "attr";
+    private static final String NAME = "date";
+    
+    private static final String BASE_FORMAT="yyyy-MM-dd HH:mm:ss";
 
     @Override
     public Variable execute(QueryContext context, List<Variable> parameters) {
-        //parameter count must be 2
-        Preconditions.checkArgument(parameters.size() == 2, "attr(): argument count: %d", parameters.size());
+        //parameter count must be 2 or 3
+        Preconditions.checkArgument(parameters.size()>=2 && parameters.size()<=3, "date(): argument count: %d", parameters.size());
+        try{
 
-        //first parameter must be selector, second must be string
-        Preconditions.checkArgument(parameters.get(0) instanceof SelectorVariable, "First parameter must be a selector.");
-        Preconditions.checkArgument(parameters.get(1) instanceof StringVariable, "Second parameter must be a string.");
-
-        SelectorVariable selector = (SelectorVariable) parameters.get(0);
-        selector.execute(context);
-        Element elem = selector.getElement();
-
-        return new StringVariable(elem.attr(parameters.get(1).getValue()));
+        //parse input
+        SimpleDateFormat input=new SimpleDateFormat(parameters.get(1).getValue());
+        
+        Date date=input.parse(parameters.get(0).getValue());
+        
+        //parse output
+        SimpleDateFormat outputFormat;
+        
+        if(parameters.size()==3){
+            outputFormat=new SimpleDateFormat(parameters.get(2).getValue());
+        }else{
+            outputFormat=new SimpleDateFormat(BASE_FORMAT);
+        }
+        
+        return new StringVariable(outputFormat.format(date));
+        }catch(ParseException ex){
+            return new StringVariable(parameters.get(0).getValue());
+        }
     }
 
     @Override

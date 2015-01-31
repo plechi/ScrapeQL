@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 lukas.
+ * Copyright 2015 Lukas Plechinger.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  *
- * @author lukas
+ * @author Lukas Plechinger
  */
 class ConcatFunction implements FunctionDefinition {
 
@@ -39,7 +39,7 @@ class ConcatFunction implements FunctionDefinition {
 
     @Override
     public Variable execute(QueryContext context, List<Variable> parameters) {
-        //parameter count must be 2
+        //parameter count must be at least 1
         Preconditions.checkArgument(parameters.size() > 1, "concat(): must have at least 2 arguments, only has %d", parameters.size());
         
         StringBuilder builder=new StringBuilder();

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 lukas.
+ * Copyright 2015 Lukas Plechinger.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  *
- * @author lukas
+ * @author Lukas Plechinger
  */
 public class FunctionVariable implements Variable{
 

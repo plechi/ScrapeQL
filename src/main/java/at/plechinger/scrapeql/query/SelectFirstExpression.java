@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 lukas.
+ * Copyright 2015 Lukas Plechinger.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ import org.jsoup.nodes.Element;
 
 /**
  *
- * @author lukas
+ * @author Lukas Plechinger
  */
 @Log4j
 public class SelectFirstExpression extends AbstractQueryAware implements SelectExpression{
