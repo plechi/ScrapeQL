@@ -33,19 +33,11 @@ import org.junit.Test;
  */
 
 public class AttrFunctionTest extends AbstractFunctionExecutionTest {
-    
-    private AttrFunction function=new AttrFunction();
 
     @Test
     public void testExecute() {
         query.select(v.function("attr",v.selector("a"),v.string("href")).as("test")).from("root");
         Assert.assertEquals("link", result());
-    }
-
-    @Test
-    public void testGetName() {
-        Assert.assertEquals("attr", function.getName());
-        
     }
     
 }

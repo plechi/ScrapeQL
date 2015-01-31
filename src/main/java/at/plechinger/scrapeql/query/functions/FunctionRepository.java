@@ -47,18 +47,21 @@ public class FunctionRepository {
     
     private void initBaseFunctions(){
         define(new AttrFunction());
+        define(new ConcatFunction());
     }
     
     private Map<String, FunctionDefinition> definedFunctions=new HashMap<>();
     
     public FunctionDefinition getDefinedFunction(String name){
+        name=name.toLowerCase();
         Preconditions.checkArgument(definedFunctions.containsKey(name), "Function '%s' is not defined.",name);
         return definedFunctions.get(name);
     }
     
     public void define(FunctionDefinition definition){
         Preconditions.checkNotNull(definition, "Function definition must not be null.");
-        String name=definition.getName();
+        Preconditions.checkNotNull(definition.getName(), "Definition must have a name.");
+        String name=definition.getName().toLowerCase();
         Preconditions.checkArgument(!definedFunctions.containsKey(name), "Function '%s' is already defined.",name);
         definedFunctions.put(name, definition);
     }

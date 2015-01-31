@@ -23,38 +23,21 @@
  */
 package at.plechinger.scrapeql.query.functions;
 
-import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.variable.StringVariable;
-import at.plechinger.scrapeql.query.variable.Variable;
-import com.google.common.base.Preconditions;
-import java.util.List;
+import at.plechinger.scrapeql.query.AbstractFunctionExecutionTest;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
  * @author lukas
  */
-class ConcatFunction implements FunctionDefinition {
 
-    private static final String NAME = "concat";
+public class ConcatFunctionTest extends AbstractFunctionExecutionTest {
 
-    @Override
-    public Variable execute(QueryContext context, List<Variable> parameters) {
-        //parameter count must be 2
-        Preconditions.checkArgument(parameters.size() > 1, "concat(): must have at least 2 arguments, only has %d", parameters.size());
-        
-        StringBuilder builder=new StringBuilder();
-        
-        for(Variable var:parameters){
-            var.execute(context);
-            builder.append(var.getValue());
-        }
-
-        return new StringVariable(builder.toString());
+    @Test
+    public void testExecute() {
+        query.select(v.function("concat",v.selector("h1"),v.selector("h2")).as("test")).from("root");
+        Assert.assertEquals("Header1Header2", result());
     }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
+    
 }
