@@ -3,7 +3,10 @@ SQL-like query parser to extraxt structured data from websites.
 
 #Why?
 
-Sometimes you need to extract data from HTML. This can be a rather complicated Task, because you have to deal with
+In general, it is better to use a dedicated API to process external data.
+
+**But...**
+...sometimes this is not possible and you need to extract data from HTML. This can be a very complicated Task, because you have to deal with
  - untidy HTML
  - complex code to navigate though DOM
  - many loops, ifs,...
@@ -32,34 +35,42 @@ Feature Backlog:
 This is how it (could) look like (i call it SrQL):
 
 ```sql
-LOAD "http://example.com/"; /*fetch HTML from example.com*/
-SELECT '#maindiv' AS mainselector FROM ':root'; /*same as SELECT FIRST statement*/
-SELECT FIRST 'h1' AS header FROM genericname; /*make 'global' variable genericname*/
-SELECT EVERY /*select list of repeating elements which are all children of #maindiv*/
+/*fetch HTML from example.com*/
+LOAD "http://example.com/"; 
+
+/*same as SELECT FIRST statement*/
+SELECT 'table#table' AS table FROM root; 
+/*make 'global' variable genericname*/
+SELECT FIRST 'h1' AS header FROM root; 
+
+/*select list of repeating elements which are all children of #maindiv*/
+SELECT EVERY 
     'selector' AS name1, 
     'selector' AS name2, 
-    CONCAT('selector1','selector2',"FIXSTRING") AS name3, 
+    CONCAT('selector1','selector2',"STATIC") AS name3, 
     header AS name4 
-    FROM mainselector INTO listvariable;
+    IN 'tr'
+    FROM table INTO listvariable;
 
-OUTPUT listvariable; /*'print' variable to output*/
+/*mark variable as output variable*/
+OUTPUT listvariable; 
 ```
 produces something like this:
 
 ```
-+----------------------------------------------------+
-| listvariable                                       |
-+--------+--------+-------------------------+--------+
-| name1  | name2  | name3                   | name4  |
-+--------+--------+-------------------------+--------+
-| val1.0 | val2.0 | val3.0val3.0.1FIXSTRING | val4.0 |
-+--------+--------+-------------------------+--------+
-| val1.1 | val2.1 | val3.1val3.1.1FIXSTRING | val4.1 |
-+--------+--------+-------------------------+--------+
-| val1.2 | val2.2 | val3.2val3.1.1FIXSTRING | val4.2 |
-+--------+--------+-------------------------+--------+
-|  ...   |  ...   |  ......FIXSTRING        |  ...   |
-+--------+--------+-------------------------+--------+
++-------------------------------------------------+
+| listvariable                                    |
++--------+--------+----------------------+--------+
+| name1  | name2  | name3                | name4  |
++--------+--------+----------------------+--------+
+| val1.0 | val2.0 | val3.0val3.0.1STATIC | val4.0 |
++--------+--------+----------------------+--------+
+| val1.1 | val2.1 | val3.1val3.1.1STATIC | val4.1 |
++--------+--------+----------------------+--------+
+| val1.2 | val2.2 | val3.2val3.1.1STATIC | val4.2 |
++--------+--------+----------------------+--------+
+|  ...   |  ...   |  ......STATIC        |  ...   |
++--------+--------+----------------------+--------+
 ```
 
 #Disclaimer
