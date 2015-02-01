@@ -25,6 +25,7 @@ package at.plechinger.scrapeql.query.statement;
 
 import at.plechinger.scrapeql.query.Query;
 import at.plechinger.scrapeql.query.QueryContext;
+import at.plechinger.scrapeql.query.variable.RootAwareVariable;
 import at.plechinger.scrapeql.query.variable.SelectorVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
 import java.util.List;
@@ -49,8 +50,8 @@ public class SelectFirstStatement extends AbstractSelectStatement implements Sel
         Element fromElement = fromVariable.getElement();
         for (Variable var : elements) {
 
-            if (var instanceof SelectorVariable) {
-                SelectorVariable s = (SelectorVariable) var;
+            if (var instanceof RootAwareVariable) {
+                RootAwareVariable s = (RootAwareVariable) var;
                 s.setRoot(fromElement);
             }
 

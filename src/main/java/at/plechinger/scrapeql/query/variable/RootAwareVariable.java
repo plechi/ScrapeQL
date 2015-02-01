@@ -21,20 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.functions;
+package at.plechinger.scrapeql.query.variable;
 
-import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.variable.Variable;
-import java.util.List;
 import org.jsoup.nodes.Element;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public interface FunctionDefinition {
-
-    public Variable execute(QueryContext context, List<Variable> parameters, Element baseElement);
-
-    public String getName();
+public interface RootAwareVariable {
+    public void setRoot(Element root);
 }

@@ -24,10 +24,12 @@
 package at.plechinger.scrapeql.query.functions;
 
 import at.plechinger.scrapeql.query.QueryContext;
+import at.plechinger.scrapeql.query.variable.RootAwareVariable;
 import at.plechinger.scrapeql.query.variable.StringVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
 import com.google.common.base.Preconditions;
 import java.util.List;
+import org.jsoup.nodes.Element;
 
 /**
  *
@@ -38,13 +40,16 @@ class ConcatFunction implements FunctionDefinition {
     private static final String NAME = "concat";
 
     @Override
-    public Variable execute(QueryContext context, List<Variable> parameters) {
+    public Variable execute(QueryContext context, List<Variable> parameters, Element baseElement) {
         //parameter count must be at least 1
         Preconditions.checkArgument(parameters.size() > 1, "concat(): must have at least 2 arguments, only has %d", parameters.size());
 
         StringBuilder builder = new StringBuilder();
 
         for (Variable var : parameters) {
+            if(var instanceof RootAwareVariable){
+                ((RootAwareVariable) var).setRoot(baseElement);
+            }
             var.execute(context);
             builder.append(var.getValue());
         }

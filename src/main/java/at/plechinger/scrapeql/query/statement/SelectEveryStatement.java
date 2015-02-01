@@ -27,6 +27,7 @@ import at.plechinger.scrapeql.Utils;
 import at.plechinger.scrapeql.query.Query;
 import at.plechinger.scrapeql.query.QueryContext;
 import at.plechinger.scrapeql.query.variable.ListVariable;
+import at.plechinger.scrapeql.query.variable.RootAwareVariable;
 import at.plechinger.scrapeql.query.variable.SelectorVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
 import com.google.common.base.Preconditions;
@@ -75,8 +76,8 @@ public class SelectEveryStatement extends AbstractSelectStatement implements Sel
         for (Element rowElement : inElements) {
             rowContext.nextRow();
             for (Variable var : elements) {
-                if (var instanceof SelectorVariable) {
-                    SelectorVariable s = (SelectorVariable) var;
+                if (var instanceof RootAwareVariable) {
+                    RootAwareVariable s = (RootAwareVariable) var;
                     s.setRoot(rowElement);
                 }
                 var.execute(rowContext);

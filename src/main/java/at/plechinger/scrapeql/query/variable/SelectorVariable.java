@@ -32,7 +32,7 @@ import org.jsoup.select.Elements;
  *
  * @author Lukas Plechinger
  */
-public class SelectorVariable implements Variable {
+public class SelectorVariable implements Variable, RootAwareVariable {
 
     private String selector;
     private String alias;

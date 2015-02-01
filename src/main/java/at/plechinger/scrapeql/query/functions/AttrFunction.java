@@ -40,7 +40,7 @@ class AttrFunction implements FunctionDefinition {
     private static final String NAME = "attr";
 
     @Override
-    public Variable execute(QueryContext context, List<Variable> parameters) {
+    public Variable execute(QueryContext context, List<Variable> parameters, Element baseElement) {
         //parameter count must be 2
         Preconditions.checkArgument(parameters.size() == 2, "attr(): argument count: %d", parameters.size());
 
@@ -49,6 +49,7 @@ class AttrFunction implements FunctionDefinition {
         Preconditions.checkArgument(parameters.get(1) instanceof StringVariable, "Second parameter must be a string.");
 
         SelectorVariable selector = (SelectorVariable) parameters.get(0);
+        selector.setRoot(baseElement);
         selector.execute(context);
         Element elem = selector.getElement();
 

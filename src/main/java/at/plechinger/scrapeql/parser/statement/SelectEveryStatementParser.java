@@ -23,7 +23,6 @@
  */
 package at.plechinger.scrapeql.parser.statement;
 
-import at.plechinger.scrapeql.parser.statement.AbstractStatementParser;
 import at.plechinger.scrapeql.Utils;
 import at.plechinger.scrapeql.lang.ScrapeQLParser;
 import at.plechinger.scrapeql.parser.expression.ExpressionVariableConverter;
