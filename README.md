@@ -40,7 +40,8 @@ LOAD "http://example.com/";
 
 /*same as SELECT FIRST statement*/
 SELECT 'table#table' AS table FROM root; 
-/*make 'global' variable genericname*/
+
+/*make global variable header*/
 SELECT FIRST 'h1' AS header FROM root; 
 
 /*select list of repeating elements which are all children of #maindiv*/
