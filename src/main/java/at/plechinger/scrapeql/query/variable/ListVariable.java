@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Lukas Plechinger.
+ * Copyright 2015 lukas.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,35 @@
 package at.plechinger.scrapeql.query.variable;
 
 import at.plechinger.scrapeql.query.QueryContext;
+import com.google.common.base.Preconditions;
+import java.util.List;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public class StringVariable implements Variable {
+public class ListVariable<T> implements Variable {
 
-    private String value;
     private String alias;
 
-    public StringVariable(String value) {
-        this.value = value;
+    private List<T> list;
+
+    public List<T> getList() {
+        return list;
+    }
+
+    public ListVariable(List<T> list) {
+        Preconditions.checkNotNull(list, "List must not be null.");
+        this.list = list;
     }
 
     @Override
     public String getValue() {
-        return value;
+        return String.format("List[%d]", list.size());
     }
 
     @Override
-    public StringVariable as(String alias) {
+    public Variable as(String alias) {
         this.alias = alias;
         return this;
     }

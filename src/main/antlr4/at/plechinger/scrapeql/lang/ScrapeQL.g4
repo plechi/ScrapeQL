@@ -51,7 +51,11 @@ select_single
  ;
 
 select_every
- : K_SELECT K_EVERY variable_list K_FROM element_name K_INTO element_name
+ : K_SELECT K_EVERY variable_list K_IN selector_name K_FROM from_name K_INTO into_name
+ ;
+
+into_name
+ : element_name
  ;
 
 output
@@ -67,6 +71,7 @@ keyword
  | K_EVERY
  | K_INTO
  | K_OUTPUT
+ | K_IN
  ;
 
 
@@ -111,7 +116,8 @@ K_FROM: F R O M;
 K_FIRST: F I R S T;
 K_EVERY: E V E R Y;
 K_INTO: I N T O;
-K_OUTPUT:O U T P U T;
+K_OUTPUT: O U T P U T;
+K_IN: I N;
 
 
 IDENTIFIER

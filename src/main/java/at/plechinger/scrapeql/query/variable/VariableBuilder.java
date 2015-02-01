@@ -32,29 +32,30 @@ import java.util.List;
  * @author Lukas Plechinger
  */
 public class VariableBuilder {
+
     private QueryContext context;
 
     public VariableBuilder(QueryContext context) {
         this.context = context;
     }
-    
-    public StringVariable string(String value){
+
+    public StringVariable string(String value) {
         return new StringVariable(value);
     }
-    
-    public SelectorVariable selector(String selector){
+
+    public SelectorVariable selector(String selector) {
         return new SelectorVariable(selector);
     }
-    
-    public NamedVariable var(String name){
+
+    public NamedVariable var(String name) {
         return new NamedVariable(name);
     }
-    
-    public FunctionVariable function(String name, List<Variable> parameters){
+
+    public FunctionVariable function(String name, List<Variable> parameters) {
         return new FunctionVariable(name, parameters);
     }
-    
-    public FunctionVariable function(String name, Variable... parameters){
+
+    public FunctionVariable function(String name, Variable... parameters) {
         return function(name, Arrays.asList(parameters));
     }
 }

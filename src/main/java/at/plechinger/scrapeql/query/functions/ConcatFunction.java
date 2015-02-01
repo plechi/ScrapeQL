@@ -41,10 +41,10 @@ class ConcatFunction implements FunctionDefinition {
     public Variable execute(QueryContext context, List<Variable> parameters) {
         //parameter count must be at least 1
         Preconditions.checkArgument(parameters.size() > 1, "concat(): must have at least 2 arguments, only has %d", parameters.size());
-        
-        StringBuilder builder=new StringBuilder();
-        
-        for(Variable var:parameters){
+
+        StringBuilder builder = new StringBuilder();
+
+        for (Variable var : parameters) {
             var.execute(context);
             builder.append(var.getValue());
         }

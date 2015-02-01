@@ -27,7 +27,8 @@ package at.plechinger.scrapeql.query;
  *
  * @author Lukas Plechinger
  */
-public abstract class AbstractQueryAware{
+public abstract class AbstractQueryAware {
+
     protected Query rootQuery;
 
     public AbstractQueryAware(Query rootQuery) {
@@ -37,6 +38,5 @@ public abstract class AbstractQueryAware{
     public Query getQuery() {
         return rootQuery;
     }
-    
-    
+
 }

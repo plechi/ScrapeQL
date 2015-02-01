@@ -36,8 +36,8 @@ import org.jsoup.nodes.Document;
  * @author Lukas Plechinger
  */
 @Log4j
-public class LoadExpression implements ExecutableExpression{
-    
+public class LoadExpression implements ExecutableExpression {
+
     private String url;
 
     public LoadExpression(String url) {
@@ -47,23 +47,23 @@ public class LoadExpression implements ExecutableExpression{
     @Override
     public void execute(QueryContext context) {
         try {
-            log.debug("load from "+url);
+            log.debug("load from " + url);
             Document doc;
-            if(url.startsWith("file:")){
-                doc=Jsoup.parse(new File(url.substring("file:".length())), Charsets.UTF_8.name());
-            }else{
-                doc=Jsoup.connect(url).get();
+            if (url.startsWith("file:")) {
+                doc = Jsoup.parse(new File(url.substring("file:".length())), Charsets.UTF_8.name());
+            } else {
+                doc = Jsoup.connect(url).get();
             }
-            
+
             context.setRootElement(doc.select(":root").first());
-            
-            SelectorVariable var=new SelectorVariable(":root");
+
+            SelectorVariable var = new SelectorVariable(":root");
             var.execute(context);
             context.addVariable("root", var);
-            
+
         } catch (IOException ex) {
-            log.error("Error while loading document",ex);
+            log.error("Error while loading document", ex);
         }
     }
-    
+
 }

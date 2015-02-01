@@ -26,27 +26,25 @@ package at.plechinger.scrapeql.query;
 import at.plechinger.scrapeql.query.variable.VariableBuilder;
 import org.junit.Before;
 
-
-
 /**
  *
  * @author Lukas Plechinger
  */
-public abstract class AbstractFunctionExecutionTest{
-    
+public abstract class AbstractFunctionExecutionTest {
+
     protected Query query;
     protected VariableBuilder v;
-    
-   @Before
-   public void init(){
-      query=new Query();
-      v=query.getVariableBuilder();
-      query.load("file:src/test/resources/TestQueries.html");
-      query.output("test");
-   }
-   
-   protected Object result(){
-       return query.execute().get("test");
-   }
-    
+
+    @Before
+    public void init() {
+        query = new Query();
+        v = query.getVariableBuilder();
+        query.load("file:src/test/resources/TestQueries.html");
+        query.output("test");
+    }
+
+    protected Object result() {
+        return query.execute().get("test");
+    }
+
 }

@@ -31,13 +31,12 @@ import org.junit.Test;
  *
  * @author Lukas Plechinger
  */
-
 public class AttrFunctionTest extends AbstractFunctionExecutionTest {
 
     @Test
     public void testExecute() {
-        query.select(v.function("attr",v.selector("a"),v.string("href")).as("test")).from("root");
+        query.select(v.function("attr", v.selector("a"), v.string("href")).as("test")).from("root");
         Assert.assertEquals("link", result());
     }
-    
+
 }

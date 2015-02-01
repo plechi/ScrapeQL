@@ -25,7 +25,7 @@
 LOAD "URL";
 SELECT 'selector' AS mainselector FROM ':root'; --same as SELECT FIRST
 SELECT FIRST 'h1' AS header FROM genericname; 
-SELECT EVERY 'selector' AS name1, 'selector' AS name2, CONCAT('selector1','selector2',"FIXSTRING") AS name3, header AS name4 FROM genericname INTO listvariable;
+SELECT EVERY 'selector' AS name1, 'selector' AS name2, CONCAT('selector1','selector2',"FIXSTRING") AS name3, header AS name4 IN 'selector' FROM genericname INTO listvariable;
 
 OUTPUT listvariable;
 

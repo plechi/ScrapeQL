@@ -23,38 +23,124 @@
  */
 package at.plechinger.scrapeql.query;
 
+import static at.plechinger.scrapeql.query.QueryContext.VARIABLE_PATTERN;
+import at.plechinger.scrapeql.query.variable.ListVariable;
+import at.plechinger.scrapeql.query.variable.SelectorVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
+import com.google.common.base.Preconditions;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  *
  * @author Lukas Plechinger
  */
-public class SelectEveryExpression extends AbstractQueryAware implements SelectExpression{
+public class SelectEveryExpression extends AbstractQueryAware implements SelectExpression {
+
     private List<Variable> elements;
-    
+
     private String from;
-    
+
     private String into;
-    
-    public SelectEveryExpression(List<Variable> elements, Query rootQuery){
+
+    private String in;
+
+    public SelectEveryExpression(List<Variable> elements, Query rootQuery) {
         super(rootQuery);
-        this.elements=elements;
+        this.elements = elements;
     }
-    
-    public SelectEveryExpression from(String from){
-        this.from=from;
+
+    public SelectEveryExpression in(String in) {
+        this.in = in;
         return this;
     }
-    
-    public Query into(String variable){
-        this.into=variable;
+
+    public SelectEveryExpression from(String from) {
+        this.from = from;
+        return this;
+    }
+
+    public Query into(String variable) {
+        this.into = variable;
         return rootQuery;
     }
-    
-    
+
     @Override
     public void execute(QueryContext context) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        SelectorVariable fromVariable = context.getVariable(from, SelectorVariable.class);
+
+        Element fromElement = fromVariable.getElement();
+        RowContext rowContext = new RowContext(context);
+
+        System.out.println("Select " + in + " from " + fromElement);
+        Elements inElements = fromElement.select(in);
+
+        List<Map<String, String>> resultList = new LinkedList<>();
+
+        for (Element rowElement : inElements) {
+            System.out.println("row " + rowElement);
+            rowContext.nextRow();
+            for (Variable var : elements) {
+                System.out.println("col " + var);
+                if (var instanceof SelectorVariable) {
+                    SelectorVariable s = (SelectorVariable) var;
+                    s.setRoot(rowElement);
+                }
+                var.execute(rowContext);
+            }
+            resultList.add(rowContext.getRow());
+        }
+
+        context.addVariable(into, new ListVariable<>(resultList));
+    }
+
+    /**
+     * Inner class for intercepting variable adding
+     */
+    private static class RowContext extends QueryContext {
+
+        private QueryContext parent;
+
+        private Map<String, String> rowVariables = new LinkedHashMap<>();
+
+        public RowContext(QueryContext parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void addVariable(String name, Variable value) {
+            System.out.println("Add row " + name + " " + value.getValue());
+            Preconditions.checkArgument(!rowVariables.containsKey(name), "Variable '%s' is already defined.", name);
+            Preconditions.checkArgument(VARIABLE_PATTERN.matcher(name).matches(), "Variable %s contains illegal characters.", name);
+            rowVariables.put(name, value.getValue());
+        }
+
+        @Override
+        public Variable getVariable(String variableName) {
+            return parent.getVariable(variableName);
+        }
+
+        @Override
+        public <T extends Variable> T getVariable(String variableName, Class<T> clazz) {
+            return parent.getVariable(variableName, clazz);
+        }
+
+        @Override
+        public Element getRootElement() {
+            return parent.getRootElement();
+        }
+
+        public Map<String, String> getRow() {
+            return rowVariables;
+        }
+
+        public void nextRow() {
+            rowVariables = new LinkedHashMap<>();
+        }
+
     }
 }

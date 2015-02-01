@@ -33,25 +33,24 @@ import java.util.List;
  *
  * @author Lukas Plechinger
  */
-public class FunctionVariable implements Variable{
+public class FunctionVariable implements Variable {
 
     private List<Variable> parameters;
     private FunctionDefinition funcitonDefinition;
-    
+
     private String alias;
-    
-    private Variable result=null;
-    
-    
+
+    private Variable result = null;
+
     public FunctionVariable(String functionName, List<Variable> parameters) {
-        this(FunctionRepository.getFunctions().getDefinedFunction(functionName),parameters);
+        this(FunctionRepository.getFunctions().getDefinedFunction(functionName), parameters);
     }
-    
+
     public FunctionVariable(FunctionDefinition function, List<Variable> parameters) {
         Preconditions.checkNotNull(function, "Function definition must not be null");
         Preconditions.checkNotNull(parameters, "Parameters must be set");
-        this.funcitonDefinition=function;
-        this.parameters=parameters;
+        this.funcitonDefinition = function;
+        this.parameters = parameters;
     }
 
     @Override
@@ -61,17 +60,17 @@ public class FunctionVariable implements Variable{
 
     @Override
     public FunctionVariable as(String alias) {
-        this.alias=alias;
+        this.alias = alias;
         return this;
     }
 
     @Override
     public void execute(QueryContext context) {
-        result=funcitonDefinition.execute(context, parameters);
-        Preconditions.checkNotNull(result, "Function Result must not be null at function '%s'",funcitonDefinition.getClass().getName());
-        if(alias!=null){
+        result = funcitonDefinition.execute(context, parameters);
+        Preconditions.checkNotNull(result, "Function Result must not be null at function '%s'", funcitonDefinition.getClass().getName());
+        if (alias != null) {
             context.addVariable(alias, result);
         }
     }
-    
+
 }

@@ -40,8 +40,8 @@ public class SelectorVariable implements Variable {
     private Element result = null;
 
     private Element root = null;
-    
-    private boolean executed=false;
+
+    private boolean executed = false;
 
     public SelectorVariable(String selector) {
         this.selector = selector;
@@ -49,6 +49,7 @@ public class SelectorVariable implements Variable {
 
     public void setRoot(Element rootElement) {
         this.root = rootElement;
+        executed = false;
     }
 
     public Element getElement() {
@@ -64,16 +65,17 @@ public class SelectorVariable implements Variable {
     @Override
     public SelectorVariable as(String alias) {
         this.alias = alias;
+        executed = false;
         return this;
     }
 
     @Override
     public void execute(QueryContext context) {
-        
-        if(executed){
+
+        if (executed) {
             return;
         }
-        
+
         Element r;
         if (root != null) {
             r = root;
@@ -85,11 +87,12 @@ public class SelectorVariable implements Variable {
         if (results != null && results.size() > 0) {
             result = results.first();
         }
+
         if (alias != null) {
             context.addVariable(alias, this);
         }
-        
-        executed=true;
+
+        executed = true;
     }
 
 }

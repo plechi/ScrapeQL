@@ -32,6 +32,8 @@ import java.util.List;
  * @author Lukas Plechinger
  */
 public interface FunctionDefinition {
-    public Variable execute(QueryContext context,List<Variable> parameters);
+
+    public Variable execute(QueryContext context, List<Variable> parameters);
+
     public String getName();
 }

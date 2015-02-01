@@ -32,39 +32,39 @@ import java.util.Map;
  * @author Lukas Plechinger
  */
 public class FunctionRepository {
-    private static FunctionRepository functions=null;
+
+    private static FunctionRepository functions = null;
 
     public static FunctionRepository getFunctions() {
-        if(functions==null){
-            functions=new FunctionRepository();
+        if (functions == null) {
+            functions = new FunctionRepository();
         }
         return functions;
     }
-    
-    private FunctionRepository(){
+
+    private FunctionRepository() {
         initBaseFunctions();
     }
-    
-    private void initBaseFunctions(){
+
+    private void initBaseFunctions() {
         define(new AttrFunction());
         define(new ConcatFunction());
     }
-    
-    private Map<String, FunctionDefinition> definedFunctions=new HashMap<>();
-    
-    public FunctionDefinition getDefinedFunction(String name){
-        name=name.toLowerCase();
-        Preconditions.checkArgument(definedFunctions.containsKey(name), "Function '%s' is not defined.",name);
+
+    private Map<String, FunctionDefinition> definedFunctions = new HashMap<>();
+
+    public FunctionDefinition getDefinedFunction(String name) {
+        name = name.toLowerCase();
+        Preconditions.checkArgument(definedFunctions.containsKey(name), "Function '%s' is not defined.", name);
         return definedFunctions.get(name);
     }
-    
-    public void define(FunctionDefinition definition){
+
+    public void define(FunctionDefinition definition) {
         Preconditions.checkNotNull(definition, "Function definition must not be null.");
         Preconditions.checkNotNull(definition.getName(), "Definition must have a name.");
-        String name=definition.getName().toLowerCase();
-        Preconditions.checkArgument(!definedFunctions.containsKey(name), "Function '%s' is already defined.",name);
+        String name = definition.getName().toLowerCase();
+        Preconditions.checkArgument(!definedFunctions.containsKey(name), "Function '%s' is already defined.", name);
         definedFunctions.put(name, definition);
     }
-    
-    
+
 }

@@ -29,7 +29,9 @@ import at.plechinger.scrapeql.query.ExecutableExpression;
  *
  * @author Lukas Plechinger
  */
-public interface Variable extends ExecutableExpression{
+public interface Variable extends ExecutableExpression {
+
     public String getValue();
+
     Variable as(String alias);
 }

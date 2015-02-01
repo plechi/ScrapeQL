@@ -24,6 +24,10 @@
 package at.plechinger.scrapeql.parser;
 
 import at.plechinger.scrapeql.query.Query;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -56,6 +60,39 @@ public class QueryParserTest {
                 + "OUTPUT test;");
 
         Assert.assertEquals("link", query.execute().get("test"));
+    }
+
+    @Test
+    public void testMultiple() {
+
+        Query query = parser.parse(
+                "LOAD \"file:src/test/resources/TestQueries.html\";"
+                + "SELECT EVERY 'li' AS item IN 'ul#list>li' FROM root INTO test;"
+                + "OUTPUT test;");
+
+        List<Map<String, String>> result = new ArrayList<>(4);
+        {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("item", "elemen1");
+            result.add(map);
+        }
+        {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("item", "elemen2");
+            result.add(map);
+        }
+        {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("item", "elemen3");
+            result.add(map);
+        }
+        {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("item", "elemen4");
+            result.add(map);
+        }
+
+        Assert.assertEquals(result, query.execute().get("test"));
     }
 
 }

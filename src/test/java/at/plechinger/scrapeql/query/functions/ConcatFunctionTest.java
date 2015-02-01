@@ -31,13 +31,12 @@ import org.junit.Test;
  *
  * @author Lukas Plechinger
  */
-
 public class ConcatFunctionTest extends AbstractFunctionExecutionTest {
 
     @Test
     public void testExecute() {
-        query.select(v.function("concat",v.selector("h1"),v.selector("h2")).as("test")).from("root");
+        query.select(v.function("concat", v.selector("h1"), v.selector("h2")).as("test")).from("root");
         Assert.assertEquals("Header1Header2", result());
     }
-    
+
 }

@@ -28,5 +28,6 @@ package at.plechinger.scrapeql.query;
  * @author Lukas Plechinger
  */
 public interface ExecutableExpression {
+
     void execute(QueryContext context);
 }

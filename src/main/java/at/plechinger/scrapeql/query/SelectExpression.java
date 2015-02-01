@@ -27,7 +27,6 @@ package at.plechinger.scrapeql.query;
  *
  * @author Lukas Plechinger
  */
-public interface SelectExpression extends ExecutableExpression{
-    
+public interface SelectExpression extends ExecutableExpression {
 
 }

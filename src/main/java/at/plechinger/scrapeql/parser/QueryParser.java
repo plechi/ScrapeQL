@@ -46,16 +46,16 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
  */
 public class QueryParser {
 
-    public Query parse(String query){
+    public Query parse(String query) {
         ScrapeQLLexer lexer = new ScrapeQLLexer(new ANTLRInputStream(query));
-        
+
         ScrapeQLParser parser = new ScrapeQLParser(new CommonTokenStream(lexer));
-        
-        ParseTree tree=parser.parse();
-        
-        final Query parsedQuery=new Query();
-     
-        ParseTreeWalker.DEFAULT.walk(new ScrapeQLBaseListener(){
+
+        ParseTree tree = parser.parse();
+
+        final Query parsedQuery = new Query();
+
+        ParseTreeWalker.DEFAULT.walk(new ScrapeQLBaseListener() {
 
             @Override
             public void enterLoad(ScrapeQLParser.LoadContext ctx) {
@@ -64,15 +64,32 @@ public class QueryParser {
 
             @Override
             public void enterSelect_single(ScrapeQLParser.Select_singleContext ctx) {
-                
-                List<Variable> selectedVariables=new ArrayList<>(ctx.variable_list().variable().size());
-                for(ScrapeQLParser.VariableContext var: ctx.variable_list().variable()){
-                    Variable variable=parseExpression(var.expr(),parsedQuery.getContext());
+
+                List<Variable> selectedVariables = new ArrayList<>(ctx.variable_list().variable().size());
+                for (ScrapeQLParser.VariableContext var : ctx.variable_list().variable()) {
+                    Variable variable = parseExpression(var.expr(), parsedQuery.getContext());
                     variable.as(var.element_name().getText());
                     selectedVariables.add(variable);
                 }
-                
-                parsedQuery.select(selectedVariables).from(ctx.from_name().getText());
+
+                parsedQuery.select(selectedVariables)
+                        .from(ctx.from_name().getText());
+            }
+
+            @Override
+            public void enterSelect_every(ScrapeQLParser.Select_everyContext ctx) {
+                List<Variable> selectedVariables = new ArrayList<>(ctx.variable_list().variable().size());
+                for (ScrapeQLParser.VariableContext var : ctx.variable_list().variable()) {
+                    Variable variable = parseExpression(var.expr(), parsedQuery.getContext());
+                    variable.as(var.element_name().getText());
+                    selectedVariables.add(variable);
+                }
+
+                parsedQuery.selectEvery(selectedVariables)
+                        .in(stripEnclosure(ctx.selector_name().getText()))
+                        .from(ctx.from_name().getText())
+                        .into(ctx.into_name().getText());
+
             }
 
             @Override
@@ -81,31 +98,29 @@ public class QueryParser {
             }
         }, tree
         );
-        
+
         return parsedQuery;
     }
-    
-    
-    private String stripEnclosure(String input){
-        return input.substring(1,input.length()-1);
+
+    private String stripEnclosure(String input) {
+        return input.substring(1, input.length() - 1);
     }
-    
-    private Variable parseExpression(ScrapeQLParser.ExprContext ctx,QueryContext qCtx){        
-        if(ctx.selector_name()!=null){
+
+    private Variable parseExpression(ScrapeQLParser.ExprContext ctx, QueryContext qCtx) {
+        if (ctx.selector_name() != null) {
             return new SelectorVariable(stripEnclosure(ctx.selector_name().getText()));
-        }else if(ctx.element_name()!=null){
+        } else if (ctx.element_name() != null) {
             return new NamedVariable(ctx.element_name().getText());
-        }else if(ctx.string_name()!=null){
+        } else if (ctx.string_name() != null) {
             return new StringVariable(stripEnclosure(ctx.string_name().getText()));
-        }else if(ctx.function_name()!=null){
-            List<Variable> variableList=new ArrayList<>(ctx.expr().size());
-            for(ScrapeQLParser.ExprContext childCtx:ctx.expr()){
-                variableList.add(parseExpression(childCtx,qCtx));
+        } else if (ctx.function_name() != null) {
+            List<Variable> variableList = new ArrayList<>(ctx.expr().size());
+            for (ScrapeQLParser.ExprContext childCtx : ctx.expr()) {
+                variableList.add(parseExpression(childCtx, qCtx));
             }
             return new FunctionVariable(ctx.function_name().getText(), variableList);
         }
         return new StringVariable(ctx.getText());
     }
-    
-    
+
 }

@@ -59,7 +59,6 @@ public class SelectFirstExpression extends AbstractQueryAware implements SelectE
 
         //From variable should have already been executed.
         //fromVariable.execute(context);
-        
         Element fromElement = fromVariable.getElement();
         for (Variable var : elements) {
 

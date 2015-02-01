@@ -29,18 +29,18 @@ import at.plechinger.scrapeql.query.QueryContext;
  *
  * @author lukas
  */
-public class NamedVariable implements Variable{
+public class NamedVariable implements Variable {
 
     private String alias;
-    
+
     private Variable original;
-    
+
     private String name;
 
     public NamedVariable(String name) {
         this.name = name;
     }
-    
+
     @Override
     public String getValue() {
         return original.getValue();
@@ -48,16 +48,16 @@ public class NamedVariable implements Variable{
 
     @Override
     public Variable as(String alias) {
-        this.alias=alias;
+        this.alias = alias;
         return this;
     }
 
     @Override
     public void execute(QueryContext context) {
-        original=context.getVariable(name);
-        if(alias!=null){
+        original = context.getVariable(name);
+        if (alias != null) {
             context.addVariable(alias, original);
         }
     }
-    
+
 }

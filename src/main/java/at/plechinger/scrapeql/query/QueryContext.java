@@ -37,37 +37,37 @@ import org.jsoup.nodes.Element;
  * @author Lukas Plechinger
  */
 public class QueryContext {
-    
-    private static final Pattern VARIABLE_PATTERN=Pattern.compile("[a-zA-Z_][a-zA-Z_0-9]*");
-    
+
+    protected static final Pattern VARIABLE_PATTERN = Pattern.compile("[a-zA-Z_][a-zA-Z_0-9]*");
+
     private Element rootElement;
-    
-     private LoadExpression load;
-    
-    private List<SelectExpression> selects=new ArrayList<>();
-    
-    private Map<String, Variable> variables=new HashMap<>();
-    
-    private List<String> outputVariables=new ArrayList<>();
+
+    private LoadExpression load;
+
+    private List<SelectExpression> selects = new ArrayList<>();
+
+    private Map<String, Variable> variables = new HashMap<>();
+
+    private List<String> outputVariables = new ArrayList<>();
 
     public void addSelect(SelectExpression exp) {
         selects.add(exp);
     }
 
-    public void addVariable(String name, Variable value){
-        Preconditions.checkArgument(!variables.containsKey(name), "Variable '%s' is already defined.",name);
-        Preconditions.checkArgument(VARIABLE_PATTERN.matcher(name).matches(), "Variable %s contains illegal characters.",name);
+    public void addVariable(String name, Variable value) {
+        Preconditions.checkArgument(!variables.containsKey(name), "Variable '%s' is already defined.", name);
+        Preconditions.checkArgument(VARIABLE_PATTERN.matcher(name).matches(), "Variable %s contains illegal characters.", name);
         variables.put(name, value);
     }
-    
-    public void addOutputVariable(String variable){
+
+    public void addOutputVariable(String variable) {
         outputVariables.add(variable);
     }
 
     public void setLoadExpression(LoadExpression loadExpression) {
-        this.load=loadExpression;
+        this.load = loadExpression;
     }
-    
+
     public LoadExpression getLoadExpression() {
         return load;
     }
@@ -81,12 +81,12 @@ public class QueryContext {
     }
 
     public <T extends Variable> T getVariable(String variableName, Class<T> clazz) {
-        Preconditions.checkArgument(variables.containsKey(variableName), "Variable '%s' is not defined.",variableName);
-        Variable var=variables.get(variableName);
-        Preconditions.checkArgument(clazz.isAssignableFrom(clazz), "Variable type is %s but must be %s.",var.getClass().getName(),clazz.getName());
+        Preconditions.checkArgument(variables.containsKey(variableName), "Variable '%s' is not defined.", variableName);
+        Variable var = variables.get(variableName);
+        Preconditions.checkArgument(clazz.isAssignableFrom(clazz), "Variable type is %s but must be %s.", var.getClass().getName(), clazz.getName());
         return (T) variables.get(variableName);
     }
-    
+
     public Variable getVariable(String variableName) {
         return getVariable(variableName, Variable.class);
     }

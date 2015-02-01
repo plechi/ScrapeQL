@@ -23,6 +23,7 @@
  */
 package at.plechinger.scrapeql.query;
 
+import at.plechinger.scrapeql.query.variable.ListVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
 import at.plechinger.scrapeql.query.variable.VariableBuilder;
 import java.util.Arrays;
@@ -30,40 +31,43 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  *
  * @author Lukas Plechinger
  */
 public class Query {
-    
-    private QueryContext context=new QueryContext();
-    
-    private VariableBuilder variableBuilder=new VariableBuilder(context);
-    
-    public Query load(String url){
+
+    private QueryContext context = new QueryContext();
+
+    private VariableBuilder variableBuilder = new VariableBuilder(context);
+
+    public Query load(String url) {
         context.setLoadExpression(new LoadExpression(url));
         return this;
     }
-    
-    public SelectFirstExpression select(Variable... selects){
+
+    public SelectFirstExpression select(Variable... selects) {
         return select(Arrays.asList(selects));
     }
-    
-    public SelectFirstExpression select(List<Variable> selects){
-        SelectFirstExpression exp=new SelectFirstExpression(selects, this);
+
+    public SelectFirstExpression select(List<Variable> selects) {
+        SelectFirstExpression exp = new SelectFirstExpression(selects, this);
         context.addSelect(exp);
         return exp;
     }
-    
-    public SelectEveryExpression selectEvery(Variable... selects){
-        SelectEveryExpression exp=new SelectEveryExpression(Arrays.asList(selects), this);
+
+    public SelectEveryExpression selectEvery(Variable... selects) {
+        return selectEvery(Arrays.asList(selects));
+    }
+
+    public SelectEveryExpression selectEvery(List<Variable> selects) {
+        SelectEveryExpression exp = new SelectEveryExpression(selects, this);
         context.addSelect(exp);
         return exp;
     }
-    
-    public Query output(String... outputs){
-        for(String exp:outputs){
+
+    public Query output(String... outputs) {
+        for (String exp : outputs) {
             context.addOutputVariable(exp);
         }
         return this;
@@ -76,21 +80,26 @@ public class Query {
     public VariableBuilder getVariableBuilder() {
         return variableBuilder;
     }
-    
-    public Map<String,Object> execute(){
+
+    public Map<String, Object> execute() {
         //ececute load statement
         context.getLoadExpression().execute(context);
-        
-        for(SelectExpression select:context.getSelects()){
+
+        for (SelectExpression select : context.getSelects()) {
             select.execute(context);
         }
-        
-        Map<String,Object> resultMap=new LinkedHashMap<>();
-        
-        for(String variable:context.getOutputVariables()){
-            resultMap.put(variable, context.getVariable(variable).getValue());
+
+        Map<String, Object> resultMap = new LinkedHashMap<>();
+
+        for (String variable : context.getOutputVariables()) {
+            Variable varElement = context.getVariable(variable);
+            if (varElement instanceof ListVariable) {
+                resultMap.put(variable, ((ListVariable) context.getVariable(variable)).getList());
+            } else {
+                resultMap.put(variable, context.getVariable(variable).getValue());
+            }
         }
-        
+
         return resultMap;
     }
 }
