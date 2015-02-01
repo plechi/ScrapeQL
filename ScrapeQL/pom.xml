@@ -11,6 +11,12 @@
         <url>http://www.plechinger.at/</url>
     </organization>
     
+    <parent>
+        <groupId>at.plechinger.scrapeql</groupId>
+        <artifactId>scrapeql-base</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
     
     <name>ScrapeQL</name>
     
