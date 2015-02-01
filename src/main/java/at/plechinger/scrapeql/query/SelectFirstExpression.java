@@ -35,38 +35,39 @@ import org.jsoup.nodes.Element;
  * @author Lukas Plechinger
  */
 @Log4j
-public class SelectFirstExpression extends AbstractQueryAware implements SelectExpression{
+public class SelectFirstExpression extends AbstractQueryAware implements SelectExpression {
+
     private List<Variable> elements;
-    
+
     private String from;
-    
-    public SelectFirstExpression(List<Variable> elements, Query rootQuery){
+
+    public SelectFirstExpression(List<Variable> elements, Query rootQuery) {
         super(rootQuery);
-        this.elements=elements;
+        this.elements = elements;
     }
-    
-    public Query from(String from){
+
+    public Query from(String from) {
         Preconditions.checkNotNull(from, "FROM must be set");
-        
-        this.from=from;
+
+        this.from = from;
         return rootQuery;
     }
-    
+
     @Override
     public void execute(QueryContext context) {
-        SelectorVariable fromVariable=context.getVariable(from, SelectorVariable.class);
-        fromVariable.execute(context);
+        SelectorVariable fromVariable = context.getVariable(from, SelectorVariable.class);
+
+        //From variable should have already been executed.
+        //fromVariable.execute(context);
         
-        Element fromElement=fromVariable.getElement();
-        
-        
-        for(Variable var:elements){
-            
-            if(var instanceof SelectorVariable){
-                SelectorVariable s=(SelectorVariable) var;
+        Element fromElement = fromVariable.getElement();
+        for (Variable var : elements) {
+
+            if (var instanceof SelectorVariable) {
+                SelectorVariable s = (SelectorVariable) var;
                 s.setRoot(fromElement);
             }
-            
+
             var.execute(context);
         }
     }

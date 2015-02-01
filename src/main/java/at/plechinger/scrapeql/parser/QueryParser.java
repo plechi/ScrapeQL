@@ -59,7 +59,7 @@ public class QueryParser {
 
             @Override
             public void enterLoad(ScrapeQLParser.LoadContext ctx) {
-                parsedQuery.load(ctx.document_name().getText());
+                parsedQuery.load(stripEnclosure(ctx.document_name().getText()));
             }
 
             @Override

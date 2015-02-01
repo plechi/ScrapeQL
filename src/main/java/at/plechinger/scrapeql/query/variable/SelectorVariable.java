@@ -40,6 +40,8 @@ public class SelectorVariable implements Variable {
     private Element result = null;
 
     private Element root = null;
+    
+    private boolean executed=false;
 
     public SelectorVariable(String selector) {
         this.selector = selector;
@@ -67,6 +69,11 @@ public class SelectorVariable implements Variable {
 
     @Override
     public void execute(QueryContext context) {
+        
+        if(executed){
+            return;
+        }
+        
         Element r;
         if (root != null) {
             r = root;
@@ -81,6 +88,8 @@ public class SelectorVariable implements Variable {
         if (alias != null) {
             context.addVariable(alias, this);
         }
+        
+        executed=true;
     }
 
 }
