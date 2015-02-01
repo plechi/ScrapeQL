@@ -6,6 +6,12 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     
+    <organization>
+        <name>Lukas Plechinger</name>
+        <url>http://www.plechinger.at/</url>
+    </organization>
+    
+    
     <name>ScrapeQL</name>
     
     <properties>

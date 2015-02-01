@@ -21,49 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query;
+package at.plechinger.scrapeql.query.statement;
 
+import at.plechinger.scrapeql.query.Query;
+import at.plechinger.scrapeql.query.QueryContext;
 import at.plechinger.scrapeql.query.variable.SelectorVariable;
-import com.google.common.base.Charsets;
-import java.io.File;
-import java.io.IOException;
+import at.plechinger.scrapeql.query.variable.Variable;
+import java.util.List;
 import lombok.extern.log4j.Log4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  *
  * @author Lukas Plechinger
  */
 @Log4j
-public class LoadExpression implements ExecutableExpression {
+public class SelectFirstStatement extends AbstractSelectStatement implements SelectStatement {
 
-    private String url;
-
-    public LoadExpression(String url) {
-        this.url = url;
+    public SelectFirstStatement(List<Variable> elements, Query rootQuery) {
+        super(elements,rootQuery);
     }
-
+    
     @Override
     public void execute(QueryContext context) {
-        try {
-            log.debug("load from " + url);
-            Document doc;
-            if (url.startsWith("file:")) {
-                doc = Jsoup.parse(new File(url.substring("file:".length())), Charsets.UTF_8.name());
-            } else {
-                doc = Jsoup.connect(url).get();
+        SelectorVariable fromVariable = context.getVariable(from, SelectorVariable.class);
+
+        Element fromElement = fromVariable.getElement();
+        for (Variable var : elements) {
+
+            if (var instanceof SelectorVariable) {
+                SelectorVariable s = (SelectorVariable) var;
+                s.setRoot(fromElement);
             }
 
-            context.setRootElement(doc.select(":root").first());
-
-            SelectorVariable var = new SelectorVariable(":root");
             var.execute(context);
-            context.addVariable("root", var);
-
-        } catch (IOException ex) {
-            log.error("Error while loading document", ex);
         }
     }
-
 }

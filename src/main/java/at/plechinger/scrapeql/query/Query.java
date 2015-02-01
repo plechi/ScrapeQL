@@ -23,6 +23,10 @@
  */
 package at.plechinger.scrapeql.query;
 
+import at.plechinger.scrapeql.query.statement.LoadStatement;
+import at.plechinger.scrapeql.query.statement.SelectStatement;
+import at.plechinger.scrapeql.query.statement.SelectFirstStatement;
+import at.plechinger.scrapeql.query.statement.SelectEveryStatement;
 import at.plechinger.scrapeql.query.variable.ListVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
 import at.plechinger.scrapeql.query.variable.VariableBuilder;
@@ -42,26 +46,26 @@ public class Query {
     private VariableBuilder variableBuilder = new VariableBuilder(context);
 
     public Query load(String url) {
-        context.setLoadExpression(new LoadExpression(url));
+        context.setLoadExpression(new LoadStatement(url));
         return this;
     }
 
-    public SelectFirstExpression select(Variable... selects) {
+    public SelectFirstStatement select(Variable... selects) {
         return select(Arrays.asList(selects));
     }
 
-    public SelectFirstExpression select(List<Variable> selects) {
-        SelectFirstExpression exp = new SelectFirstExpression(selects, this);
+    public SelectFirstStatement select(List<Variable> selects) {
+        SelectFirstStatement exp = new SelectFirstStatement(selects, this);
         context.addSelect(exp);
         return exp;
     }
 
-    public SelectEveryExpression selectEvery(Variable... selects) {
+    public SelectEveryStatement selectEvery(Variable... selects) {
         return selectEvery(Arrays.asList(selects));
     }
 
-    public SelectEveryExpression selectEvery(List<Variable> selects) {
-        SelectEveryExpression exp = new SelectEveryExpression(selects, this);
+    public SelectEveryStatement selectEvery(List<Variable> selects) {
+        SelectEveryStatement exp = new SelectEveryStatement(selects, this);
         context.addSelect(exp);
         return exp;
     }
@@ -85,7 +89,7 @@ public class Query {
         //ececute load statement
         context.getLoadExpression().execute(context);
 
-        for (SelectExpression select : context.getSelects()) {
+        for (SelectStatement select : context.getSelects()) {
             select.execute(context);
         }
 

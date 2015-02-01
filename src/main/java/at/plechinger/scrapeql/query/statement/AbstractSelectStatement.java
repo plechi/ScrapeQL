@@ -21,18 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.query.statement;
 
-import at.plechinger.scrapeql.query.Executable;
-
+import at.plechinger.scrapeql.query.AbstractQueryAware;
+import at.plechinger.scrapeql.query.Query;
+import at.plechinger.scrapeql.query.variable.Variable;
+import java.util.List;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public interface Variable extends Executable {
+public abstract class AbstractSelectStatement extends AbstractQueryAware implements SelectStatement{
 
-    public String getValue();
+    protected String from;
+    
+    protected List<Variable> elements;
 
-    Variable as(String alias);
+    public AbstractSelectStatement(List<Variable> elements, Query rootQuery) {
+        super(rootQuery);
+        this.elements = elements;
+    }
+    
+    @Override
+    public Query from(String fromName) {
+       this.from=fromName;
+       return rootQuery;
+    }
 }

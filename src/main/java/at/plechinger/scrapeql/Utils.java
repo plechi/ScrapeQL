@@ -21,18 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql;
 
-import at.plechinger.scrapeql.query.Executable;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public interface Variable extends Executable {
+public class Utils {
+    public static String stripEnclosure(String input) {
+        return input.substring(1, input.length() - 1);
+    }
+    
+    private static final Pattern VARIABLE_PATTERN = Pattern.compile("[a-zA-Z_][a-zA-Z_0-9]*");
 
-    public String getValue();
-
-    Variable as(String alias);
+    public static Pattern getVariablePattern(){
+        return VARIABLE_PATTERN;
+    }
+    
+    public static boolean isValidVariableName(String name){
+        Matcher matcher=VARIABLE_PATTERN.matcher(name);
+        return matcher.matches();
+    }
 }

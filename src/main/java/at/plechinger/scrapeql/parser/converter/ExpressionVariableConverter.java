@@ -21,18 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.parser.converter;
 
-import at.plechinger.scrapeql.query.Executable;
-
+import at.plechinger.scrapeql.lang.ScrapeQLParser;
+import at.plechinger.scrapeql.query.variable.StringVariable;
+import at.plechinger.scrapeql.query.variable.Variable;
+import com.google.common.collect.Lists;
+import java.util.List;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public interface Variable extends Executable {
+public class ExpressionVariableConverter {
 
-    public String getValue();
+    private static final List<ExpressionConverter> converters = Lists.newLinkedList();
 
-    Variable as(String alias);
+    static {
+        //Add converters
+        converters.add(new SelectorConverter());
+        converters.add(new StringConverter());
+        converters.add(new NamedVariableConverter());
+        converters.add(new FunctionConverter());
+    }
+
+    public Variable convert(ScrapeQLParser.ExprContext ctx) {
+        for (ExpressionConverter converter : converters) {
+            if (converter.isSuited(ctx)) {
+                return converter.convert(ctx, this);
+            }
+        }
+
+        //FIXME: better way to handle unknown expressions (maybe Exception)
+        return new StringVariable(ctx.getText());
+    }
 }

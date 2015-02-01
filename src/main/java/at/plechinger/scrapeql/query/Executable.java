@@ -21,18 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.query;
 
-import at.plechinger.scrapeql.query.Executable;
-
+import at.plechinger.scrapeql.query.QueryContext;
 
 /**
  *
  * @author Lukas Plechinger
  */
-public interface Variable extends Executable {
+public interface Executable {
 
-    public String getValue();
-
-    Variable as(String alias);
+    void execute(QueryContext context);
 }

@@ -21,9 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query;
+package at.plechinger.scrapeql.query.statement;
 
-import static at.plechinger.scrapeql.query.QueryContext.VARIABLE_PATTERN;
+import at.plechinger.scrapeql.Utils;
+import at.plechinger.scrapeql.query.Query;
+import at.plechinger.scrapeql.query.QueryContext;
 import at.plechinger.scrapeql.query.variable.ListVariable;
 import at.plechinger.scrapeql.query.variable.SelectorVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
@@ -39,34 +41,24 @@ import org.jsoup.select.Elements;
  *
  * @author Lukas Plechinger
  */
-public class SelectEveryExpression extends AbstractQueryAware implements SelectExpression {
-
-    private List<Variable> elements;
-
-    private String from;
+public class SelectEveryStatement extends AbstractSelectStatement implements SelectStatement {
 
     private String into;
 
     private String in;
 
-    public SelectEveryExpression(List<Variable> elements, Query rootQuery) {
-        super(rootQuery);
-        this.elements = elements;
+    public SelectEveryStatement(List<Variable> elements, Query rootQuery) {
+        super(elements,rootQuery);
     }
 
-    public SelectEveryExpression in(String in) {
+    public SelectEveryStatement in(String in) {
         this.in = in;
         return this;
     }
 
-    public SelectEveryExpression from(String from) {
-        this.from = from;
-        return this;
-    }
-
-    public Query into(String variable) {
+    public SelectEveryStatement into(String variable) {
         this.into = variable;
-        return rootQuery;
+        return this;
     }
 
     @Override
@@ -76,16 +68,13 @@ public class SelectEveryExpression extends AbstractQueryAware implements SelectE
         Element fromElement = fromVariable.getElement();
         RowContext rowContext = new RowContext(context);
 
-        System.out.println("Select " + in + " from " + fromElement);
         Elements inElements = fromElement.select(in);
 
         List<Map<String, String>> resultList = new LinkedList<>();
 
         for (Element rowElement : inElements) {
-            System.out.println("row " + rowElement);
             rowContext.nextRow();
             for (Variable var : elements) {
-                System.out.println("col " + var);
                 if (var instanceof SelectorVariable) {
                     SelectorVariable s = (SelectorVariable) var;
                     s.setRoot(rowElement);
@@ -115,7 +104,7 @@ public class SelectEveryExpression extends AbstractQueryAware implements SelectE
         public void addVariable(String name, Variable value) {
             System.out.println("Add row " + name + " " + value.getValue());
             Preconditions.checkArgument(!rowVariables.containsKey(name), "Variable '%s' is already defined.", name);
-            Preconditions.checkArgument(VARIABLE_PATTERN.matcher(name).matches(), "Variable %s contains illegal characters.", name);
+            Preconditions.checkArgument(Utils.isValidVariableName(name), "Variable %s contains illegal characters.", name);
             rowVariables.put(name, value.getValue());
         }
 

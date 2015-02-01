@@ -21,18 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.parser.converter;
 
-import at.plechinger.scrapeql.query.Executable;
-
+import at.plechinger.scrapeql.lang.ScrapeQLParser;
+import at.plechinger.scrapeql.query.variable.Variable;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public interface Variable extends Executable {
+public interface ExpressionConverter {
 
-    public String getValue();
+    public boolean isSuited(ScrapeQLParser.ExprContext ctx);
 
-    Variable as(String alias);
+    public Variable convert(ScrapeQLParser.ExprContext ctx, ExpressionVariableConverter converter);
 }

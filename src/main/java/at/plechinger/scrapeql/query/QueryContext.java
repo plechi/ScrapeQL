@@ -23,13 +23,15 @@
  */
 package at.plechinger.scrapeql.query;
 
+import at.plechinger.scrapeql.query.statement.LoadStatement;
+import at.plechinger.scrapeql.Utils;
+import at.plechinger.scrapeql.query.statement.SelectStatement;
 import at.plechinger.scrapeql.query.variable.Variable;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import org.jsoup.nodes.Element;
 
 /**
@@ -37,26 +39,24 @@ import org.jsoup.nodes.Element;
  * @author Lukas Plechinger
  */
 public class QueryContext {
-
-    protected static final Pattern VARIABLE_PATTERN = Pattern.compile("[a-zA-Z_][a-zA-Z_0-9]*");
-
+    
     private Element rootElement;
 
-    private LoadExpression load;
+    private LoadStatement load;
 
-    private List<SelectExpression> selects = new ArrayList<>();
+    private List<SelectStatement> selects = new ArrayList<>();
 
     private Map<String, Variable> variables = new HashMap<>();
 
     private List<String> outputVariables = new ArrayList<>();
 
-    public void addSelect(SelectExpression exp) {
+    public void addSelect(SelectStatement exp) {
         selects.add(exp);
     }
 
     public void addVariable(String name, Variable value) {
         Preconditions.checkArgument(!variables.containsKey(name), "Variable '%s' is already defined.", name);
-        Preconditions.checkArgument(VARIABLE_PATTERN.matcher(name).matches(), "Variable %s contains illegal characters.", name);
+        Preconditions.checkArgument(Utils.isValidVariableName(name), "Variable %s contains illegal characters.", name);
         variables.put(name, value);
     }
 
@@ -64,15 +64,15 @@ public class QueryContext {
         outputVariables.add(variable);
     }
 
-    public void setLoadExpression(LoadExpression loadExpression) {
+    public void setLoadExpression(LoadStatement loadExpression) {
         this.load = loadExpression;
     }
 
-    public LoadExpression getLoadExpression() {
+    public LoadStatement getLoadExpression() {
         return load;
     }
 
-    public List<SelectExpression> getSelects() {
+    public List<SelectStatement> getSelects() {
         return selects;
     }
 

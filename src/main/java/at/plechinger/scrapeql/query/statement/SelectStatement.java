@@ -21,13 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query;
+package at.plechinger.scrapeql.query.statement;
+
+import at.plechinger.scrapeql.query.Executable;
+import at.plechinger.scrapeql.query.Query;
+
 
 /**
  *
  * @author Lukas Plechinger
  */
-public interface ExecutableExpression {
-
-    void execute(QueryContext context);
+public interface SelectStatement extends Executable {
+    Query from(String fromName);
 }

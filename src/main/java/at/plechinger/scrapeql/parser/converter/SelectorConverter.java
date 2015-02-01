@@ -21,53 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query;
+package at.plechinger.scrapeql.parser.converter;
 
+import at.plechinger.scrapeql.Utils;
+import at.plechinger.scrapeql.lang.ScrapeQLParser;
 import at.plechinger.scrapeql.query.variable.SelectorVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
-import com.google.common.base.Preconditions;
-import java.util.List;
-import lombok.extern.log4j.Log4j;
-import org.jsoup.nodes.Element;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-@Log4j
-public class SelectFirstExpression extends AbstractQueryAware implements SelectExpression {
+public class SelectorConverter implements ExpressionConverter {
 
-    private List<Variable> elements;
-
-    private String from;
-
-    public SelectFirstExpression(List<Variable> elements, Query rootQuery) {
-        super(rootQuery);
-        this.elements = elements;
-    }
-
-    public Query from(String from) {
-        Preconditions.checkNotNull(from, "FROM must be set");
-
-        this.from = from;
-        return rootQuery;
+    @Override
+    public boolean isSuited(ScrapeQLParser.ExprContext ctx) {
+        return ctx.selector_name() != null;
     }
 
     @Override
-    public void execute(QueryContext context) {
-        SelectorVariable fromVariable = context.getVariable(from, SelectorVariable.class);
-
-        //From variable should have already been executed.
-        //fromVariable.execute(context);
-        Element fromElement = fromVariable.getElement();
-        for (Variable var : elements) {
-
-            if (var instanceof SelectorVariable) {
-                SelectorVariable s = (SelectorVariable) var;
-                s.setRoot(fromElement);
-            }
-
-            var.execute(context);
-        }
+    public Variable convert(ScrapeQLParser.ExprContext ctx, ExpressionVariableConverter converter) {
+        return new SelectorVariable(Utils.stripEnclosure(ctx.selector_name().getText()));
     }
+
 }
