@@ -49,6 +49,7 @@ public class FunctionRepository {
     private void initBaseFunctions() {
         define(new AttrFunction());
         define(new ConcatFunction());
+        define(new DateFunction());
     }
 
     private Map<String, FunctionDefinition> definedFunctions = new HashMap<>();
