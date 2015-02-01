@@ -29,7 +29,6 @@ import at.plechinger.scrapeql.query.variable.SelectorVariable;
 import com.google.common.base.Charsets;
 import java.io.File;
 import java.io.IOException;
-import lombok.extern.log4j.Log4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -37,7 +36,6 @@ import org.jsoup.nodes.Document;
  *
  * @author Lukas Plechinger
  */
-@Log4j
 public class LoadStatement implements Executable {
 
     private String url;
@@ -49,7 +47,6 @@ public class LoadStatement implements Executable {
     @Override
     public void execute(QueryContext context) {
         try {
-            log.debug("load from " + url);
             Document doc;
 
             //FIXME: better load algorithm (maybe with caching?)
@@ -66,7 +63,8 @@ public class LoadStatement implements Executable {
             context.addVariable("root", var);
 
         } catch (IOException ex) {
-            log.error("Error while loading document", ex);
+            throw new RuntimeException(ex);
+            //FIXME:error handling
         }
     }
 

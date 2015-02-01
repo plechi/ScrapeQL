@@ -21,39 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.statement;
 
-import at.plechinger.scrapeql.query.Query;
-import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.variable.RootAwareVariable;
-import at.plechinger.scrapeql.query.variable.SelectorVariable;
-import at.plechinger.scrapeql.query.variable.Variable;
-import java.util.List;
-import org.jsoup.nodes.Element;
+LOAD "http://en.wikipedia.org/wiki/Java_(programming_language)";
 
-/**
- *
- * @author Lukas Plechinger
- */
-public class SelectFirstStatement extends AbstractSelectStatement implements SelectStatement {
+SELECT 'h1#firstHeading' AS headline FROM root;
 
-    public SelectFirstStatement(List<Variable> elements, Query rootQuery) {
-        super(elements, rootQuery);
-    }
+SELECT 'table.infobox.vevent' AS info_table_element FROM root;
 
-    @Override
-    public void execute(QueryContext context) {
-        SelectorVariable fromVariable = context.getVariable(from, SelectorVariable.class);
+SELECT EVERY 'th>a' AS info, 'td' AS description IN 'tr:has(th)' FROM info_table_element INTO info_table;
 
-        Element fromElement = fromVariable.getElement();
-        for (Variable var : elements) {
-
-            if (var instanceof RootAwareVariable) {
-                RootAwareVariable s = (RootAwareVariable) var;
-                s.setRoot(fromElement);
-            }
-
-            var.execute(context);
-        }
-    }
-}
+OUTPUT info_table;
+OUTPUT headline;
