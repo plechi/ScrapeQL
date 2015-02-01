@@ -27,6 +27,7 @@ import at.plechinger.scrapeql.query.variable.Variable;
 import at.plechinger.scrapeql.query.variable.VariableBuilder;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -46,7 +47,11 @@ public class Query {
     }
     
     public SelectFirstExpression select(Variable... selects){
-        SelectFirstExpression exp=new SelectFirstExpression(Arrays.asList(selects), this);
+        return select(Arrays.asList(selects));
+    }
+    
+    public SelectFirstExpression select(List<Variable> selects){
+        SelectFirstExpression exp=new SelectFirstExpression(selects, this);
         context.addSelect(exp);
         return exp;
     }
@@ -62,6 +67,10 @@ public class Query {
             context.addOutputVariable(exp);
         }
         return this;
+    }
+
+    public QueryContext getContext() {
+        return context;
     }
 
     public VariableBuilder getVariableBuilder() {

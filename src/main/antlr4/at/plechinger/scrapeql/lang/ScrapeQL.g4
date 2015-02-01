@@ -27,14 +27,18 @@ statement
 
 expr
  : element_name
- | SELECTOR
+ | string_name
+ | selector_name
  | function_name '(' expr? (',' expr)* ')'
  ;
 
 
-
 variable
  : expr (K_AS element_name)?
+ ;
+
+variable_list
+ : variable ( ',' variable )*
  ;
 
 
@@ -43,11 +47,11 @@ load
  ;
 
 select_single
- : K_SELECT K_FIRST? variable K_FROM from_name
+ : K_SELECT K_FIRST? variable_list K_FROM from_name
  ;
 
 select_every
- : K_SELECT K_EVERY variable ( ',' variable )* K_FROM element_name K_INTO element_name
+ : K_SELECT K_EVERY variable_list K_FROM element_name K_INTO element_name
  ;
 
 output
@@ -70,26 +74,24 @@ document_name
  : STRING_LITERAL
  ;
 
-
 from_name
  : element_name
- | SELECTOR
- ;
-
-element_name
- : any_name
  ;
 
 function_name
- : any_name
+ : element_name
  ;
 
-
-any_name
+element_name
  : IDENTIFIER 
- | keyword
- | STRING_LITERAL
- | SELECTOR
+ ;
+
+selector_name
+ : SELECTOR
+ ;
+
+string_name
+ : STRING_LITERAL
  ;
 
 

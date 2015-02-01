@@ -23,14 +23,13 @@
  */
 package at.plechinger.scrapeql.query;
 
-import at.plechinger.scrapeql.query.LoadExpression;
-import at.plechinger.scrapeql.query.SelectExpression;
 import at.plechinger.scrapeql.query.variable.Variable;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import org.jsoup.nodes.Element;
 
 /**
@@ -38,6 +37,8 @@ import org.jsoup.nodes.Element;
  * @author Lukas Plechinger
  */
 public class QueryContext {
+    
+    private static final Pattern VARIABLE_PATTERN=Pattern.compile("[a-zA-Z_][a-zA-Z_0-9]*");
     
     private Element rootElement;
     
@@ -55,6 +56,7 @@ public class QueryContext {
 
     public void addVariable(String name, Variable value){
         Preconditions.checkArgument(!variables.containsKey(name), "Variable '%s' is already defined.",name);
+        Preconditions.checkArgument(VARIABLE_PATTERN.matcher(name).matches(), "Variable %s contains illegal characters.",name);
         variables.put(name, value);
     }
     
