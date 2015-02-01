@@ -21,8 +21,8 @@ Features I'm working on right now:
 
  - create a Query Language which is able to define website queries
  - Query websites and select the data you want (either with Java DSL or text queries)
- - Map data to Java Beans
- - Get data as JSON (for other languages than Java)
+ - Map data to Java Beans (*WIP*)
+ - Get data as JSON (for other languages than Java) (*WIP*)
 
 Feature Backlog:
 
