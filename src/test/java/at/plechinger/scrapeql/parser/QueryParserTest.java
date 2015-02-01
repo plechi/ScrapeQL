@@ -91,6 +91,11 @@ public class QueryParserTest {
             map.put("item", "elemen4");
             result.add(map);
         }
+        {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("item", "elemen5");
+            result.add(map);
+        }
 
         Assert.assertEquals(result, query.execute().get("test"));
     }
