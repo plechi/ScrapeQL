@@ -32,7 +32,7 @@ Feature Backlog:
 
 #Sample
 
-This is how it (could) look like (i call it SrQL):
+This is how it (could) look like (i call it ScrQL):
 
 ```sql
 /*fetch HTML from example.com*/
