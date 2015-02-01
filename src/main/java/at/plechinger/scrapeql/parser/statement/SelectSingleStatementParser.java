@@ -21,40 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.statement;
+package at.plechinger.scrapeql.parser.statement;
 
+import at.plechinger.scrapeql.parser.statement.AbstractStatementParser;
+import at.plechinger.scrapeql.lang.ScrapeQLParser;
+import at.plechinger.scrapeql.parser.expression.ExpressionVariableConverter;
 import at.plechinger.scrapeql.query.Query;
-import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.variable.SelectorVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
+import java.util.ArrayList;
 import java.util.List;
-import lombok.extern.log4j.Log4j;
-import org.jsoup.nodes.Element;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-@Log4j
-public class SelectFirstStatement extends AbstractSelectStatement implements SelectStatement {
+public class SelectSingleStatementParser extends AbstractStatementParser<ScrapeQLParser.Select_singleContext> {
 
-    public SelectFirstStatement(List<Variable> elements, Query rootQuery) {
-        super(elements, rootQuery);
+    private ExpressionVariableConverter converter = new ExpressionVariableConverter();
+
+    public SelectSingleStatementParser() {
+        super(ScrapeQLParser.Select_singleContext.class);
     }
 
     @Override
-    public void execute(QueryContext context) {
-        SelectorVariable fromVariable = context.getVariable(from, SelectorVariable.class);
-
-        Element fromElement = fromVariable.getElement();
-        for (Variable var : elements) {
-
-            if (var instanceof SelectorVariable) {
-                SelectorVariable s = (SelectorVariable) var;
-                s.setRoot(fromElement);
-            }
-
-            var.execute(context);
+    protected void parseRule(Query query, ScrapeQLParser.Select_singleContext ctx) {
+        List<Variable> selectedVariables = new ArrayList<>(ctx.variable_list().variable().size());
+        for (ScrapeQLParser.VariableContext var : ctx.variable_list().variable()) {
+            Variable variable = converter.convert(var.expr());
+            variable.as(var.element_name().getText());
+            selectedVariables.add(variable);
         }
+
+        query.select(selectedVariables)
+                .from(ctx.from_name().getText());
     }
+
 }

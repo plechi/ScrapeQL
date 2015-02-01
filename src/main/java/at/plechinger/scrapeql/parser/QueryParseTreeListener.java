@@ -23,14 +23,17 @@
  */
 package at.plechinger.scrapeql.parser;
 
-import at.plechinger.scrapeql.parser.converter.ExpressionVariableConverter;
-import at.plechinger.scrapeql.Utils;
 import at.plechinger.scrapeql.lang.ScrapeQLBaseListener;
 import at.plechinger.scrapeql.lang.ScrapeQLParser;
+import at.plechinger.scrapeql.parser.statement.LoadStatementParser;
+import at.plechinger.scrapeql.parser.statement.OutputStatementParser;
+import at.plechinger.scrapeql.parser.statement.SelectEveryStatementParser;
+import at.plechinger.scrapeql.parser.statement.SelectSingleStatementParser;
+import at.plechinger.scrapeql.parser.statement.StatementParser;
 import at.plechinger.scrapeql.query.Query;
-import at.plechinger.scrapeql.query.variable.Variable;
-import java.util.ArrayList;
+import com.google.common.collect.Lists;
 import java.util.List;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
  *
@@ -38,7 +41,16 @@ import java.util.List;
  */
 public class QueryParseTreeListener extends ScrapeQLBaseListener {
 
-    private ExpressionVariableConverter converter = new ExpressionVariableConverter();
+    private static final List<StatementParser> statementParsers = Lists.newLinkedList();
+
+    static {
+
+        //add statement in most common order
+        statementParsers.add(new LoadStatementParser());
+        statementParsers.add(new SelectSingleStatementParser());
+        statementParsers.add(new SelectEveryStatementParser());
+        statementParsers.add(new OutputStatementParser());
+    }
 
     private final Query query = new Query();
 
@@ -50,38 +62,12 @@ public class QueryParseTreeListener extends ScrapeQLBaseListener {
     }
 
     @Override
-    public void enterLoad(ScrapeQLParser.LoadContext ctx) {
-        query.load(Utils.stripEnclosure(ctx.document_name().getText()));
-    }
-
-    @Override
-    public void enterSelect_single(ScrapeQLParser.Select_singleContext ctx) {
-
-        List<Variable> selectedVariables = new ArrayList<>(ctx.variable_list().variable().size());
-        for (ScrapeQLParser.VariableContext var : ctx.variable_list().variable()) {
-            Variable variable = converter.convert(var.expr());
-            variable.as(var.element_name().getText());
-            selectedVariables.add(variable);
+    public void enterEveryRule(ParserRuleContext ctx) {
+        for (StatementParser parser : statementParsers) {
+            if (parser.isSuited(ctx)) {
+                parser.parse(query, ctx);
+            }
         }
-
-        query.select(selectedVariables)
-                .from(ctx.from_name().getText());
-    }
-
-    @Override
-    public void enterSelect_every(ScrapeQLParser.Select_everyContext ctx) {
-        List<Variable> selectedVariables = new ArrayList<>(ctx.variable_list().variable().size());
-        for (ScrapeQLParser.VariableContext var : ctx.variable_list().variable()) {
-            Variable variable = converter.convert(var.expr());
-            variable.as(var.element_name().getText());
-            selectedVariables.add(variable);
-        }
-
-        query.selectEvery(selectedVariables)
-                .in(Utils.stripEnclosure(ctx.selector_name().getText()))
-                .into(ctx.into_name().getText())
-                .from(ctx.from_name().getText());
-
     }
 
     @Override

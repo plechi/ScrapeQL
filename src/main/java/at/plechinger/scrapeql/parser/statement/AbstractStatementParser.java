@@ -21,27 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.parser.converter;
+package at.plechinger.scrapeql.parser.statement;
 
-import at.plechinger.scrapeql.Utils;
-import at.plechinger.scrapeql.lang.ScrapeQLParser;
-import at.plechinger.scrapeql.query.variable.SelectorVariable;
-import at.plechinger.scrapeql.query.variable.Variable;
+import at.plechinger.scrapeql.parser.statement.StatementParser;
+import at.plechinger.scrapeql.query.Query;
+import com.google.common.base.Preconditions;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
  *
  * @author lukas
  */
-public class SelectorConverter implements ExpressionConverter {
+public abstract class AbstractStatementParser<T extends ParserRuleContext> implements StatementParser {
 
-    @Override
-    public boolean isSuited(ScrapeQLParser.ExprContext ctx) {
-        return ctx.selector_name() != null;
+    private Class<T> clazz;
+
+    public AbstractStatementParser(Class<T> clazz) {
+        this.clazz = clazz;
     }
 
     @Override
-    public Variable convert(ScrapeQLParser.ExprContext ctx, ExpressionVariableConverter converter) {
-        return new SelectorVariable(Utils.stripEnclosure(ctx.selector_name().getText()));
+    public boolean isSuited(ParserRuleContext ctx) {
+        return clazz.isAssignableFrom(ctx.getClass());
     }
+
+    @Override
+    public void parse(Query query, ParserRuleContext ctx) {
+        Preconditions.checkArgument(
+                isSuited(ctx),
+                "Parser %s is not suited to parse context of type %s.",
+                this.getClass().getName(),
+                ctx.getClass().getName()
+        );
+
+        T context = (T) ctx;
+
+        parseRule(query, context);
+    }
+
+    protected abstract void parseRule(Query query, T ctx);
 
 }

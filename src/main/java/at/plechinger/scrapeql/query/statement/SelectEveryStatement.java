@@ -48,7 +48,7 @@ public class SelectEveryStatement extends AbstractSelectStatement implements Sel
     private String in;
 
     public SelectEveryStatement(List<Variable> elements, Query rootQuery) {
-        super(elements,rootQuery);
+        super(elements, rootQuery);
     }
 
     public SelectEveryStatement in(String in) {
@@ -102,7 +102,6 @@ public class SelectEveryStatement extends AbstractSelectStatement implements Sel
 
         @Override
         public void addVariable(String name, Variable value) {
-            System.out.println("Add row " + name + " " + value.getValue());
             Preconditions.checkArgument(!rowVariables.containsKey(name), "Variable '%s' is already defined.", name);
             Preconditions.checkArgument(Utils.isValidVariableName(name), "Variable %s contains illegal characters.", name);
             rowVariables.put(name, value.getValue());

@@ -39,7 +39,7 @@ import org.jsoup.nodes.Element;
  * @author Lukas Plechinger
  */
 public class QueryContext {
-    
+
     private Element rootElement;
 
     private LoadStatement load;

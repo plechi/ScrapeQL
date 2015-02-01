@@ -26,11 +26,11 @@ package at.plechinger.scrapeql.query.statement;
 import at.plechinger.scrapeql.query.Executable;
 import at.plechinger.scrapeql.query.Query;
 
-
 /**
  *
  * @author Lukas Plechinger
  */
 public interface SelectStatement extends Executable {
+
     Query from(String fromName);
 }

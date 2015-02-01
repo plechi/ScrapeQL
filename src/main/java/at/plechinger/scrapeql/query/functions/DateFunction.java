@@ -39,31 +39,31 @@ import java.util.List;
 class DateFunction implements FunctionDefinition {
 
     private static final String NAME = "date";
-    
-    private static final String BASE_FORMAT="yyyy-MM-dd HH:mm:ss";
+
+    private static final String BASE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @Override
     public Variable execute(QueryContext context, List<Variable> parameters) {
         //parameter count must be 2 or 3
-        Preconditions.checkArgument(parameters.size()>=2 && parameters.size()<=3, "date(): argument count: %d", parameters.size());
-        try{
+        Preconditions.checkArgument(parameters.size() >= 2 && parameters.size() <= 3, "date(): argument count: %d", parameters.size());
+        try {
 
-        //parse input
-        SimpleDateFormat input=new SimpleDateFormat(parameters.get(1).getValue());
-        
-        Date date=input.parse(parameters.get(0).getValue());
-        
-        //parse output
-        SimpleDateFormat outputFormat;
-        
-        if(parameters.size()==3){
-            outputFormat=new SimpleDateFormat(parameters.get(2).getValue());
-        }else{
-            outputFormat=new SimpleDateFormat(BASE_FORMAT);
-        }
-        
-        return new StringVariable(outputFormat.format(date));
-        }catch(ParseException ex){
+            //parse input
+            SimpleDateFormat input = new SimpleDateFormat(parameters.get(1).getValue());
+
+            Date date = input.parse(parameters.get(0).getValue());
+
+            //parse output
+            SimpleDateFormat outputFormat;
+
+            if (parameters.size() == 3) {
+                outputFormat = new SimpleDateFormat(parameters.get(2).getValue());
+            } else {
+                outputFormat = new SimpleDateFormat(BASE_FORMAT);
+            }
+
+            return new StringVariable(outputFormat.format(date));
+        } catch (ParseException ex) {
             return new StringVariable(parameters.get(0).getValue());
         }
     }

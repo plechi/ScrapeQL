@@ -32,20 +32,20 @@ import java.util.List;
  *
  * @author lukas
  */
-public abstract class AbstractSelectStatement extends AbstractQueryAware implements SelectStatement{
+public abstract class AbstractSelectStatement extends AbstractQueryAware implements SelectStatement {
 
     protected String from;
-    
+
     protected List<Variable> elements;
 
     public AbstractSelectStatement(List<Variable> elements, Query rootQuery) {
         super(rootQuery);
         this.elements = elements;
     }
-    
+
     @Override
     public Query from(String fromName) {
-       this.from=fromName;
-       return rootQuery;
+        this.from = fromName;
+        return rootQuery;
     }
 }

@@ -21,18 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.parser.converter;
+package at.plechinger.scrapeql.parser.expression;
 
+import at.plechinger.scrapeql.Utils;
 import at.plechinger.scrapeql.lang.ScrapeQLParser;
+import at.plechinger.scrapeql.query.variable.SelectorVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
 
 /**
  *
  * @author lukas
  */
-public interface ExpressionConverter {
+public class SelectorConverter implements ExpressionConverter {
 
-    public boolean isSuited(ScrapeQLParser.ExprContext ctx);
+    @Override
+    public boolean isSuited(ScrapeQLParser.ExprContext ctx) {
+        return ctx.selector_name() != null;
+    }
 
-    public Variable convert(ScrapeQLParser.ExprContext ctx, ExpressionVariableConverter converter);
+    @Override
+    public Variable convert(ScrapeQLParser.ExprContext ctx, ExpressionVariableConverter converter) {
+        return new SelectorVariable(Utils.stripEnclosure(ctx.selector_name().getText()));
+    }
+
 }

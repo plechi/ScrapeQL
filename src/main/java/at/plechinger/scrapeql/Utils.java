@@ -31,18 +31,19 @@ import java.util.regex.Pattern;
  * @author lukas
  */
 public class Utils {
+
     public static String stripEnclosure(String input) {
         return input.substring(1, input.length() - 1);
     }
-    
+
     private static final Pattern VARIABLE_PATTERN = Pattern.compile("[a-zA-Z_][a-zA-Z_0-9]*");
 
-    public static Pattern getVariablePattern(){
+    public static Pattern getVariablePattern() {
         return VARIABLE_PATTERN;
     }
-    
-    public static boolean isValidVariableName(String name){
-        Matcher matcher=VARIABLE_PATTERN.matcher(name);
+
+    public static boolean isValidVariableName(String name) {
+        Matcher matcher = VARIABLE_PATTERN.matcher(name);
         return matcher.matches();
     }
 }

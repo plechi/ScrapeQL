@@ -21,26 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.parser.converter;
+package at.plechinger.scrapeql.parser.statement;
 
+import at.plechinger.scrapeql.parser.statement.AbstractStatementParser;
 import at.plechinger.scrapeql.lang.ScrapeQLParser;
-import at.plechinger.scrapeql.query.variable.NamedVariable;
-import at.plechinger.scrapeql.query.variable.Variable;
+import at.plechinger.scrapeql.query.Query;
 
 /**
  *
  * @author lukas
  */
-public class NamedVariableConverter implements ExpressionConverter {
+public class OutputStatementParser extends AbstractStatementParser<ScrapeQLParser.OutputContext> {
 
-    @Override
-    public boolean isSuited(ScrapeQLParser.ExprContext ctx) {
-        return ctx.element_name() != null;
+    public OutputStatementParser() {
+        super(ScrapeQLParser.OutputContext.class);
     }
 
     @Override
-    public Variable convert(ScrapeQLParser.ExprContext ctx, ExpressionVariableConverter converter) {
-        return new NamedVariable(ctx.element_name().getText());
+    protected void parseRule(Query query, ScrapeQLParser.OutputContext ctx) {
+        query.output(ctx.element_name().getText());
     }
 
 }

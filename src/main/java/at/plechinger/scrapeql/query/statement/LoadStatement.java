@@ -51,7 +51,7 @@ public class LoadStatement implements Executable {
         try {
             log.debug("load from " + url);
             Document doc;
-            
+
             //FIXME: better load algorithm (maybe with caching?)
             if (url.startsWith("file:")) {
                 doc = Jsoup.parse(new File(url.substring("file:".length())), Charsets.UTF_8.name());

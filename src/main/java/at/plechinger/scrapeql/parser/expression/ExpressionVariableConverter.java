@@ -21,27 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.parser.converter;
+package at.plechinger.scrapeql.parser.expression;
 
-import at.plechinger.scrapeql.Utils;
 import at.plechinger.scrapeql.lang.ScrapeQLParser;
 import at.plechinger.scrapeql.query.variable.StringVariable;
 import at.plechinger.scrapeql.query.variable.Variable;
+import com.google.common.collect.Lists;
+import java.util.List;
 
 /**
  *
  * @author lukas
  */
-public class StringConverter implements ExpressionConverter {
+public class ExpressionVariableConverter {
 
-    @Override
-    public boolean isSuited(ScrapeQLParser.ExprContext ctx) {
-        return ctx.string_name() != null;
+    private static final List<ExpressionConverter> converters = Lists.newLinkedList();
+
+    static {
+        //Add converters
+        converters.add(new SelectorConverter());
+        converters.add(new StringConverter());
+        converters.add(new NamedVariableConverter());
+        converters.add(new FunctionConverter());
     }
 
-    @Override
-    public Variable convert(ScrapeQLParser.ExprContext ctx, ExpressionVariableConverter converter) {
-        return new StringVariable(Utils.stripEnclosure(ctx.string_name().getText()));
-    }
+    public Variable convert(ScrapeQLParser.ExprContext ctx) {
+        for (ExpressionConverter converter : converters) {
+            if (converter.isSuited(ctx)) {
+                return converter.convert(ctx, this);
+            }
+        }
 
+        //FIXME: better way to handle unknown expressions (maybe Exception)
+        return new StringVariable(ctx.getText());
+    }
 }

@@ -21,17 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.parser.statement;
 
-import at.plechinger.scrapeql.query.Executable;
+import at.plechinger.scrapeql.query.Query;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public interface Variable extends Executable {
+public interface StatementParser {
 
-    public String getValue();
+    public boolean isSuited(ParserRuleContext ctx);
 
-    Variable as(String alias);
+    public void parse(Query query, ParserRuleContext ctx);
 }
