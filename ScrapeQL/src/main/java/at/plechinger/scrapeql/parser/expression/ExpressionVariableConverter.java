@@ -24,8 +24,8 @@
 package at.plechinger.scrapeql.parser.expression;
 
 import at.plechinger.scrapeql.lang.ScrapeQLParser;
-import at.plechinger.scrapeql.query.variable.StringVariable;
-import at.plechinger.scrapeql.query.variable.Variable;
+import at.plechinger.scrapeql.query.expression.StringVariable;
+import at.plechinger.scrapeql.query.expression.Variable;
 import com.google.common.collect.Lists;
 import java.util.List;
 

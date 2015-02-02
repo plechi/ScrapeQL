@@ -25,8 +25,10 @@ package at.plechinger.scrapeql.query.statement;
 
 import at.plechinger.scrapeql.query.AbstractQueryAware;
 import at.plechinger.scrapeql.query.Query;
-import at.plechinger.scrapeql.query.variable.Variable;
+import at.plechinger.scrapeql.query.expression.Variable;
 import java.util.List;
+
+
 
 /**
  *

@@ -28,7 +28,12 @@ SELECT 'h1#firstHeading' AS headline FROM root;
 
 SELECT 'table.infobox.vevent' AS info_table_element FROM root;
 
-SELECT EVERY 'th>a' AS info, 'td' AS description IN 'tr:has(th)' FROM info_table_element INTO info_table;
+SELECT EVERY 
+   'th' AS info, 
+   'td' AS description 
+   IN 'tr:has(th[scope=row])' 
+   FROM info_table_element 
+   INTO info_table;
 
 OUTPUT info_table;
 OUTPUT headline;

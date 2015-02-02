@@ -24,8 +24,8 @@
 package at.plechinger.scrapeql.parser.expression;
 
 import at.plechinger.scrapeql.lang.ScrapeQLParser;
-import at.plechinger.scrapeql.query.variable.FunctionVariable;
-import at.plechinger.scrapeql.query.variable.Variable;
+import at.plechinger.scrapeql.query.expression.FunctionVariable;
+import at.plechinger.scrapeql.query.expression.Variable;
 import java.util.ArrayList;
 import java.util.List;
 

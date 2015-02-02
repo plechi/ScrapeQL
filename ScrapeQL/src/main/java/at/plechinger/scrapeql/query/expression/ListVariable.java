@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Lukas Plechinger.
+ * Copyright 2015 lukas.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,78 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.query.expression;
 
 import at.plechinger.scrapeql.query.QueryContext;
 import com.google.common.base.Preconditions;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import java.util.List;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public class SelectorVariable implements Variable, RootAwareVariable {
+public class ListVariable<T> implements Variable {
 
-    private String selector;
     private String alias;
 
-    private Element result = null;
+    private List<T> list;
 
-    private Element root = null;
-
-    private boolean executed = false;
-
-    public SelectorVariable(String selector) {
-        this.selector = selector;
+    public List<T> getList() {
+        return list;
     }
 
-    public void setRoot(Element rootElement) {
-        this.root = rootElement;
-        executed = false;
-    }
-
-    public Element getElement() {
-        Preconditions.checkNotNull(result, "Selector '%s' as not found anything", selector);
-        return result;
+    public ListVariable(List<T> list) {
+        Preconditions.checkNotNull(list, "List must not be null.");
+        this.list = list;
     }
 
     @Override
     public String getValue() {
-        return getElement().text();
+        return String.format("List[%d]", list.size());
     }
 
     @Override
-    public SelectorVariable as(String alias) {
+    public Variable as(String alias) {
         this.alias = alias;
-        executed = false;
         return this;
     }
 
     @Override
     public void execute(QueryContext context) {
-
-        if (executed) {
-            return;
-        }
-
-        Element r;
-        if (root != null) {
-            r = root;
-        } else {
-            r = context.getRootElement();
-        }
-        Elements results = r.select(selector);
-
-        if (results != null && results.size() > 0) {
-            result = results.first();
-        }
-
         if (alias != null) {
             context.addVariable(alias, this);
         }
-
-        executed = true;
     }
 
 }

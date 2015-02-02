@@ -24,9 +24,9 @@
 package at.plechinger.scrapeql.query.functions;
 
 import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.variable.RootAwareVariable;
-import at.plechinger.scrapeql.query.variable.StringVariable;
-import at.plechinger.scrapeql.query.variable.Variable;
+import at.plechinger.scrapeql.query.expression.RootAwareVariable;
+import at.plechinger.scrapeql.query.expression.StringVariable;
+import at.plechinger.scrapeql.query.expression.Variable;
 import com.google.common.base.Preconditions;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

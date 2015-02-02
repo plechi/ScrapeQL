@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 lukas.
+ * Copyright 2015 Lukas Plechinger.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.query.expression;
 
-import at.plechinger.scrapeql.query.QueryContext;
+import org.jsoup.nodes.Element;
 
 /**
  *
  * @author lukas
  */
-public class NamedVariable implements Variable {
-
-    private String alias;
-
-    private Variable original;
-
-    private String name;
-
-    public NamedVariable(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getValue() {
-        return original.getValue();
-    }
-
-    @Override
-    public Variable as(String alias) {
-        this.alias = alias;
-        return this;
-    }
-
-    @Override
-    public void execute(QueryContext context) {
-        original = context.getVariable(name);
-        if (alias != null) {
-            context.addVariable(alias, original);
-        }
-    }
-
+public interface RootAwareVariable {
+    public void setRoot(Element root);
 }

@@ -23,13 +23,13 @@
  */
 package at.plechinger.scrapeql.query;
 
+import at.plechinger.scrapeql.query.expression.ListVariable;
+import at.plechinger.scrapeql.query.expression.Variable;
+import at.plechinger.scrapeql.query.expression.VariableBuilder;
 import at.plechinger.scrapeql.query.statement.LoadStatement;
 import at.plechinger.scrapeql.query.statement.SelectStatement;
 import at.plechinger.scrapeql.query.statement.SelectFirstStatement;
 import at.plechinger.scrapeql.query.statement.SelectEveryStatement;
-import at.plechinger.scrapeql.query.variable.ListVariable;
-import at.plechinger.scrapeql.query.variable.Variable;
-import at.plechinger.scrapeql.query.variable.VariableBuilder;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;

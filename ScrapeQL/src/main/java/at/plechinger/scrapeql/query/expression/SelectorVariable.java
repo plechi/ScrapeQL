@@ -21,63 +21,70 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.query.expression;
 
 import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.functions.FunctionDefinition;
-import at.plechinger.scrapeql.query.functions.FunctionRepository;
 import com.google.common.base.Preconditions;
-import java.util.List;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  *
  * @author Lukas Plechinger
  */
-public class FunctionVariable implements Variable, RootAwareVariable {
+public class SelectorVariable implements Variable, RootAwareVariable {
 
-    private List<Variable> parameters;
-    private FunctionDefinition funcitonDefinition;
-
+    private String selector;
     private String alias;
 
-    private Variable result = null;
-    
-    private Element root;
+    private Element result = null;
+
+    private Element root = null;
+
+    public SelectorVariable(String selector) {
+        this.selector = selector;
+    }
 
     @Override
-    public void setRoot(Element root) {
-        this.root = root;
-    }
-    
-    public FunctionVariable(String functionName, List<Variable> parameters) {
-        this(FunctionRepository.getFunctions().getDefinedFunction(functionName), parameters);
+    public void setRoot(Element rootElement) {
+        this.root = rootElement;
     }
 
-    public FunctionVariable(FunctionDefinition function, List<Variable> parameters) {
-        Preconditions.checkNotNull(function, "Function definition must not be null");
-        Preconditions.checkNotNull(parameters, "Parameters must be set");
-        this.funcitonDefinition = function;
-        this.parameters = parameters;
+    public Element getElement() {
+        Preconditions.checkNotNull(result, "Selector '%s' as not found anything", selector);
+        return result;
     }
 
     @Override
     public String getValue() {
-        return result.getValue();
+        return getElement().text();
     }
 
     @Override
-    public FunctionVariable as(String alias) {
+    public SelectorVariable as(String alias) {
         this.alias = alias;
         return this;
     }
 
     @Override
     public void execute(QueryContext context) {
-        result = funcitonDefinition.execute(context, parameters, root);
-        Preconditions.checkNotNull(result, "Function Result must not be null at function '%s'", funcitonDefinition.getClass().getName());
+
+        Element r;
+        if (root != null) {
+            r = root;
+        } else {
+            r = context.getRootElement();
+        }
+        Elements results = r.select(selector);
+
+        if (results != null && results.size() > 0) {
+            result = results.first();
+        }
+
         if (alias != null) {
-            context.addVariable(alias, result);
+            context.addVariable(alias, this);
+        }else{
+            context.addVariable("selector"+this.hashCode(), this);
         }
     }
 

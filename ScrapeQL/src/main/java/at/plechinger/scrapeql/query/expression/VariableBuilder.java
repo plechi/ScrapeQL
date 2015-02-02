@@ -21,17 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.query.expression;
 
-import at.plechinger.scrapeql.query.Executable;
+import at.plechinger.scrapeql.query.QueryContext;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
  * @author Lukas Plechinger
  */
-public interface Variable extends Executable {
+public class VariableBuilder {
 
-    public String getValue();
+    private QueryContext context;
 
-    Variable as(String alias);
+    public VariableBuilder(QueryContext context) {
+        this.context = context;
+    }
+
+    public StringVariable string(String value) {
+        return new StringVariable(value);
+    }
+
+    public SelectorVariable selector(String selector) {
+        return new SelectorVariable(selector);
+    }
+
+    public NamedVariable var(String name) {
+        return new NamedVariable(name);
+    }
+
+    public FunctionVariable function(String name, List<Variable> parameters) {
+        return new FunctionVariable(name, parameters);
+    }
+
+    public FunctionVariable function(String name, Variable... parameters) {
+        return function(name, Arrays.asList(parameters));
+    }
 }

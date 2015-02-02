@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 Lukas Plechinger.
+ * Copyright 2015 lukas.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.query.expression;
 
 import at.plechinger.scrapeql.query.QueryContext;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public class VariableBuilder {
+public class NamedVariable implements Variable {
 
-    private QueryContext context;
+    private String alias;
 
-    public VariableBuilder(QueryContext context) {
-        this.context = context;
+    private Variable original;
+
+    private String name;
+
+    public NamedVariable(String name) {
+        this.name = name;
     }
 
-    public StringVariable string(String value) {
-        return new StringVariable(value);
+    @Override
+    public String getValue() {
+        return original.getValue();
     }
 
-    public SelectorVariable selector(String selector) {
-        return new SelectorVariable(selector);
+    @Override
+    public Variable as(String alias) {
+        this.alias = alias;
+        return this;
     }
 
-    public NamedVariable var(String name) {
-        return new NamedVariable(name);
+    @Override
+    public void execute(QueryContext context) {
+        original = context.getVariable(name);
+        if (alias != null) {
+            context.addVariable(alias, original);
+        }
     }
 
-    public FunctionVariable function(String name, List<Variable> parameters) {
-        return new FunctionVariable(name, parameters);
-    }
-
-    public FunctionVariable function(String name, Variable... parameters) {
-        return function(name, Arrays.asList(parameters));
-    }
 }

@@ -35,7 +35,7 @@ public class FunctionRepository {
 
     private static FunctionRepository functions = null;
 
-    public static FunctionRepository getFunctions() {
+    public static FunctionRepository repository() {
         if (functions == null) {
             functions = new FunctionRepository();
         }

@@ -27,9 +27,11 @@ import at.plechinger.scrapeql.Utils;
 import at.plechinger.scrapeql.lang.ScrapeQLParser;
 import at.plechinger.scrapeql.parser.expression.ExpressionVariableConverter;
 import at.plechinger.scrapeql.query.Query;
-import at.plechinger.scrapeql.query.variable.Variable;
+import at.plechinger.scrapeql.query.expression.Variable;
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 /**
  *

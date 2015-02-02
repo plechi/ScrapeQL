@@ -21,14 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.query.expression;
 
-import org.jsoup.nodes.Element;
+import at.plechinger.scrapeql.query.Executable;
 
 /**
  *
- * @author lukas
+ * @author Lukas Plechinger
  */
-public interface RootAwareVariable {
-    public void setRoot(Element root);
+public interface Variable extends Executable {
+
+    public String getValue();
+
+    Variable as(String alias);
 }

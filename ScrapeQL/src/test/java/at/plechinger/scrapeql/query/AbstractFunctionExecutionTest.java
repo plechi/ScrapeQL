@@ -23,7 +23,7 @@
  */
 package at.plechinger.scrapeql.query;
 
-import at.plechinger.scrapeql.query.variable.VariableBuilder;
+import at.plechinger.scrapeql.query.expression.VariableBuilder;
 import org.junit.Before;
 
 /**

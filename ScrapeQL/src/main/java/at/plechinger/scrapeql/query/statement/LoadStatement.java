@@ -25,12 +25,14 @@ package at.plechinger.scrapeql.query.statement;
 
 import at.plechinger.scrapeql.query.Executable;
 import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.variable.SelectorVariable;
+import at.plechinger.scrapeql.query.expression.SelectorVariable;
 import com.google.common.base.Charsets;
 import java.io.File;
 import java.io.IOException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+
 
 /**
  *

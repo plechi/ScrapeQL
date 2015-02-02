@@ -25,8 +25,8 @@ package at.plechinger.scrapeql.query;
 
 import at.plechinger.scrapeql.query.statement.LoadStatement;
 import at.plechinger.scrapeql.Utils;
+import at.plechinger.scrapeql.query.expression.Variable;
 import at.plechinger.scrapeql.query.statement.SelectStatement;
-import at.plechinger.scrapeql.query.variable.Variable;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +55,10 @@ public class QueryContext {
     }
 
     public void addVariable(String name, Variable value) {
-        Preconditions.checkArgument(!variables.containsKey(name), "Variable '%s' is already defined.", name);
+        Preconditions.checkArgument(
+                !(variables.containsKey(name) 
+                && value.hashCode()!=variables.get(name).hashCode()), 
+                "Variable '%s' is already defined.", name);
         Preconditions.checkArgument(Utils.isValidVariableName(name), "Variable %s contains illegal characters.", name);
         variables.put(name, value);
     }

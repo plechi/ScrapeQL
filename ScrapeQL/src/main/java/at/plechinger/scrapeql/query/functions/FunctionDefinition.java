@@ -24,7 +24,7 @@
 package at.plechinger.scrapeql.query.functions;
 
 import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.variable.Variable;
+import at.plechinger.scrapeql.query.expression.Variable;
 import java.util.List;
 import org.jsoup.nodes.Element;
 

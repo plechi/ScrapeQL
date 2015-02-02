@@ -24,8 +24,8 @@
 package at.plechinger.scrapeql.parser.expression;
 
 import at.plechinger.scrapeql.lang.ScrapeQLParser;
-import at.plechinger.scrapeql.query.variable.NamedVariable;
-import at.plechinger.scrapeql.query.variable.Variable;
+import at.plechinger.scrapeql.query.expression.NamedVariable;
+import at.plechinger.scrapeql.query.expression.Variable;
 
 /**
  *

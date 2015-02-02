@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2015 lukas.
+ * Copyright 2015 Lukas Plechinger.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,46 +21,63 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.variable;
+package at.plechinger.scrapeql.query.expression;
 
 import at.plechinger.scrapeql.query.QueryContext;
+import at.plechinger.scrapeql.query.functions.FunctionDefinition;
+import at.plechinger.scrapeql.query.functions.FunctionRepository;
 import com.google.common.base.Preconditions;
 import java.util.List;
+import org.jsoup.nodes.Element;
 
 /**
  *
- * @author lukas
+ * @author Lukas Plechinger
  */
-public class ListVariable<T> implements Variable {
+public class FunctionVariable implements Variable, RootAwareVariable {
+
+    private List<Variable> parameters;
+    private FunctionDefinition funcitonDefinition;
 
     private String alias;
 
-    private List<T> list;
+    private Variable result = null;
+    
+    private Element root;
 
-    public List<T> getList() {
-        return list;
+    @Override
+    public void setRoot(Element root) {
+        this.root = root;
+    }
+    
+    public FunctionVariable(String functionName, List<Variable> parameters) {
+        this(FunctionRepository.repository().getDefinedFunction(functionName), parameters);
     }
 
-    public ListVariable(List<T> list) {
-        Preconditions.checkNotNull(list, "List must not be null.");
-        this.list = list;
+    public FunctionVariable(FunctionDefinition function, List<Variable> parameters) {
+        Preconditions.checkNotNull(function, "Function definition must not be null");
+        Preconditions.checkNotNull(parameters, "Parameters must be set");
+        this.funcitonDefinition = function;
+        this.parameters = parameters;
     }
 
     @Override
     public String getValue() {
-        return String.format("List[%d]", list.size());
+        return result.getValue();
     }
 
     @Override
-    public Variable as(String alias) {
+    public FunctionVariable as(String alias) {
         this.alias = alias;
         return this;
     }
 
     @Override
     public void execute(QueryContext context) {
+        result = funcitonDefinition.execute(context, parameters, root);
+        Preconditions.checkNotNull(result, "Function Result must not be null at function '%s'", funcitonDefinition.getClass().getName());
         if (alias != null) {
-            context.addVariable(alias, this);
+            context.addVariable(alias, result);
         }
     }
 
