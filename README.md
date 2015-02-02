@@ -24,11 +24,12 @@ Features I'm working on right now:
 
 
 Feature Backlog:
- - Map data to Java Beans (*WIP*)
- - Get data as JSON (for other languages than Java) (*WIP*)
+ - Map data to Java Beans (**WIP**)
+ - Get data as JSON (for other languages than Java) (**WIP**)
+ - Implement a (basic) JDBC driver to use with ORM frameworks
  - Cache both website requests and query results
  - implement standalone server (like a DB server)
- - implement new language features like subqueries, functions,...
+ - implement new language features like subqueries, new functions,...
 
 #Use
 
