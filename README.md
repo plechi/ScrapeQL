@@ -18,17 +18,21 @@ My motivation for this project came from the interest to learn ANTLR and the nee
 #Features
 
 Features I'm working on right now:
-
  - create a Query Language which is able to define website queries
  - Query websites and select the data you want (either with Java DSL or text queries)
- - Map data to Java Beans (*WIP*)
- - Get data as JSON (for other languages than Java) (*WIP*)
+ - Scrape Data using the command line
+
 
 Feature Backlog:
-
+ - Map data to Java Beans (*WIP*)
+ - Get data as JSON (for other languages than Java) (*WIP*)
  - Cache both website requests and query results
  - implement standalone server (like a DB server)
  - implement new language features like subqueries, functions,...
+
+#Use
+
+Please take a look at the [User Guide](https://github.com/plechi/ScrapeQL/wiki)
 
 #Sample
 
