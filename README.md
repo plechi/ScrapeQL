@@ -6,7 +6,7 @@ SQL-like query parser to extraxt structured data from websites.
 In general, it is better to use a dedicated API to process external data.
 
 **But...**
-...sometimes this is not possible and you need to extract data from HTML. This can be a very complicated Task, because you have to deal with
+...sometimes this is not possible and you need to extract data from HTML. This can be a very complicated task, because you have to deal with
  - untidy HTML
  - complex code to navigate though DOM
  - many loops, ifs,...
@@ -17,16 +17,15 @@ My motivation for this project came from the interest to learn ANTLR and the nee
 
 #Features
 
-Features I'm working on right now:
- - create a Query Language which is able to define website queries
- - Query websites and select the data you want (either with Java DSL or text queries)
- - Scrape Data using the command line
-
+Working features (or in testing state)
+ - Run queries from Java via DSL or String query
+ - Run queries via command line `ScrapeQL-cli`
+ - Rudimentary JDBC driver (just normal statements or prepared statements) `ScrapeQL-jdbc`
 
 Feature Backlog:
  - Map data to Java Beans (**WIP**)
- - Get data as JSON (for other languages than Java) (**WIP**)
- - Implement a (basic) JDBC driver to use with ORM frameworks
+ - Full Javadoc
+ - Extensive Query testing
  - Cache both website requests and query results
  - implement standalone server (like a DB server)
  - implement new language features like subqueries, new functions,...
