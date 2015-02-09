@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    
     <groupId>at.plechinger.scrapeql</groupId>
     <artifactId>scrapeql-base</artifactId>
     <version>0.1-SNAPSHOT</version>
+    
     <packaging>pom</packaging>
+    
     <modules>
         <module>ScrapeQL</module>
         <module>scrapeql-cli</module>
+        <module>ScrapeQL-jdbc</module>
     </modules>
     <dependencyManagement>
         <dependencies>
+            <!--Internal Dependencies-->
             <dependency>
-                <groupId>at.plechinger.scrapeql</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>scrapeql</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>at.plechinger.scrapeql</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>scrapeql-cli</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>scrapeql-jdbc</artifactId>
+                <version>${project.version}</version>
             </dependency>
             
+            <!--External Dependencies-->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
