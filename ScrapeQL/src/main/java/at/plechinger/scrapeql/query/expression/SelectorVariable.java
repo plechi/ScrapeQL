@@ -83,9 +83,10 @@ public class SelectorVariable implements Variable, RootAwareVariable {
 
         if (alias != null) {
             context.addVariable(alias, this);
-        }else{
-            context.addVariable("selector"+this.hashCode(), this);
         }
+//        else{
+//            context.addVariable("selector"+this.hashCode(), this);
+//        }
     }
 
 }

@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 public class ScrapeQLDriver implements java.sql.Driver{
     
     
-    public static final String PREFIX = "jdbc:scrapeql:";
+    public static final String PREFIX = "jdbc:scrapeql";
     
     static
     {

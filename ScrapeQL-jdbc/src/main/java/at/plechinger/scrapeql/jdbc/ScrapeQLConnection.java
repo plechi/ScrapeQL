@@ -64,6 +64,12 @@ public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Co
         this.url = url;
     }
 
+    public String getUrl() {
+        return url;
+    }
+    
+    
+
     @Override
     public Statement createStatement() throws SQLException {
         return new ScrapeQLStatement(this);
@@ -153,17 +159,17 @@ public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Co
 
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ScrapeQLDatabaseMetadata(this);
     }
 
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 
     @Override

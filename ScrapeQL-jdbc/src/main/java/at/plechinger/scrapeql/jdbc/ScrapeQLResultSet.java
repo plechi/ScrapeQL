@@ -23,6 +23,7 @@
  */
 package at.plechinger.scrapeql.jdbc;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Table;
 import java.io.InputStream;
 import java.io.Reader;
@@ -72,7 +73,7 @@ class ScrapeQLResultSet extends AbstractWrappable implements java.sql.ResultSet 
 
     ScrapeQLResultSet(Table<Integer, String, String> table) {
         this.table = table;
-        this.rowCount = table.size();
+        this.rowCount = table.rowKeySet().size();
 
         columns = new ArrayList<>(table.columnKeySet().size());
 
@@ -107,6 +108,7 @@ class ScrapeQLResultSet extends AbstractWrappable implements java.sql.ResultSet 
     }
 
     private String getCell(int row, String col) {
+        Preconditions.checkArgument(table.containsColumn(col),"Result does not contain column %s.",col);
         return table.get(row, col);
     }
 

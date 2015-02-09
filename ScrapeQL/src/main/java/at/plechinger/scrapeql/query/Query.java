@@ -33,6 +33,7 @@ import at.plechinger.scrapeql.query.statement.SelectEveryStatement;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -123,8 +124,14 @@ public class Query {
     public Table<Integer, String,String> executeTable(){
         Preconditions.checkArgument(context.getOutputVariables().size()>0,"No output variable is set.");
         
+        //execute everything
+        context.getLoadExpression().execute(context);
+        for (SelectStatement select : context.getSelects()) {
+            select.execute(context);
+        }
         
-        Table<Integer,String,String> table=HashBasedTable.create();
+        
+        Table<Integer,String,String> table=TreeBasedTable.create();
         
         //fetch first (ignore others if multiple outputs)
         String variableName=context.getOutputVariables().get(0);
