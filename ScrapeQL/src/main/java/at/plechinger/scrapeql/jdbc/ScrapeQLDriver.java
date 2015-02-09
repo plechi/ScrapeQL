@@ -95,7 +95,6 @@ public class ScrapeQLDriver implements java.sql.Driver{
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
         return new DriverPropertyInfo[]
                 {
-                        new DriverPropertyInfo("cache", info.getProperty("cache")),
                         new DriverPropertyInfo("cache", info.getProperty("cache"))
                 };
     }

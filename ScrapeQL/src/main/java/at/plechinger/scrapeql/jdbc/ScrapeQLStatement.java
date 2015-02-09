@@ -26,232 +26,266 @@ package at.plechinger.scrapeql.jdbc;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 
 /**
  *
  * @author lukas
  */
-public class ScrapeQLStatement implements java.sql.Statement{
+public class ScrapeQLStatement extends AbstractWrappable implements java.sql.Statement {
+
+    protected ScrapeQLConnection connection;
+    protected ScrapeQLResultSet resultSet;
+    protected SQLWarning sqlWarning;
+
+    ScrapeQLStatement(ScrapeQLConnection aThis) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @Override
     public ResultSet executeQuery(String sql) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        execute(sql);
+        return resultSet;
     }
 
     @Override
     public int executeUpdate(String sql) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("executeUpdate");
     }
 
     @Override
     public void close() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if ( resultSet != null )
+        {
+            resultSet.close();
+        }
+        connection = null;
+        resultSet = null;
+        sqlWarning = null;
     }
 
     @Override
     public int getMaxFieldSize() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("getMaxFieldSize" );
     }
 
     @Override
     public void setMaxFieldSize(int max) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported( "setMaxFieldSize" );
     }
 
     @Override
     public int getMaxRows() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported( "cancel" );
     }
 
     @Override
     public void setMaxRows(int max) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported( "setMaxRows" );
     }
 
     @Override
     public void setEscapeProcessing(boolean enable) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported( "setEscapeProcessing" );
     }
 
     @Override
     public int getQueryTimeout() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported( "getQueryTimeout" );
     }
 
     @Override
     public void setQueryTimeout(int seconds) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported( "setQueryTimeout" );
     }
 
     @Override
     public void cancel() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported( "cancel" );
     }
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return sqlWarning;
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        sqlWarning = null;
     }
 
     @Override
     public void setCursorName(String name) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("setCursorName" );
     }
 
     @Override
     public boolean execute(String sql) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            resultSet = connection.executeQuery(sql);
+            return true;
+        }
+        catch ( SQLWarning e )
+        {
+            if ( sqlWarning == null )
+            {
+                sqlWarning = e;
+            }
+            else
+            {
+                sqlWarning.setNextWarning( e );
+            }
+            throw e;
+        }
+        catch ( SQLException e )
+        {
+            throw e;
+        }
+        catch ( Throwable e )
+        {
+            throw new SQLException( e );
+        }
     }
 
     @Override
     public ResultSet getResultSet() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return resultSet;
     }
 
     @Override
     public int getUpdateCount() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("getUpdateCount");
     }
 
     @Override
     public boolean getMoreResults() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        resultSet = null;
+        return false;
     }
 
     @Override
     public void setFetchDirection(int direction) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("setFetchDirection");
     }
 
     @Override
     public int getFetchDirection() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ResultSet.FETCH_UNKNOWN;
     }
 
     @Override
     public void setFetchSize(int rows) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("setFetchSize");
     }
 
     @Override
     public int getFetchSize() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("getFetchSize");
     }
 
     @Override
     public int getResultSetConcurrency() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ResultSet.CONCUR_READ_ONLY;
     }
 
     @Override
     public int getResultSetType() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ResultSet.TYPE_FORWARD_ONLY;
     }
 
     @Override
     public void addBatch(String sql) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("addBatch");
     }
 
     @Override
     public void clearBatch() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("clearBatch");
     }
 
     @Override
     public int[] executeBatch() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("executeBatch");
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return connection;
     }
 
     @Override
     public boolean getMoreResults(int current) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getMoreResults();
     }
 
     @Override
     public ResultSet getGeneratedKeys() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("getGeneratedKeys");
     }
 
     @Override
     public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return executeUpdate(sql);
     }
 
     @Override
     public int executeUpdate(String sql, int[] columnIndexes) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return executeUpdate(sql);
     }
 
     @Override
     public int executeUpdate(String sql, String[] columnNames) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return executeUpdate(sql);
     }
 
     @Override
     public boolean execute(String sql, int autoGeneratedKeys) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return execute(sql);
     }
 
     @Override
     public boolean execute(String sql, int[] columnIndexes) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return execute(sql);
     }
 
     @Override
     public boolean execute(String sql, String[] columnNames) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return execute(sql);
     }
 
     @Override
     public int getResultSetHoldability() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ResultSet.CLOSE_CURSORS_AT_COMMIT;
     }
 
     @Override
     public boolean isClosed() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return connection == null;
     }
 
     @Override
     public void setPoolable(boolean poolable) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("setPoolable");
     }
 
     @Override
     public boolean isPoolable() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
     public void closeOnCompletion() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw notSupported("closeOnCompletion");
     }
 
     @Override
     public boolean isCloseOnCompletion() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected SQLFeatureNotSupportedException notSupported(String methodName) {
+        return new SQLFeatureNotSupportedException(methodName + " is not supported.");
     }
 
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

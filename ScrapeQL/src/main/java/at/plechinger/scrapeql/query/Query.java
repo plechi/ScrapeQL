@@ -30,6 +30,9 @@ import at.plechinger.scrapeql.query.statement.LoadStatement;
 import at.plechinger.scrapeql.query.statement.SelectStatement;
 import at.plechinger.scrapeql.query.statement.SelectFirstStatement;
 import at.plechinger.scrapeql.query.statement.SelectEveryStatement;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -85,6 +88,12 @@ public class Query {
         return variableBuilder;
     }
 
+    
+    
+    /**
+     * Default execution (eg. for JSON)
+     * @return 
+     */
     public Map<String, Object> execute() {
         //ececute load statement
         context.getLoadExpression().execute(context);
@@ -105,5 +114,39 @@ public class Query {
         }
 
         return resultMap;
+    }
+    
+    /**
+     * Single Row output (linke SQL RDBMS)
+     * @return 
+     */
+    public Table<Integer, String,String> executeTable(){
+        Preconditions.checkArgument(context.getOutputVariables().size()>0,"No output variable is set.");
+        
+        
+        Table<Integer,String,String> table=HashBasedTable.create();
+        
+        //fetch first (ignore others if multiple outputs)
+        String variableName=context.getOutputVariables().get(0);
+        Variable variable=context.getVariable(variableName);
+        
+        if(variable instanceof ListVariable){
+            
+            ListVariable<Map<String, String>> listVar=(ListVariable) variable;
+            
+            List<Map<String,String>> originalList=listVar.getList();
+            
+            for(int i=0;i<originalList.size();i++){
+               for(Map.Entry<String,String> cell:originalList.get(i).entrySet()){
+                   table.put(i, cell.getKey(), cell.getValue());
+               } 
+            }
+
+        }else{
+            table.put(0, variableName, variable.getValue());
+        }
+        
+        
+        return table;
     }
 }
