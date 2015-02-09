@@ -47,41 +47,31 @@ class DateFunction implements FunctionDefinition {
     @Override
     public Variable execute(QueryContext context, List<Variable> parameters, Element baseElement) {
         //parameter count must be 2 or 3
-        Preconditions.checkArgument(parameters.size() >= 2 && parameters.size() <= 3, "date(): argument count: %d", parameters.size());
-        Preconditions.checkArgument(parameters.get(1) instanceof StringVariable, "Second parameter must be a string.");
-        
-        
+        Preconditions.checkArgument(parameters.size() <= 2, "date(): argument count: %d", parameters.size());
+
         try {
+            Variable toFormat = parameters.get(0);
 
-            //parse input
-            Variable param0=parameters.get(0);
-            //execute input, because is could be a selector
-            if(param0 instanceof RootAwareVariable){
-                ((RootAwareVariable) param0).setRoot(baseElement);
-            }
-            
-            param0.execute(context);
-            
-            
-            Variable param1=parameters.get(1);
-            
-            
-            SimpleDateFormat input = new SimpleDateFormat(param1.getValue());
-
-            Date date = input.parse(param0.getValue());
-
-            //parse output
-            SimpleDateFormat outputFormat;
-
-            if (parameters.size() == 3) {
-                Preconditions.checkArgument(parameters.get(2) instanceof StringVariable, "Third parameter must be a string.");
-                Variable param2=parameters.get(3);
-                outputFormat = new SimpleDateFormat(param2.getValue());
-            } else {
-                outputFormat = new SimpleDateFormat(BASE_FORMAT);
+            if (toFormat instanceof RootAwareVariable) {
+                ((RootAwareVariable) toFormat).setRoot(baseElement);
             }
 
-            return new StringVariable(outputFormat.format(date));
+            toFormat.execute(context);
+
+            SimpleDateFormat format;
+            //is format parameter set?
+            if (parameters.size() == 2) {
+                Preconditions.checkArgument(parameters.get(1) instanceof StringVariable, "Second parameter must be a string.");
+                Variable param1 = parameters.get(1);
+               format = new SimpleDateFormat(param1.getValue());
+            }else{ //no format set, base format
+                format=new SimpleDateFormat(BASE_FORMAT);
+            }
+            
+            Date formatted=format.parse(toFormat.getValue());
+            
+            return new StringVariable(Long.toString(formatted.getTime()));
+
         } catch (ParseException ex) {
             return new StringVariable(parameters.get(0).getValue());
         }
