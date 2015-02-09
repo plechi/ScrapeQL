@@ -23,6 +23,8 @@
  */
 package at.plechinger.scrapeql.jdbc;
 
+import at.plechinger.scrapeql.parser.QueryParser;
+import at.plechinger.scrapeql.query.Query;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -46,32 +48,62 @@ import java.util.concurrent.Executor;
  *
  * @author lukas
  */
-public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Connection{
-    
+public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Connection {
+
     private String url;
     private boolean closed = false;
     private Properties properties = new Properties();
     private SQLWarning sqlWarnings;
-    
-    private Properties clientInfo=new Properties();
+
+    private Properties clientInfo = new Properties();
+
+    private QueryParser parser = new QueryParser();
 
     ScrapeQLConnection(String url, Properties properties) {
-        this.properties.putAll( properties );
-        this.url=url;
+        this.properties.putAll(properties);
+        this.url = url;
     }
 
     @Override
     public Statement createStatement() throws SQLException {
         return new ScrapeQLStatement(this);
     }
-    
-    
-    ScrapeQLResultSet executeQuery(String sql) throws SQLException{
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+    ScrapeQLResultSet executeQuery(String sql) throws SQLException {
+        try {
+
+            Query query = parser.parse(sql);
+            ScrapeQLResultSet rs = new ScrapeQLResultSet(query.executeTable());
+            return rs;
+        } catch (Throwable thr) {
+            throw new SQLException(thr);
+        }
     }
 
-    ScrapeQLResultSet executeQuery(String sql, Map<String, Object> params) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    ScrapeQLResultSet executeQuery(String sql, Map<Integer, Object> params) throws SQLException {
+        StringBuilder finalQuery = new StringBuilder();
+        int cursor = 0;
+        for (Object param : params.values()) {
+
+            int start = sql.indexOf("?", cursor);
+            if (start < 0) {
+                throw new SQLException("Invalid argument count in prepared statement.");
+            }
+            finalQuery.append(sql.substring(cursor, start));
+            finalQuery.append('"');
+            finalQuery.append(param);
+            finalQuery.append('"');
+            cursor = start + 1;
+        }
+
+        //there should be no more ? in prepared statement
+        if (sql.indexOf("?", cursor) >= 0) {
+            throw new SQLException("Invalid argument count in prepared statement.");
+        }
+
+        //rest of query
+        finalQuery.append(sql.substring(cursor));
+        return executeQuery(finalQuery.toString());
     }
 
     @Override
@@ -91,7 +123,7 @@ public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Co
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-       
+
     }
 
     @Override
@@ -101,17 +133,17 @@ public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Co
 
     @Override
     public void commit() throws SQLException {
-        
+
     }
 
     @Override
     public void rollback() throws SQLException {
-        
+
     }
 
     @Override
     public void close() throws SQLException {
-        closed=true;
+        closed = true;
     }
 
     @Override
@@ -146,7 +178,7 @@ public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Co
 
     @Override
     public void setTransactionIsolation(int level) throws SQLException {
-        
+
     }
 
     @Override
@@ -161,14 +193,14 @@ public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Co
 
     @Override
     public void clearWarnings() throws SQLException {
-        sqlWarnings=null;
+        sqlWarnings = null;
     }
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
         return createStatement();
     }
-    
+
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
         return null;
@@ -186,7 +218,7 @@ public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Co
 
     @Override
     public void setHoldability(int holdability) throws SQLException {
-       //do nothing
+        //do nothing
     }
 
     @Override
@@ -243,12 +275,11 @@ public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Co
     public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
         return prepareStatement(sql);
     }
-    
+
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-      return prepareStatement(sql);
+        return prepareStatement(sql);
     }
-
 
     @Override
     public Clob createClob() throws SQLException {
@@ -297,7 +328,7 @@ public class ScrapeQLConnection extends AbstractWrappable implements java.sql.Co
 
     @Override
     public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
-       return null;
+        return null;
     }
 
     @Override

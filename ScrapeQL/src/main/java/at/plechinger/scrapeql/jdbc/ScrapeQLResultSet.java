@@ -58,7 +58,7 @@ import java.util.Map;
  *
  * @author lukas
  */
-public class ScrapeQLResultSet extends AbstractWrappable implements java.sql.ResultSet {
+class ScrapeQLResultSet extends AbstractWrappable implements java.sql.ResultSet {
 
     private Table<Integer, String, String> table;
     private List<String> columns;
@@ -70,7 +70,7 @@ public class ScrapeQLResultSet extends AbstractWrappable implements java.sql.Res
 
     private boolean wasLastNull = false;
 
-    public ScrapeQLResultSet(Table<Integer, String, String> table) {
+    ScrapeQLResultSet(Table<Integer, String, String> table) {
         this.table = table;
         this.rowCount = table.size();
 

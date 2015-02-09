@@ -28,8 +28,8 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -38,7 +38,7 @@ import java.util.Map;
 public class ScrapeQLPreparedStatement extends AbstractScrapeQLPreparedStatement {
 
     private String sql;
-    private Map<String, Object> params = new HashMap<>();
+    private Map<Integer, Object> params = new TreeMap<>();
 
     public ScrapeQLPreparedStatement(ScrapeQLConnection connection, String sql) {
         super(connection);
@@ -63,7 +63,7 @@ public class ScrapeQLPreparedStatement extends AbstractScrapeQLPreparedStatement
     }
 
     private void add(int parameterIndex, Object value) {
-        params.put(Integer.toString(parameterIndex), value);
+        params.put(parameterIndex, value);
     }
 
     @Override

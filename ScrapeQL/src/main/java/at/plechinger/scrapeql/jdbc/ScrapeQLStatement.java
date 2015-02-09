@@ -33,14 +33,14 @@ import java.sql.SQLWarning;
  *
  * @author lukas
  */
-public class ScrapeQLStatement extends AbstractWrappable implements java.sql.Statement {
+class ScrapeQLStatement extends AbstractWrappable implements java.sql.Statement {
 
     protected ScrapeQLConnection connection;
     protected ScrapeQLResultSet resultSet;
     protected SQLWarning sqlWarning;
 
-    ScrapeQLStatement(ScrapeQLConnection aThis) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    ScrapeQLStatement(ScrapeQLConnection connection) {
+        this.connection=connection;
     }
 
     @Override
