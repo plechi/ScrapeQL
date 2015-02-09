@@ -10,7 +10,7 @@
     
     <modules>
         <module>ScrapeQL</module>
-        <module>scrapeql-cli</module>
+        <module>ScrapeQL-cli</module>
         <module>ScrapeQL-jdbc</module>
     </modules>
     <dependencyManagement>
