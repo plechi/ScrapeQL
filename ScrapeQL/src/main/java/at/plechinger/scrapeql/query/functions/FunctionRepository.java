@@ -50,6 +50,8 @@ public class FunctionRepository {
         define(new AttrFunction());
         define(new ConcatFunction());
         define(new DateFunction());
+        define(new SubstrFunction());
+        define(new TrimFunction());
     }
 
     private Map<String, FunctionDefinition> definedFunctions = new HashMap<>();
