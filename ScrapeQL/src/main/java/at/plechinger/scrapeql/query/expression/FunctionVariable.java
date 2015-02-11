@@ -42,14 +42,14 @@ public class FunctionVariable implements Variable, RootAwareVariable {
     private String alias;
 
     private Variable result = null;
-    
+
     private Element root;
 
     @Override
     public void setRoot(Element root) {
         this.root = root;
     }
-    
+
     public FunctionVariable(String functionName, List<Variable> parameters) {
         this(FunctionRepository.repository().getDefinedFunction(functionName), parameters);
     }
@@ -74,6 +74,11 @@ public class FunctionVariable implements Variable, RootAwareVariable {
 
     @Override
     public void execute(QueryContext context) {
+        for (Variable param : parameters) {
+            if (param instanceof RootAwareVariable) {
+                ((RootAwareVariable) param).setRoot(root);
+            }
+        }
         result = funcitonDefinition.execute(context, parameters, root);
         Preconditions.checkNotNull(result, "Function Result must not be null at function '%s'", funcitonDefinition.getClass().getName());
         if (alias != null) {

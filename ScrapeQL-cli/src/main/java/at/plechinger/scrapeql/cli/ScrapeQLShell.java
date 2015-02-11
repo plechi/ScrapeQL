@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.io.CharStreams;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public class ScrapeQLShell {
 
             System.out.println(outputString);
 
-        } catch (IOException e) {
+        } catch (Throwable e) {
             System.out.println(e.getMessage());
         }
     }

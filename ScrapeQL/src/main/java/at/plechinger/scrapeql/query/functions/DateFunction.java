@@ -52,10 +52,6 @@ class DateFunction implements FunctionDefinition {
         try {
             Variable toFormat = parameters.get(0);
 
-            if (toFormat instanceof RootAwareVariable) {
-                ((RootAwareVariable) toFormat).setRoot(baseElement);
-            }
-
             toFormat.execute(context);
 
             SimpleDateFormat format;

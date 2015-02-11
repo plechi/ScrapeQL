@@ -24,7 +24,6 @@
 package at.plechinger.scrapeql.query.functions;
 
 import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.expression.RootAwareVariable;
 import at.plechinger.scrapeql.query.expression.StringVariable;
 import at.plechinger.scrapeql.query.expression.Variable;
 import com.google.common.base.Preconditions;
@@ -44,9 +43,7 @@ class TrimFunction implements FunctionDefinition {
         Preconditions.checkArgument(parameters.size() ==1, "Wrong parameter count %d.", parameters.size());
 
         Variable input = parameters.get(0);
-        if (input instanceof RootAwareVariable) {
-            ((RootAwareVariable) input).setRoot(baseElement);
-        }
+        
         input.execute(context);
         return new StringVariable(input.getValue().trim());
     }

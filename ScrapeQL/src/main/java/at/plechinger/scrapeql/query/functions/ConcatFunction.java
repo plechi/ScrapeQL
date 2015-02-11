@@ -47,9 +47,6 @@ class ConcatFunction implements FunctionDefinition {
         StringBuilder builder = new StringBuilder();
 
         for (Variable var : parameters) {
-            if(var instanceof RootAwareVariable){
-                ((RootAwareVariable) var).setRoot(baseElement);
-            }
             var.execute(context);
             builder.append(var.getValue());
         }

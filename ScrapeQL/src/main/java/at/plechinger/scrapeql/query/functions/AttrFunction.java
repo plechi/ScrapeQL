@@ -49,7 +49,6 @@ class AttrFunction implements FunctionDefinition {
         Preconditions.checkArgument(parameters.get(1) instanceof StringVariable, "Second parameter must be a string.");
 
         SelectorVariable selector = (SelectorVariable) parameters.get(0);
-        selector.setRoot(baseElement);
         selector.execute(context);
         Element elem = selector.getElement();
 

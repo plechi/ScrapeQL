@@ -45,9 +45,6 @@ class SubstrFunction implements FunctionDefinition {
         Preconditions.checkArgument(parameters.get(1) instanceof StringVariable, "Parameter 2 must be a String value");
 
         Variable input = parameters.get(0);
-        if (input instanceof RootAwareVariable) {
-            ((RootAwareVariable) input).setRoot(baseElement);
-        }
 
         input.execute(context);
         String result = input.getValue();
@@ -69,7 +66,7 @@ class SubstrFunction implements FunctionDefinition {
             try {
                 end = Integer.parseInt(parameter2);
             } catch (NumberFormatException e) {
-                end = result.indexOf(parameter2, start)+parameter2.length();
+                end = result.indexOf(parameter2, start);
             }
         }
 
