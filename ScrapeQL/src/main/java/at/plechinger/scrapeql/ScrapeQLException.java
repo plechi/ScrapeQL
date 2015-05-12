@@ -21,30 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query;
-
-import at.plechinger.scrapeql.query.expression.VariableBuilder;
-import org.junit.Before;
+package at.plechinger.scrapeql;
 
 /**
  *
- * @author Lukas Plechinger
+ * @author lukas
  */
-public abstract class AbstractFunctionExecutionTest {
+public class ScrapeQLException extends Exception {
 
-    protected Query query;
-    protected VariableBuilder v;
-
-    @Before
-    public void init() {
-        query = new Query();
-        v = query.getVariableBuilder();
-        query.load("file:src/test/resources/TestQueries.html");
-        query.output("test");
+    /**
+     * Creates a new instance of <code>ScrapeQLException</code> without detail
+     * message.
+     */
+    public ScrapeQLException() {
     }
 
-    protected Object result() {
-        return query.execute().get("test");
+    /**
+     * Constructs an instance of <code>ScrapeQLException</code> with the
+     * specified detail message.
+     *
+     * @param msg the detail message.
+     */
+    public ScrapeQLException(String msg) {
+        super(msg);
     }
-
 }

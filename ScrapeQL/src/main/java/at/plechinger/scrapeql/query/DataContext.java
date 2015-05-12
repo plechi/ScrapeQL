@@ -21,22 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.functions;
 
-import at.plechinger.scrapeql.query.AbstractFunctionExecutionTest;
-import org.junit.Assert;
-import org.junit.Test;
+package at.plechinger.scrapeql.query;
+
+import com.google.common.base.Optional;
 
 /**
- *
- * @author Lukas Plechinger
+ * Created by lukas on 12.05.15.
  */
-public class ConcatFunctionTest extends AbstractFunctionExecutionTest {
+public class DataContext {
 
-    @Test
-    public void testExecute() {
-        query.select(v.function("concat", v.selector("h1"), v.selector("h2")).as("test")).from("root");
-        Assert.assertEquals("Header1Header2", result());
-    }
 
+    /**
+     * Name of the Context, null means default
+     */
+    private String contextName=null;
 }

@@ -21,22 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql.query.functions;
 
-import at.plechinger.scrapeql.query.AbstractFunctionExecutionTest;
-import org.junit.Assert;
-import org.junit.Test;
+package at.plechinger.scrapeql.query.expression;
 
 /**
- *
- * @author Lukas Plechinger
+ * Created by lukas on 12.05.15.
  */
-public class AttrFunctionTest extends AbstractFunctionExecutionTest {
+public interface ContextAwareExpression extends Expression{
 
-    @Test
-    public void testExecute() {
-        query.select(v.function("attr", v.selector("a"), v.string("href")).as("test")).from("root");
-        Assert.assertEquals("link", result());
-    }
-
+    public <T extends ContextAwareExpression> T ctx(String contextAlias);
 }
