@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package at.plechinger.scrapeql;
+package at.plechinger.scrapeql.relation;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;

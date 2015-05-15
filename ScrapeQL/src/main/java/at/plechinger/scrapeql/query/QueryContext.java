@@ -24,6 +24,7 @@
 
 package at.plechinger.scrapeql.query;
 
+import at.plechinger.scrapeql.query.datacontext.DataContext;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

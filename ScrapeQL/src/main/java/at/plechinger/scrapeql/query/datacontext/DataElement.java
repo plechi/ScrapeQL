@@ -38,4 +38,8 @@ public class DataElement<T> {
     public T getOriginalElement() {
         return originalElement;
     }
+
+    public Class<T> getElementType(){
+        return (Class<T>) originalElement.getClass();
+    }
 }

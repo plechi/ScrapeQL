@@ -24,8 +24,13 @@
 
 package at.plechinger.scrapeql.query.datacontext;
 
+import at.plechinger.scrapeql.query.DataType;
 import at.plechinger.scrapeql.query.expression.Expression;
+import at.plechinger.scrapeql.query.expression.Variable;
+import com.google.common.base.Preconditions;
+import org.jsoup.nodes.Element;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -35,11 +40,28 @@ public class DataContext {
 
     private String name;
 
-    private Expression parameter;
+    private Variable parameter;
 
-    public DataContext(Expression parameter, String name) {
+
+    private Element rootElement;
+
+    public DataContext(Variable parameter, String name) {
         this.parameter=parameter;
         this.name=name;
+    }
+
+
+    private void loadDataContext(){
+
+        //check type
+        Preconditions.checkArgument(DataType.STRING.equals(parameter.getType())
+        || DataType.ELEMENT.equals(parameter.getType()));
+
+
+    }
+
+    public List<DataElement> selector(String selector){
+        return null;
     }
 
 }

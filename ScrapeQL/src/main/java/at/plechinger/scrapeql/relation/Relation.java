@@ -22,18 +22,17 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query;
+package at.plechinger.scrapeql.relation;
 
-import com.google.common.base.Optional;
+import at.plechinger.scrapeql.query.expression.Variable;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 /**
- * Created by lukas on 12.05.15.
+ * Created by lukas on 15.05.15.
  */
-public class DataContext {
+public class Relation {
 
 
-    /**
-     * Name of the Context, null means default
-     */
-    private String contextName=null;
+    Table<Long,String,Variable> table;
 }

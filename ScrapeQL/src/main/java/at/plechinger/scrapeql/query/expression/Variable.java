@@ -29,24 +29,36 @@ import at.plechinger.scrapeql.query.DataType;
 /**
  * Created by lukas on 12.05.15.
  */
-public class Variable {
+public class Variable<T> {
+
+    private T value;
+
+    private Class<? extends T> valueClass=null;
 
 
-    private String value;
+    private DataType type;
 
-    public Variable(String input){
-
+    public Variable(T value){
+        this.value=value;
+        if(value!=null){
+            this.valueClass=(Class<? extends T>) value.getClass();
+        }
+        type=DataType.determine(valueClass);
     }
 
-    public Variable(String input, DataType type){
-
+    public Class<? extends T> getValueClass() {
+        return valueClass;
     }
 
-    public Variable(Object value){
-        Class<?> clazz=value.getClass();
-
-
-
+    public T getValue() {
+        return value;
     }
 
+    public boolean isNull(){
+        return value!=null;
+    }
+
+    public DataType getType() {
+        return type;
+    }
 }

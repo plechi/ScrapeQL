@@ -45,7 +45,8 @@ public enum DataType {
      */
     BOOL(Pattern.compile("(true|false)",Pattern.CASE_INSENSITIVE), Boolean.class),
     ELEMENT(DataElement.class),
-    DATE(Date.class);
+    DATE(Date.class),
+    NULL;
 
     public Class<?> getInternalType() {
         return internalType;
@@ -72,6 +73,8 @@ public enum DataType {
         this.internalType = internalType;
     }
 
+    private DataType(){}
+
     public static DataType determine(String input) {
         for(DataType type:values()){
             //string is default
@@ -85,6 +88,10 @@ public enum DataType {
     }
 
     public static DataType determine(Class<?> clazz){
+        if(clazz==null){
+            return NULL;
+        }
+
         for(DataType type:values()){
             //string is default
             if(type.internalType.equals(clazz)){

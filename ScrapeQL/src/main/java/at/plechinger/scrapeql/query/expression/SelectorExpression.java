@@ -25,18 +25,32 @@
 package at.plechinger.scrapeql.query.expression;
 
 import at.plechinger.scrapeql.query.QueryContext;
+import at.plechinger.scrapeql.query.datacontext.DataContext;
+import at.plechinger.scrapeql.query.datacontext.DataElement;
+
+import java.util.List;
 
 /**
  * Created by lukas on 12.05.15.
  */
 public class SelectorExpression extends AbstractContextAwareExpression implements ContextAwareExpression{
 
-    public SelectorExpression(String selector) {
+    private String selector;
 
+    public SelectorExpression(String selector) {
+        this.selector=selector;
     }
 
     @Override
     public Variable express(QueryContext ctx) {
-        return null;
+        DataContext dctx=ctx.getDataContext(contextAlias);
+        List<DataElement> dataElements=dctx.selector(selector);
+        DataElement value=null;
+
+        //always get first
+        if(dataElements!=null && !dataElements.isEmpty()){
+            value=dataElements.get(0);
+        }
+        return new Variable<DataElement>(value);
     }
 }
