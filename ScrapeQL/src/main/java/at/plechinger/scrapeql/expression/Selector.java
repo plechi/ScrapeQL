@@ -22,43 +22,40 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query.expression;
+package at.plechinger.scrapeql.expression;
 
-import at.plechinger.scrapeql.query.DataType;
+
+import at.plechinger.scrapeql.query.DataContext;
+import at.plechinger.scrapeql.query.QueryContext;
+import org.jsoup.nodes.Element;
 
 /**
- * Created by lukas on 12.05.15.
+ * Created by lukas on 15.05.15.
  */
-public class Variable<T> {
+public class Selector extends AbstractNamedExpression<Element> {
 
-    private T value;
+    private Expression<String> selector;
 
-    private Class<? extends T> valueClass=null;
+    private String dataContext;
 
-
-    private DataType type;
-
-    public Variable(T value){
-        this.value=value;
-        if(value!=null){
-            this.valueClass=(Class<? extends T>) value.getClass();
-        }
-        type=DataType.determine(valueClass);
+    public Selector(Expression<String> selector) {
+        super("$");
+        this.selector=selector;
     }
 
-    public Class<? extends T> getValueClass() {
-        return valueClass;
+    public Selector(Expression<String> selector, String dataContext) {
+       this(selector);
+        this.dataContext=dataContext;
     }
 
-    public T getValue() {
-        return value;
+    @Override
+    public Variable<Element> execute(QueryContext queryContext) {
+        DataContext ctx=queryContext.getDataContext(dataContext);
+        return ctx.select(selector.execute(queryContext));
     }
 
-    public boolean isNull(){
-        return value!=null;
-    }
-
-    public DataType getType() {
-        return type;
+    public Selector ctx(String dataContext) {
+        this.dataContext=dataContext;
+        return this;
     }
 }

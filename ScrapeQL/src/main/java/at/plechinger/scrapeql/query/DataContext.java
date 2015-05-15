@@ -24,25 +24,54 @@
 
 package at.plechinger.scrapeql.query;
 
+import at.plechinger.scrapeql.HtmlLoader;
 import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.expression.Selector;
-import com.google.common.collect.Lists;
-
-import java.util.List;
+import at.plechinger.scrapeql.expression.Variable;
+import com.google.common.base.Preconditions;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * Created by lukas on 15.05.15.
  */
-public class Query {
-    private List<DataContext> dataContextList= Lists.newLinkedList();
+public class DataContext{
 
-    public Query select(Expression... expressions) {
+    private Element rootElement=null;
+
+    private String contextName=null;
+
+    private Expression<String> url;
+
+    public DataContext(Expression<String> url){
+        this.url=url;
+    }
+
+    public DataContext as(String alias){
+        this.contextName=alias;
         return this;
     }
 
+    public String getName(){
+        return contextName;
+    }
 
-    public Query from(DataContext dataContext){
-        dataContextList.add(dataContext);
-        return this;
+    public Variable<Element> select(Variable<String> selector) {
+        Preconditions.checkArgument(!selector.isNull(),"Selector must not be null");
+
+        Elements elements=rootElement.select(selector.getValue());
+        if(elements!=null && !elements.isEmpty()){
+            return new Variable<Element>(elements.first());
+        }else{
+            return null;
+        }
+    }
+
+    public void load(QueryContext ctx){
+        Variable<String> urlVariable=url.execute(null);
+        String html=HtmlLoader.getLoader().load(urlVariable.getValue());
+        Document doc=Jsoup.parse(html);
+        rootElement=doc.select(":root").first();
     }
 }

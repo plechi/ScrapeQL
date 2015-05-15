@@ -24,11 +24,11 @@
 
 package at.plechinger.scrapeql;
 
+import at.plechinger.scrapeql.expression.Selector;
+import at.plechinger.scrapeql.expression.Variable;
+import at.plechinger.scrapeql.expression.VariableExpression;
+import at.plechinger.scrapeql.query.DataContext;
 import at.plechinger.scrapeql.query.Query;
-import at.plechinger.scrapeql.query.datacontext.DataContext;
-import at.plechinger.scrapeql.query.expression.SelectorExpression;
-import at.plechinger.scrapeql.query.expression.Variable;
-import at.plechinger.scrapeql.query.expression.VariableExpression;
 import org.junit.Test;
 
 /**
@@ -38,7 +38,7 @@ public class ExecutionTemplate {
 
     @Test
     public void testQuery(){
-        new Query().select(new SelectorExpression("selector").ctx("dataContext").as("alias"))
-                .from(new DataContext(new VariableExpression(new Variable("parameters")),"dataContext"));
+        new Query().select(new Selector(new VariableExpression<String>(new Variable<String>("selector"))).ctx("dataContext"))
+                .from(new DataContext(new VariableExpression<String>(new Variable<String>("parameters"))).as("dataContext"));
     }
 }

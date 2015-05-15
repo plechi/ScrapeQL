@@ -22,24 +22,24 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query.datacontext;
+package at.plechinger.scrapeql.expression;
 
 /**
- * Created by lukas on 12.05.15.
+ * Created by lukas on 15.05.15.
  */
-public class DataElement<T> {
+public class Variable<T> {
 
-    private T originalElement;
+    private T value;
 
-    public DataElement(T originalElement){
-        this.originalElement=originalElement;
+    public Variable(T value){
+        this.value=value;
     }
 
-    public T getOriginalElement() {
-        return originalElement;
+    public T getValue() {
+        return value;
     }
 
-    public Class<T> getElementType(){
-        return (Class<T>) originalElement.getClass();
+    public boolean isNull() {
+        return value==null;
     }
 }

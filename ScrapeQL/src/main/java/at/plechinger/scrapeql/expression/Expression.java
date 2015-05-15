@@ -22,23 +22,16 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query.expression;
+package at.plechinger.scrapeql.expression;
 
-import at.plechinger.scrapeql.query.DataType;
 import at.plechinger.scrapeql.query.QueryContext;
 
 /**
- * Created by lukas on 12.05.15.
+ * Created by lukas on 15.05.15.
  */
-public class VariableExpression extends AbstractContextAwareExpression implements ContextAwareExpression{
+public interface Expression<T> {
 
-    private Variable var;
-    public VariableExpression(Variable var){
-        this.var=var;
-    }
 
-    @Override
-    public Variable express(QueryContext ctx) {
-        return var;
-    }
+    public Variable<T> execute(QueryContext queryContext);
+
 }

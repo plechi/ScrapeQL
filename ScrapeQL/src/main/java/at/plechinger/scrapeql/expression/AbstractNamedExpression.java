@@ -22,35 +22,21 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query.expression;
-
-import at.plechinger.scrapeql.query.QueryContext;
-import at.plechinger.scrapeql.query.datacontext.DataContext;
-import at.plechinger.scrapeql.query.datacontext.DataElement;
-
-import java.util.List;
+package at.plechinger.scrapeql.expression;
 
 /**
- * Created by lukas on 12.05.15.
+ * Created by lukas on 15.05.15.
  */
-public class SelectorExpression extends AbstractContextAwareExpression implements ContextAwareExpression{
+public abstract class AbstractNamedExpression<T>  implements NamedExpression<T> {
 
-    private String selector;
+    private final String symbol;
 
-    public SelectorExpression(String selector) {
-        this.selector=selector;
+    protected AbstractNamedExpression(String symbol) {
+        this.symbol = symbol.toLowerCase();
     }
 
     @Override
-    public Variable express(QueryContext ctx) {
-        DataContext dctx=ctx.getDataContext(contextAlias);
-        List<DataElement> dataElements=dctx.selector(selector);
-        DataElement value=null;
-
-        //always get first
-        if(dataElements!=null && !dataElements.isEmpty()){
-            value=dataElements.get(0);
-        }
-        return new Variable<DataElement>(value);
+    public String getSymbol() {
+        return symbol;
     }
 }

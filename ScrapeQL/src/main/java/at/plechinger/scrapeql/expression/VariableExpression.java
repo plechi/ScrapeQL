@@ -22,46 +22,22 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query.datacontext;
+package at.plechinger.scrapeql.expression;
 
-import at.plechinger.scrapeql.query.DataType;
-import at.plechinger.scrapeql.query.expression.Expression;
-import at.plechinger.scrapeql.query.expression.Variable;
-import com.google.common.base.Preconditions;
-import org.jsoup.nodes.Element;
-
-import java.util.List;
-import java.util.Optional;
+import at.plechinger.scrapeql.query.QueryContext;
 
 /**
- * Created by lukas on 12.05.15.
+ * Created by lukas on 15.05.15.
  */
-public class DataContext {
+public class VariableExpression<T> implements Expression<T> {
 
-    private String name;
-
-    private Variable parameter;
-
-
-    private Element rootElement;
-
-    public DataContext(Variable parameter, String name) {
-        this.parameter=parameter;
-        this.name=name;
+    private Variable<T> var;
+    public VariableExpression(Variable<T> var) {
+        this.var=var;
     }
 
-
-    private void loadDataContext(){
-
-        //check type
-        Preconditions.checkArgument(DataType.STRING.equals(parameter.getType())
-        || DataType.ELEMENT.equals(parameter.getType()));
-
-
+    @Override
+    public Variable<T> execute(QueryContext queryContext) {
+        return var;
     }
-
-    public List<DataElement> selector(String selector){
-        return null;
-    }
-
 }

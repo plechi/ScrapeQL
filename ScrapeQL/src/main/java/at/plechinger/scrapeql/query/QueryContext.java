@@ -24,25 +24,12 @@
 
 package at.plechinger.scrapeql.query;
 
-import at.plechinger.scrapeql.query.datacontext.DataContext;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import java.util.List;
-import java.util.Map;
-
 /**
- * Created by lukas on 12.05.15.
+ * Created by lukas on 15.05.15.
  */
 public class QueryContext {
 
-    private Map<String,DataContext> dataContexts = Maps.newHashMap();
-
     public DataContext getDataContext(String name){
-        Preconditions.checkArgument(dataContexts.containsKey(name),"Data Context \"%s\" does not exist.",name);
-
-        return dataContexts.get(name);
+        return null;
     }
-
 }

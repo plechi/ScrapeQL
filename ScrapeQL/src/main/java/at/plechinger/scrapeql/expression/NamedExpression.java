@@ -22,12 +22,11 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query.expression;
+package at.plechinger.scrapeql.expression;
 
 /**
- * Created by lukas on 12.05.15.
+ * Created by lukas on 15.05.15.
  */
-public interface ContextAwareExpression extends Expression{
-
-    public <T extends ContextAwareExpression> T ctx(String contextAlias);
+public interface NamedExpression<T> extends Expression<T> {
+    public String getSymbol();
 }
