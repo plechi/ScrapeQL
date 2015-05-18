@@ -22,56 +22,39 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query;
+package at.plechinger.scrapeql.expression;
 
-import at.plechinger.scrapeql.HtmlLoader;
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.expression.Variable;
+
 import com.google.common.base.Preconditions;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
  * Created by lukas on 15.05.15.
  */
-public class DataContext{
+public class SelectorExpression extends AbstractNamedExpression<Element> {
 
-    private Element rootElement=null;
+    private Expression<String> selector;
 
-    private String contextName=null;
+    private String dataContext;
 
-    private Expression<String> url;
-
-    public DataContext(Expression<String> url){
-        this.url=url;
+    public SelectorExpression(Expression<String> selector) {
+        super("$");
+        this.selector=selector;
     }
 
-    public DataContext as(String alias){
-        this.contextName=alias;
+    public SelectorExpression(Expression<String> selector, String dataContext) {
+       this(selector);
+        this.dataContext=dataContext;
+    }
+
+    @Override
+    public Variable<Element> execute(ExpressionContext expressionContext) {
+        Preconditions.checkArgument(expressionContext.getDataContextName().equals(dataContext),"You just can select from one context at a time");
+        return expressionContext.select(selector.execute(expressionContext));
+    }
+
+    public SelectorExpression ctx(String dataContext) {
+        this.dataContext=dataContext;
         return this;
-    }
-
-    public String getName(){
-        return contextName;
-    }
-
-    public Variable<Element> select(Variable<String> selector) {
-        Preconditions.checkArgument(!selector.isNull(),"Selector must not be null");
-
-        Elements elements=rootElement.select(selector.getValue());
-        if(elements!=null && !elements.isEmpty()){
-            return new Variable<Element>(elements.first());
-        }else{
-            return null;
-        }
-    }
-
-    public void load(QueryContext ctx){
-        Variable<String> urlVariable=url.execute(null);
-        String html=HtmlLoader.getLoader().load(urlVariable.getValue());
-        Document doc=Jsoup.parse(html);
-        rootElement=doc.select(":root").first();
     }
 }

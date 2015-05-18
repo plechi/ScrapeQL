@@ -24,7 +24,8 @@
 
 package at.plechinger.scrapeql.expression;
 
-import at.plechinger.scrapeql.query.QueryContext;
+
+import com.google.common.base.Optional;
 
 /**
  * Created by lukas on 15.05.15.
@@ -32,6 +33,6 @@ import at.plechinger.scrapeql.query.QueryContext;
 public interface Expression<T> {
 
 
-    public Variable<T> execute(QueryContext queryContext);
+    public Variable<T> execute(ExpressionContext expressionContext);
 
 }

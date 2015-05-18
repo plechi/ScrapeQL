@@ -42,4 +42,6 @@ public class Variable<T> {
     public boolean isNull() {
         return value==null;
     }
+
+    public static final Variable NULL=new Variable(null);
 }

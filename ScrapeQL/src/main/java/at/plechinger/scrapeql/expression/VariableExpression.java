@@ -24,7 +24,6 @@
 
 package at.plechinger.scrapeql.expression;
 
-import at.plechinger.scrapeql.query.QueryContext;
 
 /**
  * Created by lukas on 15.05.15.
@@ -37,7 +36,7 @@ public class VariableExpression<T> implements Expression<T> {
     }
 
     @Override
-    public Variable<T> execute(QueryContext queryContext) {
+    public Variable<T> execute(ExpressionContext expressionContext) {
         return var;
     }
 }

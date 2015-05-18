@@ -24,38 +24,37 @@
 
 package at.plechinger.scrapeql.expression;
 
-
-import at.plechinger.scrapeql.query.DataContext;
-import at.plechinger.scrapeql.query.QueryContext;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 18.05.15.
  */
-public class Selector extends AbstractNamedExpression<Element> {
+public class ExpressionContext {
 
-    private Expression<String> selector;
+    private String dataContextName;
 
-    private String dataContext;
+    private Element rootElement;
 
-    public Selector(Expression<String> selector) {
-        super("$");
-        this.selector=selector;
+    public ExpressionContext(String dataContextName, Element rootElement) {
+        this.dataContextName = dataContextName;
+        this.rootElement = rootElement;
     }
 
-    public Selector(Expression<String> selector, String dataContext) {
-       this(selector);
-        this.dataContext=dataContext;
+    public String getDataContextName() {
+        return dataContextName;
     }
 
-    @Override
-    public Variable<Element> execute(QueryContext queryContext) {
-        DataContext ctx=queryContext.getDataContext(dataContext);
-        return ctx.select(selector.execute(queryContext));
-    }
+    public Variable<Element> select(Variable<String> query){
+        if(query.isNull()){
+            return Variable.NULL;
+        }
 
-    public Selector ctx(String dataContext) {
-        this.dataContext=dataContext;
-        return this;
+        Elements select=rootElement.select(query.getValue());
+
+        if(!select.isEmpty()){
+            return new Variable<>(select.first());
+        }
+        return Variable.NULL;
     }
 }

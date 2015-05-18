@@ -24,15 +24,61 @@
 
 package at.plechinger.scrapeql.relation;
 
-import at.plechinger.scrapeql.query.expression.Variable;
+import at.plechinger.scrapeql.expression.Variable;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 18.05.15.
  */
 public class Relation {
 
+    private Table<Integer, String, Variable> relation=HashBasedTable.create();
+    private Set<String> columns=new LinkedHashSet<String>();
+    private int rowNum=0;
 
-    Table<Long,String,Variable> table;
+    public void addRow(Map<String,Variable> row){
+        for(Map.Entry<String,Variable> entry:row.entrySet()){
+            columns.add(entry.getKey());
+            relation.put(rowNum,entry.getKey(),entry.getValue());
+        }
+
+        rowNum++;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder print=new StringBuilder();
+        StringBuilder builder=new StringBuilder();
+
+        for (int i = 0; i < columns.size(); i++) {
+            print.append("%s\t");
+        }
+
+        builder.append(String.format(print.toString(),columns.toArray(new String[columns.size()])));
+        builder.append('\n');
+
+        for (int i = 0; i < rowNum; i++) {
+
+            Map<String,Variable> ro=relation.row(i);
+            for(String col:columns){
+                Variable variable=ro.get(col);
+
+                if(variable!=null){
+                    builder.append(variable.getValue());
+                }else{
+                 builder.append("NULL");
+                }
+                builder.append('\t');
+
+            }
+            builder.append('\n');
+        }
+
+        return builder.toString();
+    }
 }

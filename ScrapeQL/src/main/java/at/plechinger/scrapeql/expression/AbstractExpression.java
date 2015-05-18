@@ -22,27 +22,10 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query;
-
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.expression.Selector;
-import com.google.common.collect.Lists;
-
-import java.util.List;
+package at.plechinger.scrapeql.expression;
 
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 18.05.15.
  */
-public class Query {
-    private List<DataContext> dataContextList= Lists.newLinkedList();
-
-    public Query select(Expression... expressions) {
-        return this;
-    }
-
-
-    public Query from(DataContext dataContext){
-        dataContextList.add(dataContext);
-        return this;
-    }
+public class AbstractExpression {
 }

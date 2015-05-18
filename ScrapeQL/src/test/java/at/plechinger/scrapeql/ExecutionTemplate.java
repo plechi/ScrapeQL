@@ -24,12 +24,16 @@
 
 package at.plechinger.scrapeql;
 
-import at.plechinger.scrapeql.expression.Selector;
-import at.plechinger.scrapeql.expression.Variable;
-import at.plechinger.scrapeql.expression.VariableExpression;
-import at.plechinger.scrapeql.query.DataContext;
-import at.plechinger.scrapeql.query.Query;
+import at.plechinger.scrapeql.expression.*;
+import at.plechinger.scrapeql.relation.Relation;
+import at.plechinger.scrapeql.relation.RelationBuilder;
+import com.google.common.base.Charsets;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.Arrays;
 
 /**
  * Created by lukas on 12.05.15.
@@ -38,7 +42,25 @@ public class ExecutionTemplate {
 
     @Test
     public void testQuery(){
-        new Query().select(new Selector(new VariableExpression<String>(new Variable<String>("selector"))).ctx("dataContext"))
-                .from(new DataContext(new VariableExpression<String>(new Variable<String>("parameters"))).as("dataContext"));
+      /*  new Query().select(new Selector(new VariableExpression<String>(new Variable<String>("selector"))).ctx("dataContext"))
+                .from(new DataContext(new VariableExpression<String>(new Variable<String>("parameters"))).as("dataContext"));*/
+    }
+
+
+    @Test
+    public void testRelation() throws Exception{
+
+        File f=new File("ScrapeQL/src/test/resources/TestQueries.html");
+
+        System.out.println("File: "+f.getAbsolutePath());
+        Document document= Jsoup.parse(f, Charsets.UTF_8.toString());
+
+        RelationBuilder builder=new RelationBuilder(document.select("tbody>tr"),
+                Arrays.asList((Expression)new AliasExpression<>(new SelectorExpression(new VariableExpression<String>(new Variable<String>("td.ts"))).ctx("test"),"ts"),
+                (Expression)new AliasExpression<>(new SelectorExpression(new VariableExpression<String>(new Variable<String>("td:not(.ts):eq(1)"))).ctx("test"),"ts1")));
+
+        Relation relation=builder.build();
+
+        System.out.println(relation.toString());
     }
 }

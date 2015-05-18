@@ -22,14 +22,29 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query;
+package at.plechinger.scrapeql.expression;
+
+import com.google.common.base.Optional;
 
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 18.05.15.
  */
-public class QueryContext {
+public class AliasExpression<T> implements Expression<T> {
 
-    public DataContext getDataContext(String name){
-        return null;
+    private final Expression<T> aliasExpression;
+    private final Optional<String> alias;
+
+    public AliasExpression(Expression<T> aliasExpression, String alias) {
+        this.aliasExpression = aliasExpression;
+        this.alias = Optional.of(alias);
+    }
+
+    public Optional<String> getAlias(){
+        return alias;
+    }
+
+    @Override
+    public Variable<T> execute(ExpressionContext expressionContext) {
+        return aliasExpression.execute(expressionContext);
     }
 }
