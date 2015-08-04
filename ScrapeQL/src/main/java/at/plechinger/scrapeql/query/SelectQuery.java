@@ -27,6 +27,8 @@ package at.plechinger.scrapeql.query;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.*;
+import at.plechinger.scrapeql.filter.Equals;
+import at.plechinger.scrapeql.filter.Filter;
 import at.plechinger.scrapeql.function.FunctionRepository;
 import at.plechinger.scrapeql.function.impl.Attr;
 import at.plechinger.scrapeql.function.impl.Concat;
@@ -38,6 +40,7 @@ import at.plechinger.scrapeql.relation.Selector;
 import at.plechinger.scrapeql.type.StringValue;
 import at.plechinger.scrapeql.type.Value;
 import at.plechinger.scrapeql.util.Timer;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import java.text.ParseException;
@@ -52,12 +55,19 @@ public class SelectQuery {
 
     private List<RelationExpression> relations = Lists.newLinkedList();
 
+    private Optional<Filter> where=Optional.absent();
+
     public SelectQuery(Expression... expressions) {
         this.expressions = Lists.newArrayList(expressions);
     }
 
     public SelectQuery from(RelationExpression... relations) {
         this.relations.addAll(Lists.newArrayList(relations));
+        return this;
+    }
+
+    public SelectQuery where(Filter filter){
+        this.where=Optional.fromNullable(filter);
         return this;
     }
 
@@ -87,16 +97,24 @@ public class SelectQuery {
 
         //relational "projection"
         Relation finalRelation = new Relation();
-        for (int row = 0; row < joinRelation.rows(); row++) {
 
+        timer.stop();
+        int finalRow=0;
+        for (int row = 0; row < joinRelation.rows(); row++) {
             int column = 0;
             context.setColumns(joinRelation.getRow(row));
+
+            if(where.isPresent() && !where.get().filter(context)){
+                continue;
+            }
+
+
             for (Expression exp : expressions) {
                 if (!exp.getClass().isAssignableFrom(StarExpression.class)) {
                     Value result = exp.evaluate(context);
 
                     String columnName = (result.getVariableName() != null) ? result.getVariableName() : "column_" + column;
-                    finalRelation.set(row, columnName, result);
+                    finalRelation.set(finalRow, columnName, result);
                     column++;
                 }
             }
@@ -104,12 +122,14 @@ public class SelectQuery {
             for (StarExpression stex : starExpressions) {
                 for (String col : joinRelation.getColumns()) {
                     if (stex.isVisible(col)) {
-                        finalRelation.set(row, col, joinRelation.getRow(row).get(col));
+                        finalRelation.set(finalRow, col, joinRelation.getRow(row).get(col));
                         column++;
                     }
                 }
             }
+            finalRow++;
         }
+        System.out.println("projected in " + timer.stop());
         context.clearColumns();
 
         System.out.println(finalRelation.toPrettyString());
@@ -124,28 +144,22 @@ public class SelectQuery {
         FunctionRepository.instance().register(new Lower());
 
 
-        SelectQuery query = new SelectQuery(new AliasExpression(
-                new FunctionExpression("lower",
-                new FunctionExpression("CONCAT",
-                        new VariableExpression("tracks.title"),
-                        new ValueExpression(new StringValue(" test ")),
-                        new VariableExpression("tracks1.time")
-                )), "concat"
-        ),
+        SelectQuery query = new SelectQuery(
+                new AliasExpression(
                 new FunctionExpression("date_format", new VariableExpression("tracks1.time"),
                         new ValueExpression(new StringValue("dd.MM.yyyy HH:mm:ss"))
-                ),
-                new FunctionExpression("attr",
-                        new VariableExpression("tracks.amazon_link"),
-                        new ValueExpression(new StringValue("href"))
-                )
+                ),"t1"),
+                new AliasExpression(
+                new FunctionExpression("date_format", new VariableExpression("tracks.time"),
+                        new ValueExpression(new StringValue("dd.MM.yyyy HH:mm:ss"))
+                ),"t2"),
+                new VariableExpression("tracks.title"),
+                new VariableExpression("tracks1.interpret")
         );
 
         query.from(new RelationExpression(
                         new Selector("td:eq(0)", "time"),
-                        new Selector("td:eq(1)", "title"),
-                        new Selector("td:eq(2)", "interpret"),
-                        new Selector("td.more>a:eq(0)", "amazon_link")
+                        new Selector("td:eq(1)", "title")
                 ).from(new FunctionExpression(
                         "LOAD_HTML",
                         new ValueExpression(
@@ -155,7 +169,6 @@ public class SelectQuery {
                         , new Selector(".tx-abanowonair-pi1 .contenttable tr")).as("tracks")
         ).from(new RelationExpression(
                         new Selector("td:eq(0)", "time"),
-                        new Selector("td:eq(1)", "title"),
                         new Selector("td:eq(2", "interpret")
                 ).from(new FunctionExpression(
                         "LOAD_HTML",
@@ -166,6 +179,8 @@ public class SelectQuery {
                         , new Selector(".tx-abanowonair-pi1 .contenttable tr")).as("tracks1")
         );
 
+        query.where(new Equals(new VariableExpression("tracks1.time"),new VariableExpression("tracks.time")
+        ));
 
         query.execute();
 

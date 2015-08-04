@@ -22,36 +22,34 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.filter;
 
-import at.plechinger.scrapeql.loader.Entity;
-
-import java.util.Objects;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.type.Value;
 
 /**
- * Created by lukas on 04.08.15.
+ * Created by lukas on 05.08.15.
  */
-public class EntityValue extends AbstractValue<Entity> implements Value<Entity> {
+public class Equals implements Filter {
 
-    public static final String TYPE_NAME="ENTITY";
+    private Expression one;
+    private Expression two;
 
-    public EntityValue(Entity value) {
-        super(value);
+    public Equals(Expression one, Expression two) {
+        this.one = one;
+        this.two = two;
     }
 
     @Override
-    public String getDataTypeName() {
-        return TYPE_NAME;
-    }
+    public boolean filter(Context ctx) throws ScrapeQLException{
 
-    @Override
-    public String getStringValue() {
-        return value.getStringValue();
-    }
+        Value v1=one.evaluate(ctx);
+        Value v2=two.evaluate(ctx);
 
-    @Override
-    public Entity getValue() {
-        return value;
-    }
+        boolean result= v1.getValue().equals(v2.getValue());
 
+        return result;
+    }
 }

@@ -60,4 +60,14 @@ public class HtmlEntity implements Entity<Element> {
     public String getStringValue() {
         return element.ownText();
     }
+
+    @Override
+    public String toString() {
+        return getStringValue();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return toString().equals(obj.toString());
+    }
 }
