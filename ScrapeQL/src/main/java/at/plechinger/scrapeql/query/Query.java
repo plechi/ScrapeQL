@@ -22,32 +22,48 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.query;
 
-import at.plechinger.scrapeql.expression.value.Value;
-import com.google.common.base.Optional;
+import at.plechinger.scrapeql.ScrapeParser;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.relation.Relation;
+import at.plechinger.scrapeql.relation.RelationFactory;
+import com.google.common.collect.Lists;
 
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by lukas on 18.05.15.
  */
-public class AliasExpression implements Expression {
+public class Query {
 
-    private final Expression aliasExpression;
-    private final Optional<String> alias;
+    private List<Expression> expressionList;
+    private List<DataContext> dataContexts= Lists.newLinkedList();
 
-    public AliasExpression(Expression aliasExpression, String alias) {
-        this.aliasExpression = aliasExpression;
-        this.alias = Optional.of(alias);
+    public Query select(Expression... expressions) {
+        expressionList= Arrays.asList(expressions);
+        return this;
     }
 
-    public Optional<String> getAlias(){
-        return alias;
+    public Query from(DataContext context) {
+        dataContexts.add(context);
+        return this;
     }
 
-    @Override
-    public Value execute(ExpressionContext expressionContext) {
-        return aliasExpression.execute(expressionContext);
+    private DataContext findDataContext(String name){
+        for(DataContext context:dataContexts){
+            if(name.equals(context.getName())){
+                return context;
+            }
+        }
+        throw new RuntimeException("Context does not exist: "+name);
+    }
+
+
+    public Relation execute(){
+
+        Map<DataContext,List<Expression>> expressionContexts=new HashMap<>();
+
+        return null;
     }
 }

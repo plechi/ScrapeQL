@@ -22,21 +22,13 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
-
+package at.plechinger.scrapeql.expression.value;
 
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 28.05.15.
  */
-public class VariableExpression<T> implements Expression<T> {
-
-    private Variable<T> var;
-    public VariableExpression(Variable<T> var) {
-        this.var=var;
-    }
-
-    @Override
-    public Variable<T> execute(ExpressionContext expressionContext) {
-        return var;
+public class IntegerValue extends Value<Long> {
+    public IntegerValue(Long value) {
+        super(value);
     }
 }

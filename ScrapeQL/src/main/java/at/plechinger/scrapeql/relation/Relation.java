@@ -24,7 +24,7 @@
 
 package at.plechinger.scrapeql.relation;
 
-import at.plechinger.scrapeql.expression.Variable;
+import at.plechinger.scrapeql.expression.value.Value;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -37,12 +37,12 @@ import java.util.Set;
  */
 public class Relation {
 
-    private Table<Integer, String, Variable> relation=HashBasedTable.create();
+    private Table<Integer, String, Value> relation=HashBasedTable.create();
     private Set<String> columns=new LinkedHashSet<String>();
     private int rowNum=0;
 
-    public void addRow(Map<String,Variable> row){
-        for(Map.Entry<String,Variable> entry:row.entrySet()){
+    public void addRow(Map<String,Value> row){
+        for(Map.Entry<String,Value> entry:row.entrySet()){
             columns.add(entry.getKey());
             relation.put(rowNum,entry.getKey(),entry.getValue());
         }
@@ -64,12 +64,12 @@ public class Relation {
 
         for (int i = 0; i < rowNum; i++) {
 
-            Map<String,Variable> ro=relation.row(i);
+            Map<String,Value> ro=relation.row(i);
             for(String col:columns){
-                Variable variable=ro.get(col);
+                Value value =ro.get(col);
 
-                if(variable!=null){
-                    builder.append(variable.getValue());
+                if(value !=null){
+                    builder.append(value.getValue());
                 }else{
                  builder.append("NULL");
                 }

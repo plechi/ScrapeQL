@@ -24,9 +24,24 @@
 
 package at.plechinger.scrapeql.expression;
 
+
+import at.plechinger.scrapeql.expression.value.Value;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by lukas on 15.05.15.
  */
-public interface NamedExpression<T> extends Expression<T> {
-    public String getSymbol();
+public class ValueExpression implements Expression {
+
+    private Value var;
+    public ValueExpression(Value var) {
+        this.var=var;
+    }
+
+    @Override
+    public Value execute(ExpressionContext expressionContext) {
+        return var;
+    }
 }

@@ -22,26 +22,13 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
-
-import com.google.common.base.Optional;
+package at.plechinger.scrapeql.expression.value;
 
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 28.05.15.
  */
-public abstract class AbstractNamedExpression<T>  implements NamedExpression<T> {
-
-    private final String symbol;
-
-    protected AbstractNamedExpression(String symbol) {
-        this.symbol = symbol.toLowerCase();
+public class StringValue extends Value<String> {
+    public StringValue(String value) {
+        super(value);
     }
-
-    @Override
-    public String getSymbol() {
-        return symbol;
-    }
-
-    protected Optional<String> alias=Optional.absent();
-
 }

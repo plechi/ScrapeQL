@@ -24,30 +24,28 @@
 
 package at.plechinger.scrapeql.expression;
 
+import at.plechinger.scrapeql.expression.join.CartesianJoin;
+import at.plechinger.scrapeql.expression.join.JoinType;
 import at.plechinger.scrapeql.expression.value.Value;
-import com.google.common.base.Optional;
 
-import java.util.Set;
+import java.beans.*;
 
 /**
- * Created by lukas on 18.05.15.
+ * Created by lukas on 28.05.15.
  */
-public class AliasExpression implements Expression {
+public class FromExpression implements Expression{
 
-    private final Expression aliasExpression;
-    private final Optional<String> alias;
+    public FromExpression(String relationName){}
 
-    public AliasExpression(Expression aliasExpression, String alias) {
-        this.aliasExpression = aliasExpression;
-        this.alias = Optional.of(alias);
+    public FromExpression(String relationName, FromExpression nextJoin){
+        this(relationName, new CartesianJoin(), nextJoin);
     }
 
-    public Optional<String> getAlias(){
-        return alias;
-    }
+    public FromExpression(String relationName,JoinType type, FromExpression join){}
 
     @Override
     public Value execute(ExpressionContext expressionContext) {
-        return aliasExpression.execute(expressionContext);
+        return null;
     }
+
 }

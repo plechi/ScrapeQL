@@ -22,10 +22,10 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.expression.join;
 
 /**
- * Created by lukas on 18.05.15.
+ * Created by lukas on 28.05.15.
  */
-public class AbstractExpression {
+public interface JoinType {
 }

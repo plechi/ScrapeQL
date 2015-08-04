@@ -24,6 +24,7 @@
 
 package at.plechinger.scrapeql.expression;
 
+import at.plechinger.scrapeql.expression.value.Value;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -32,29 +33,6 @@ import org.jsoup.select.Elements;
  */
 public class ExpressionContext {
 
-    private String dataContextName;
 
-    private Element rootElement;
 
-    public ExpressionContext(String dataContextName, Element rootElement) {
-        this.dataContextName = dataContextName;
-        this.rootElement = rootElement;
-    }
-
-    public String getDataContextName() {
-        return dataContextName;
-    }
-
-    public Variable<Element> select(Variable<String> query){
-        if(query.isNull()){
-            return Variable.NULL;
-        }
-
-        Elements select=rootElement.select(query.getValue());
-
-        if(!select.isEmpty()){
-            return new Variable<>(select.first());
-        }
-        return Variable.NULL;
-    }
 }

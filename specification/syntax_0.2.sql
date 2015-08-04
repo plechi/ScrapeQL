@@ -6,3 +6,7 @@ SELECT master.$('selector') AS alias1,
 FROM 'test.html'.$('base_selector') master
 JOIN master.$('subselect') child
 JOIN PARAM_URL('single-{?}.html', ATTR(alias2,'data-id')) external;
+
+
+
+LOAD $('selector'), $('selector') FROM 'test.html' BASE $('base_selector') INTO relation_name

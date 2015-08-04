@@ -22,32 +22,19 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.function;
 
+import at.plechinger.scrapeql.expression.ExpressionContext;
 import at.plechinger.scrapeql.expression.value.Value;
-import com.google.common.base.Optional;
 
-import java.util.Set;
+import java.util.List;
 
 /**
- * Created by lukas on 18.05.15.
+ * Created by lukas on 28.05.15.
  */
-public class AliasExpression implements Expression {
+public interface Function<T>{
 
-    private final Expression aliasExpression;
-    private final Optional<String> alias;
+    String getName();
 
-    public AliasExpression(Expression aliasExpression, String alias) {
-        this.aliasExpression = aliasExpression;
-        this.alias = Optional.of(alias);
-    }
-
-    public Optional<String> getAlias(){
-        return alias;
-    }
-
-    @Override
-    public Value execute(ExpressionContext expressionContext) {
-        return aliasExpression.execute(expressionContext);
-    }
+     Value<T> execute(List<Value> parameters, ExpressionContext ctx);
 }

@@ -24,10 +24,12 @@
 
 package at.plechinger.scrapeql.relation;
 
+import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.expression.*;
+import at.plechinger.scrapeql.expression.value.Value;
+import at.plechinger.scrapeql.query.DataContext;
 import com.google.common.base.Optional;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,46 +38,51 @@ import java.util.Map;
 /**
  * Created by lukas on 18.05.15.
  */
-public class RelationBuilder {
+public class RelationFactory {
 
-    public RelationBuilder(Elements rows, List<Expression> expressionList) {
-        this.rows = rows;
+    private final DataContext dataContext;
+
+    public RelationFactory(DataContext dataContext, List<Expression> expressionList ) {
         this.expressionList = expressionList;
+        this.dataContext=dataContext;
     }
 
-    private Elements rows;
-    private List<Expression> expressionList;
-    private Relation relation = new Relation();
+    private final List<Expression> expressionList;
 
+    public Relation build() throws ScrapeQLException{
 
-    public Relation build() {
-
-        for (Element element : rows) {
+        Relation relation = new Relation();
+        for (Element element : dataContext.getRowElements()) {
             relation.addRow(executeRow(element));
         }
 
         return relation;
     }
 
-    private Map<String, Variable> executeRow(Element base){
+    private Map<String, Value> executeRow(Element base) throws ScrapeQLException{
 
-        Map<String, Variable> row = new LinkedHashMap<>();
-        ExpressionContext ctx=new ExpressionContext("test",base);
+        Map<String, Value> row = new LinkedHashMap<>();
+        ExpressionContext ctx=new ExpressionContext();
 
         for(Expression exp:expressionList){
-            Variable value=exp.execute(ctx);
+            Value value=exp.execute(ctx);
 
-            String colName= "col_"+row.size();
+            Optional<String> alias=Optional.absent();
 
+            //determine alias
             //"Better" instanceof
             if(AliasExpression.class.isAssignableFrom(exp.getClass())){
                 AliasExpression nex=AliasExpression.class.cast(exp);
-                Optional<String> alias=nex.getAlias();
-
-                if(alias.isPresent()){
-                    colName=alias.get();
-                }
+                alias=nex.getAlias();
             }
+
+            String colName;
+            if(alias.isPresent()){
+                colName=alias.get();
+            }else{
+                throw new ScrapeQLException("Column can not be mapped because no column alias is provided.");
+            }
+
             row.put(colName,value);
         }
 

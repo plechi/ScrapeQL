@@ -22,26 +22,10 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.expression.join;
 
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 28.05.15.
  */
-public class Variable<T> {
-
-    private T value;
-
-    public Variable(T value){
-        this.value=value;
-    }
-
-    public T getValue() {
-        return value;
-    }
-
-    public boolean isNull() {
-        return value==null;
-    }
-
-    public static final Variable NULL=new Variable(null);
+public class FullOuterJoin implements JoinType {
 }

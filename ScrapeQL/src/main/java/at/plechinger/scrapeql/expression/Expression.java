@@ -25,14 +25,15 @@
 package at.plechinger.scrapeql.expression;
 
 
-import com.google.common.base.Optional;
+import at.plechinger.scrapeql.expression.value.Value;
+
+import java.util.Set;
 
 /**
  * Created by lukas on 15.05.15.
  */
-public interface Expression<T> {
+public interface Expression {
 
-
-    public Variable<T> execute(ExpressionContext expressionContext);
+    public Value execute(ExpressionContext expressionContext);
 
 }

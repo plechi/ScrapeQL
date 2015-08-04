@@ -22,39 +22,10 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
-
-
-import com.google.common.base.Preconditions;
-import org.jsoup.nodes.Element;
+package at.plechinger.scrapeql.expression.join;
 
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 28.05.15.
  */
-public class SelectorExpression extends AbstractNamedExpression<Element> {
-
-    private Expression<String> selector;
-
-    private String dataContext;
-
-    public SelectorExpression(Expression<String> selector) {
-        super("$");
-        this.selector=selector;
-    }
-
-    public SelectorExpression(Expression<String> selector, String dataContext) {
-       this(selector);
-        this.dataContext=dataContext;
-    }
-
-    @Override
-    public Variable<Element> execute(ExpressionContext expressionContext) {
-        Preconditions.checkArgument(expressionContext.getDataContextName().equals(dataContext),"You just can select from one context at a time");
-        return expressionContext.select(selector.execute(expressionContext));
-    }
-
-    public SelectorExpression ctx(String dataContext) {
-        this.dataContext=dataContext;
-        return this;
-    }
+public class RightOuterJoin implements JoinType {
 }
