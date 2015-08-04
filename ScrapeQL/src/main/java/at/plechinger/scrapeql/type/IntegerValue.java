@@ -43,6 +43,10 @@ public class IntegerValue extends AbstractParseableValue<Long> {
         super(toParse);
     }
 
+    public IntegerValue(long value){
+        super(value,Long.toString(value));
+    }
+
     @Override
     protected Long parseMatch(Matcher matcher) {
         return Long.parseLong(matcher.group());

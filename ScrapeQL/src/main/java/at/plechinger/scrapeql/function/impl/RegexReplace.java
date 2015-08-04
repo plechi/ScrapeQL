@@ -22,57 +22,29 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.function.impl;
 
-import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.type.StringValue;
+import at.plechinger.scrapeql.type.Value;
+
+import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public abstract class AbstractValue<T> implements Value<T> {
-
-    protected T value;
-
-    protected String variableName;
-
-    public AbstractValue(T value){
-        this.value=value;
-    }
-
-    protected AbstractValue(){}
-
-    @Override
-    public T getValue() {
-        return value;
+public class RegexReplace extends AbstractFunction {
+    public RegexReplace() {
+        super("regex_replace", p(Value.class), p(StringValue.class), p(StringValue.class));
     }
 
     @Override
-    public String getStringValue() {
-        return value.toString();
-    }
-
-    @Override
-    public String toString() {
-        return getStringValue();
-    }
-
-    @Override
-    public String getVariableName() {
-        return variableName;
-    }
-
-    @Override
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-
-    @Override
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException {
-        if(!value.getClass().isAssignableFrom(clazz)){
-            throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
-        }
-
-        return clazz.cast(value);
+    protected Value executeChecked(List<Value> parameters) {
+        Value val = param(0, parameters);
+        StringValue regex = param(1, parameters);
+        StringValue replace = param(2, parameters);
+        String value = val.getStringValue();
+        Value returnValue = new StringValue(value.replaceAll(regex.getStringValue(), replace.getStringValue()));
+        returnValue.setVariableName(String.format(getName() + "(%s)", val.getVariableName()));
+        return returnValue;
     }
 }

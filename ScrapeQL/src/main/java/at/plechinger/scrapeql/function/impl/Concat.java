@@ -22,57 +22,44 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.function.impl;
 
-import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.function.Function;
+import at.plechinger.scrapeql.type.StringValue;
+import at.plechinger.scrapeql.type.Value;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
+import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public abstract class AbstractValue<T> implements Value<T> {
+public class Concat implements Function {
 
-    protected T value;
-
-    protected String variableName;
-
-    public AbstractValue(T value){
-        this.value=value;
-    }
-
-    protected AbstractValue(){}
+    private static final String NAME = "CONCAT";
 
     @Override
-    public T getValue() {
-        return value;
+    public String getName() {
+        return NAME;
     }
 
     @Override
-    public String getStringValue() {
-        return value.toString();
-    }
+    public Value execute(List<Value> parameters) {
+        StringBuilder buffer = new StringBuilder();
 
-    @Override
-    public String toString() {
-        return getStringValue();
-    }
-
-    @Override
-    public String getVariableName() {
-        return variableName;
-    }
-
-    @Override
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-
-    @Override
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException {
-        if(!value.getClass().isAssignableFrom(clazz)){
-            throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
+        List<String> cols = Lists.newArrayListWithExpectedSize(parameters.size());
+        for (Value val : parameters) {
+            buffer.append(val.getStringValue());
+            cols.add(val.getVariableName());
         }
 
-        return clazz.cast(value);
+        StringBuilder variableName = new StringBuilder("concat(");
+        Joiner.on(',').skipNulls().appendTo(variableName,cols);
+        variableName.append(')');
+
+        StringValue val = new StringValue(buffer.toString());
+        val.setVariableName(variableName.toString());
+        return val;
     }
 }

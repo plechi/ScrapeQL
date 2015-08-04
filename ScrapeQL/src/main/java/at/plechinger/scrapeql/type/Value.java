@@ -24,6 +24,8 @@
 
 package at.plechinger.scrapeql.type;
 
+import at.plechinger.scrapeql.ScrapeQLException;
+
 import java.text.ParseException;
 
 /**
@@ -40,4 +42,6 @@ public interface Value<T> {
     String getVariableName();
 
     void setVariableName(String name);
+
+    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException;
 }

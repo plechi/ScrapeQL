@@ -28,6 +28,10 @@ import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.*;
 import at.plechinger.scrapeql.function.FunctionRepository;
+import at.plechinger.scrapeql.function.impl.Attr;
+import at.plechinger.scrapeql.function.impl.Concat;
+import at.plechinger.scrapeql.function.impl.DateFormat;
+import at.plechinger.scrapeql.function.impl.Lower;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.relation.Selector;
@@ -84,11 +88,16 @@ public class SelectQuery {
         //relational "projection"
         Relation finalRelation = new Relation();
         for (int row = 0; row < joinRelation.rows(); row++) {
+
+            int column = 0;
             context.setColumns(joinRelation.getRow(row));
             for (Expression exp : expressions) {
                 if (!exp.getClass().isAssignableFrom(StarExpression.class)) {
                     Value result = exp.evaluate(context);
-                    finalRelation.set(row, result);
+
+                    String columnName = (result.getVariableName() != null) ? result.getVariableName() : "column_" + column;
+                    finalRelation.set(row, columnName, result);
+                    column++;
                 }
             }
 
@@ -96,6 +105,7 @@ public class SelectQuery {
                 for (String col : joinRelation.getColumns()) {
                     if (stex.isVisible(col)) {
                         finalRelation.set(row, col, joinRelation.getRow(row).get(col));
+                        column++;
                     }
                 }
             }
@@ -108,14 +118,34 @@ public class SelectQuery {
 
     public static void main(String[] args) throws Exception {
         FunctionRepository.instance().register(new HtmlLoaderFunction());
+        FunctionRepository.instance().register(new Concat());
+        FunctionRepository.instance().register(new DateFormat());
+        FunctionRepository.instance().register(new Attr());
+        FunctionRepository.instance().register(new Lower());
 
 
-        SelectQuery query = new SelectQuery(new StarExpression("tracks"));
+        SelectQuery query = new SelectQuery(new AliasExpression(
+                new FunctionExpression("lower",
+                new FunctionExpression("CONCAT",
+                        new VariableExpression("tracks.title"),
+                        new ValueExpression(new StringValue(" test ")),
+                        new VariableExpression("tracks1.time")
+                )), "concat"
+        ),
+                new FunctionExpression("date_format", new VariableExpression("tracks1.time"),
+                        new ValueExpression(new StringValue("dd.MM.yyyy HH:mm:ss"))
+                ),
+                new FunctionExpression("attr",
+                        new VariableExpression("tracks.amazon_link"),
+                        new ValueExpression(new StringValue("href"))
+                )
+        );
 
         query.from(new RelationExpression(
                         new Selector("td:eq(0)", "time"),
                         new Selector("td:eq(1)", "title"),
-                        new Selector("td:eq(2", "interpret")
+                        new Selector("td:eq(2)", "interpret"),
+                        new Selector("td.more>a:eq(0)", "amazon_link")
                 ).from(new FunctionExpression(
                         "LOAD_HTML",
                         new ValueExpression(

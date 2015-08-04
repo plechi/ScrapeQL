@@ -148,11 +148,6 @@ public class Relation {
         return table.row(row);
     }
 
-    public void set(int row, Value result) {
-        String column = (result.getVariableName() != null) ? result.getVariableName() : "column_" + columns();
-        set(row, column, result);
-    }
-
     public void set(int row, String col, Value value) {
         table.put(row, col, value);
     }

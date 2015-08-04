@@ -22,57 +22,29 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.expression;
 
 import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.type.Value;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public abstract class AbstractValue<T> implements Value<T> {
+public class AliasExpression implements Expression {
 
-    protected T value;
+    private Expression expression;
+    private String alias;
 
-    protected String variableName;
-
-    public AbstractValue(T value){
-        this.value=value;
-    }
-
-    protected AbstractValue(){}
-
-    @Override
-    public T getValue() {
-        return value;
+    public AliasExpression(Expression expression, String alias) {
+        this.expression = expression;
+        this.alias = alias;
     }
 
     @Override
-    public String getStringValue() {
-        return value.toString();
-    }
-
-    @Override
-    public String toString() {
-        return getStringValue();
-    }
-
-    @Override
-    public String getVariableName() {
-        return variableName;
-    }
-
-    @Override
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-
-    @Override
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException {
-        if(!value.getClass().isAssignableFrom(clazz)){
-            throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
-        }
-
-        return clazz.cast(value);
+    public Value evaluate(Context ctx) throws ScrapeQLException {
+        Value val=expression.evaluate(ctx);
+        val.setVariableName(alias);
+        return val;
     }
 }

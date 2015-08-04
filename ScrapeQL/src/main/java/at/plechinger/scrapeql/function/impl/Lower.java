@@ -22,57 +22,25 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.function.impl;
 
-import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.function.Function;
+import at.plechinger.scrapeql.type.StringValue;
+import at.plechinger.scrapeql.type.Value;
+
+import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public abstract class AbstractValue<T> implements Value<T> {
-
-    protected T value;
-
-    protected String variableName;
-
-    public AbstractValue(T value){
-        this.value=value;
-    }
-
-    protected AbstractValue(){}
-
-    @Override
-    public T getValue() {
-        return value;
+public class Lower extends AbstractFunction {
+    public Lower() {
+        super("lower", p(StringValue.class));
     }
 
     @Override
-    public String getStringValue() {
-        return value.toString();
-    }
-
-    @Override
-    public String toString() {
-        return getStringValue();
-    }
-
-    @Override
-    public String getVariableName() {
-        return variableName;
-    }
-
-    @Override
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-
-    @Override
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException {
-        if(!value.getClass().isAssignableFrom(clazz)){
-            throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
-        }
-
-        return clazz.cast(value);
+    protected Value executeChecked(List<Value> parameters) {
+        StringValue val=param(0,parameters);
+        return new StringValue(val.getValue().toLowerCase());
     }
 }

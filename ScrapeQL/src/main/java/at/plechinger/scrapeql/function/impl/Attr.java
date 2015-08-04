@@ -22,57 +22,41 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.function.impl;
 
 import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.function.Function;
+import at.plechinger.scrapeql.loader.Entity;
+import at.plechinger.scrapeql.loader.html.HtmlEntity;
+import at.plechinger.scrapeql.type.EntityValue;
+import at.plechinger.scrapeql.type.StringValue;
+import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.type.ValueConverter;
+import com.google.common.base.Preconditions;
+
+import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public abstract class AbstractValue<T> implements Value<T> {
-
-    protected T value;
-
-    protected String variableName;
-
-    public AbstractValue(T value){
-        this.value=value;
-    }
-
-    protected AbstractValue(){}
+public class Attr implements Function {
+    private static final String NAME="attr";
 
     @Override
-    public T getValue() {
-        return value;
+    public String getName() {
+        return NAME;
     }
 
     @Override
-    public String getStringValue() {
-        return value.toString();
-    }
+    public Value execute(List<Value> parameters) throws ScrapeQLException{
+        Preconditions.checkArgument(parameters.size()==2);
+        Value val=parameters.get(0);
+        Value attr=parameters.get(1);
 
-    @Override
-    public String toString() {
-        return getStringValue();
-    }
+        Preconditions.checkArgument(ValueConverter.checkType(val, EntityValue.TYPE_NAME));
 
-    @Override
-    public String getVariableName() {
-        return variableName;
-    }
+        HtmlEntity ent=(HtmlEntity)val.getDesiredValue(HtmlEntity.class);
 
-    @Override
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-
-    @Override
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException {
-        if(!value.getClass().isAssignableFrom(clazz)){
-            throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
-        }
-
-        return clazz.cast(value);
+        return new StringValue(ent.getWrappedEntity().attr(attr.getStringValue()));
     }
 }

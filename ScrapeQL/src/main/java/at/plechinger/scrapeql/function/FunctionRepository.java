@@ -55,7 +55,7 @@ public class FunctionRepository {
 
     public Function getFunction(String name) throws ScrapeQLException{
         for(Function function:functions){
-            if(function.getName().equals(name)){
+            if(function.getName().toLowerCase().equals(name.toLowerCase())){
                 return function;
             }
         }

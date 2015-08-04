@@ -22,57 +22,44 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.function.impl;
 
-import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.function.Function;
+import at.plechinger.scrapeql.type.IntegerValue;
+import at.plechinger.scrapeql.type.StringValue;
+import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.type.ValueConverter;
+import com.google.common.base.Preconditions;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public abstract class AbstractValue<T> implements Value<T> {
+public class DateFormat extends AbstractFunction{
 
-    protected T value;
-
-    protected String variableName;
-
-    public AbstractValue(T value){
-        this.value=value;
-    }
-
-    protected AbstractValue(){}
-
-    @Override
-    public T getValue() {
-        return value;
+    public DateFormat() {
+        super("date_format",p(Value.class),p(StringValue.class));
     }
 
     @Override
-    public String getStringValue() {
-        return value.toString();
-    }
+    protected Value executeChecked(List<Value> parameters) {
+        StringValue format=param(1,parameters);
+        Value toFormat=parameters.get(0);
+        Value returnValue;
+        try {
+            SimpleDateFormat sdf=new SimpleDateFormat(format.getValue());
+            Date parsed=sdf.parse(toFormat.getStringValue());
+            returnValue=new IntegerValue(parsed.getTime());
 
-    @Override
-    public String toString() {
-        return getStringValue();
-    }
-
-    @Override
-    public String getVariableName() {
-        return variableName;
-    }
-
-    @Override
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-
-    @Override
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException {
-        if(!value.getClass().isAssignableFrom(clazz)){
-            throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
+        } catch (ParseException e) {
+            returnValue=toFormat;
         }
 
-        return clazz.cast(value);
+        returnValue.setVariableName(String.format("date_format(%s)",toFormat.getVariableName()));
+        return returnValue;
     }
 }
