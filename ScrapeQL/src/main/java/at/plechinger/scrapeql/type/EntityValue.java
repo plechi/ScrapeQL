@@ -22,10 +22,33 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.join;
+package at.plechinger.scrapeql.type;
+
+import at.plechinger.scrapeql.loader.Entity;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class FullOuterJoin implements JoinType {
+public class EntityValue extends AbstractValue<Entity> implements Value<Entity> {
+
+    public static final String TYPE_NAME="ENTITY";
+
+    public EntityValue(Entity value) {
+        super(value);
+    }
+
+    @Override
+    public String getDataTypeName() {
+        return TYPE_NAME;
+    }
+
+    @Override
+    public String getStringValue() {
+        return value.getStringValue();
+    }
+
+    @Override
+    public Entity getValue() {
+        return value;
+    }
 }

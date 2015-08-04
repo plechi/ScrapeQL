@@ -22,28 +22,34 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.type;
 
-import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.type.Value;
+import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class ValueExpression implements Expression{
+public class StringValue extends AbstractParseableValue<String> {
 
-    private Value value;
+    public static final String TYPE_NAME="STRING";
 
-    public ValueExpression(Value value){
-        this.value=value;
+    static{
+        patterns.add(Pattern.compile("^(.*)$"));
+    }
+
+    public StringValue(String toParse){
+        super(toParse);
     }
 
     @Override
-    public Value evaluate(Context ctx) {
-        return value;
+    protected String parseMatch(Matcher matcher) {
+        return matcher.group();
     }
 
-    public String getType(){
-        return value.getDataTypeName();
+    @Override
+    public String getDataTypeName() {
+        return TYPE_NAME;
     }
 }

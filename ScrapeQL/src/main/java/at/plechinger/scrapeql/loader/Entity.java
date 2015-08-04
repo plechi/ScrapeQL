@@ -22,17 +22,15 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.relation;
+package at.plechinger.scrapeql.loader;
 
-import java.beans.Expression;
 import java.util.List;
 
 /**
- * Created by lukas on 24.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class RelationLoader{
-
-public RelationLoader(List<Expression> expressions){
-
-}
+public interface Entity<T> {
+    List<Entity<T>> select(String selector);
+    public T getWrappedEntity();
+    String getStringValue();
 }

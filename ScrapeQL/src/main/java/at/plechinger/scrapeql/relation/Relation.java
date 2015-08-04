@@ -24,61 +24,93 @@
 
 package at.plechinger.scrapeql.relation;
 
-import at.plechinger.scrapeql.expression.value.Value;
+import at.plechinger.scrapeql.type.Value;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by lukas on 18.05.15.
+ * Created by lukas on 04.08.15.
  */
 public class Relation {
 
-    private Table<Integer, String, Value> relation=HashBasedTable.create();
-    private Set<String> columns=new LinkedHashSet<String>();
-    private int rowNum=0;
+    private List<ColumnDefinition> columns = Lists.newLinkedList();
 
-    public void addRow(Map<String,Value> row){
-        for(Map.Entry<String,Value> entry:row.entrySet()){
-            columns.add(entry.getKey());
-            relation.put(rowNum,entry.getKey(),entry.getValue());
-        }
-
-        rowNum++;
+    public void addColumn(String name, List<Value> values) {
+        columns.add(new ColumnDefinition(name, values));
     }
 
-    @Override
-    public String toString() {
-        StringBuilder print=new StringBuilder();
-        StringBuilder builder=new StringBuilder();
-
-        for (int i = 0; i < columns.size(); i++) {
-            print.append("%s\t");
+    public int size() {
+        int size = 1;
+        for (ColumnDefinition col : columns) {
+            size *= col.getValues().size();
         }
+        return size;
+    }
 
-        builder.append(String.format(print.toString(),columns.toArray(new String[columns.size()])));
-        builder.append('\n');
+    private void join(Table<Integer, String, Value> table, Map<String, Value> row, int col) {
 
-        for (int i = 0; i < rowNum; i++) {
+        if (col >= columns.size()) {
+            int rowNum = table.rowKeySet().size();
 
-            Map<String,Value> ro=relation.row(i);
-            for(String col:columns){
-                Value value =ro.get(col);
-
-                if(value !=null){
-                    builder.append(value.getValue());
-                }else{
-                 builder.append("NULL");
-                }
-                builder.append('\t');
-
+            for (Map.Entry<String, Value> entry : row.entrySet()) {
+                table.put(rowNum, entry.getKey(), entry.getValue());
             }
-            builder.append('\n');
+            return;
         }
 
-        return builder.toString();
+        ColumnDefinition column = columns.get(col);
+
+        for (Value val : column.getValues()) {
+            Map<String, Value> newMap = new LinkedHashMap<>(row);
+            newMap.put(column.getName(), val);
+            join(table, newMap, col + 1);
+        }
+    }
+
+    public Table<Integer, String, Value> joinTable() {
+        int rows = size();
+        int cells = columns.size();
+
+        Table<Integer, String, Value> result = HashBasedTable.create(rows, cells);
+
+        join(result, new LinkedHashMap<String, Value>(), 0);
+
+        return result;
+    }
+
+    private static class ColumnDefinition {
+
+        private String name;
+
+        private List<Value> values;
+
+        public ColumnDefinition(String name, List<Value> values) {
+            this.name = name;
+            this.values = values;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    public Set<String> getColumns(){
+        Set ret= Sets.newLinkedHashSet();
+        for(ColumnDefinition col:columns){
+            ret.add(col.getName());
+        }
+        return ret;
     }
 }

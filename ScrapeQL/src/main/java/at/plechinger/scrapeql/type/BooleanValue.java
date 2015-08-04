@@ -22,13 +22,34 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.value;
+package at.plechinger.scrapeql.type;
+
+import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class IntegerValue extends Value<Long> {
-    public IntegerValue(Long value) {
-        super(value);
+public class BooleanValue extends AbstractParseableValue<Boolean> {
+
+    public static final String TYPE_NAME="BOOLEAN";
+
+    static{
+        patterns.add(Pattern.compile("^(true|false)$", Pattern.CASE_INSENSITIVE));
+    }
+
+    public BooleanValue(String toParse) throws ParseException {
+        super(toParse);
+    }
+
+    @Override
+    protected Boolean parseMatch(Matcher matcher) {
+        return Boolean.parseBoolean(matcher.group());
+    }
+
+    @Override
+    public String getDataTypeName() {
+        return TYPE_NAME;
     }
 }

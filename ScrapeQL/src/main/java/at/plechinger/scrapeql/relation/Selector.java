@@ -22,13 +22,34 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.value;
+package at.plechinger.scrapeql.relation;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class DecimalValue extends Value<Double> {
-    public DecimalValue(Double value) {
-        super(value);
+public class Selector {
+
+    private String selector;
+    private String alias = null;
+
+    public Selector(String selector) {
+        this.selector = selector;
+    }
+
+    public Selector(String selector, String alias) {
+        this.selector = selector;
+        this.alias = alias;
+    }
+
+    public String getSelector() {
+        return selector;
+    }
+
+    public String getAlias() {
+        return (alias != null) ? alias : generateAlias(selector);
+    }
+
+    private static String generateAlias(String selector) {
+        return selector.replaceAll("\\W+", "_");
     }
 }

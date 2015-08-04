@@ -24,23 +24,42 @@
 
 package at.plechinger.scrapeql.expression;
 
-import at.plechinger.scrapeql.expression.value.Value;
+import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.function.Function;
+import at.plechinger.scrapeql.function.FunctionRepository;
+import at.plechinger.scrapeql.type.Value;
+import com.google.common.collect.Lists;
 
 import java.util.List;
-import java.util.Set;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class FunctionExpression implements Expression{
+public class FunctionExpression implements Expression {
 
+    private List<Expression> parameters = Lists.newLinkedList();
+    private String name;
 
-    public FunctionExpression(String functionName, List<Expression> parameter){
+    private Function function;
 
+    public FunctionExpression(String name, List<Expression> expressions) {
+        this.parameters = expressions;
+        this.name = name;
+    }
+
+    public FunctionExpression(String name, Expression... parameters) {
+        this(name, Lists.newArrayList(parameters));
     }
 
     @Override
-    public Value execute(ExpressionContext expressionContext) {
-        return null;
+    public Value evaluate(Context ctx) throws ScrapeQLException {
+        List<Value> parameterValues = Lists.newArrayListWithCapacity(parameters.size());
+        for (Expression exp : parameters) {
+            parameterValues.add(exp.evaluate(ctx));
+        }
+
+        Function function = FunctionRepository.instance().getFunction(name);
+        return function.execute(parameterValues);
     }
 }

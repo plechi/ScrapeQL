@@ -24,17 +24,16 @@
 
 package at.plechinger.scrapeql.function;
 
-import at.plechinger.scrapeql.expression.ExpressionContext;
-import at.plechinger.scrapeql.expression.value.Value;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.type.Value;
 
 import java.util.List;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public interface Function<T>{
+public interface Function {
 
-    String getName();
-
-     Value<T> execute(List<Value> parameters, ExpressionContext ctx);
+    public String getName();
+    public Value execute(List<Value> parameters);
 }

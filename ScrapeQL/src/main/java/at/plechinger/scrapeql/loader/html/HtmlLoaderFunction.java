@@ -22,10 +22,43 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.join;
+package at.plechinger.scrapeql.loader.html;
+
+import at.plechinger.scrapeql.CachedUrlLoader;
+import at.plechinger.scrapeql.function.Function;
+import at.plechinger.scrapeql.type.EntityValue;
+import at.plechinger.scrapeql.type.StringValue;
+import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.type.ValueConverter;
+import com.google.common.base.Preconditions;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+
+import java.util.List;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class InnerJoin implements JoinType {
+public class HtmlLoaderFunction implements Function {
+
+    public static final String NAME = "LOAD_HTML";
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public Value execute(List<Value> parameters) {
+        Preconditions.checkPositionIndexes(1, 1, parameters.size());
+        Preconditions.checkArgument(ValueConverter.checkType(parameters.get(0), StringValue.TYPE_NAME));
+
+        String url = parameters.get(0).getStringValue();
+
+        String html = CachedUrlLoader.getLoader().load(url);
+
+        Element document = Jsoup.parse(html);
+
+        return new EntityValue(new HtmlEntity(document));
+    }
 }

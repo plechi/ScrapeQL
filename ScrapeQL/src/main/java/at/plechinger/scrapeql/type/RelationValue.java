@@ -22,17 +22,29 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.type;
 
-import at.plechinger.scrapeql.expression.value.Value;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import at.plechinger.scrapeql.relation.Relation;
+import com.google.common.base.Joiner;
 
 /**
- * Created by lukas on 18.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class ExpressionContext {
+public class RelationValue extends AbstractValue<Relation> {
 
+    public static final String TYPE_NAME = "RELATION";
 
+    public RelationValue(Relation relation){
+        super(relation);
+    }
 
+    @Override
+    public String getDataTypeName() {
+        return TYPE_NAME;
+    }
+
+    @Override
+    public String getStringValue() {
+        return String.format("%s(%s)", TYPE_NAME, Joiner.on(',').join(value.getColumns()));
+    }
 }

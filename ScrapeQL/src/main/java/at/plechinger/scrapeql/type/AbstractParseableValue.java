@@ -22,26 +22,51 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.value;
+package at.plechinger.scrapeql.type;
+
+import com.google.common.collect.Lists;
+
+import java.text.ParseException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class Value<T> {
+public abstract class AbstractParseableValue<T> extends AbstractValue<T> implements ParseableValue<T> {
 
-    private T value;
+    protected String originalValue;
 
-    public Value(T value){
-        this.value=value;
+    protected static List<Pattern> patterns = Lists.newArrayList();
+
+    public AbstractParseableValue(String toParse) {
+        this.originalValue = toParse;
+       setParsedValue(toParse);
     }
 
+    protected abstract T parseMatch(Matcher matcher);
+
+    @Override
+    public String getStringValue() {
+        return originalValue;
+    }
+
+    @Override
+    public void setParsedValue(String string) {
+
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(string);
+            if (matcher.matches()) {
+                value = parseMatch(matcher);
+                return;
+            }
+        }
+        throw new RuntimeException("Input String " + string + " cannot be converted to " + getDataTypeName() + " found.");
+    }
+
+    @Override
     public T getValue() {
         return value;
     }
-
-    public boolean isNull() {
-        return value==null;
-    }
-
-    public static final Value NULL=new Value(null);
 }

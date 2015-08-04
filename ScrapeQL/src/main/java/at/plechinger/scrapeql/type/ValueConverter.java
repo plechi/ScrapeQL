@@ -22,28 +22,46 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.type;
 
-import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.loader.Entity;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class ValueExpression implements Expression{
+public class ValueConverter {
 
-    private Value value;
 
-    public ValueExpression(Value value){
-        this.value=value;
+    public static EntityValue toEntityValue(Value val) throws ScrapeQLException{
+        if(checkType(val, EntityValue.class)){
+            return EntityValue.class.cast(val);
+        }
+        throw new ScrapeQLException("Cannot convert "+val.getDataTypeName()+" to "+EntityValue.TYPE_NAME);
     }
 
-    @Override
-    public Value evaluate(Context ctx) {
-        return value;
+    public static ArrayValue toArrayValue(Value val){
+        if(checkType(val,ArrayValue.TYPE_NAME)){
+            return ArrayValue.class.cast(val);
+        }else{
+            return new ArrayValue(val);
+        }
     }
 
-    public String getType(){
-        return value.getDataTypeName();
+
+    public static boolean checkType(Value val, String type){
+        return val.getDataTypeName().equals(type);
+    }
+
+    public static boolean checkType(Value val1, Value val2){
+        return checkType(val1, val2.getClass());
+    }
+
+    public static boolean checkType(Value val, Class<? extends Value> clazz){
+        return val.getClass().isAssignableFrom(EntityValue.class);
+    }
+
+    public static boolean checkTypeExact(Value val1, Value val2){
+        return checkType(val1, val2) && checkType(val1,val2.getDataTypeName());
     }
 }

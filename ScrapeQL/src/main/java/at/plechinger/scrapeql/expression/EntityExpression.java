@@ -24,28 +24,24 @@
 
 package at.plechinger.scrapeql.expression;
 
-import at.plechinger.scrapeql.expression.join.CartesianJoin;
-import at.plechinger.scrapeql.expression.join.JoinType;
-import at.plechinger.scrapeql.expression.value.Value;
-
-import java.beans.*;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.type.EntityValue;
+import at.plechinger.scrapeql.type.Value;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class FromExpression implements Expression{
+public class EntityExpression implements Expression{
 
-    public FromExpression(String relationName){}
+    private String name;
 
-    public FromExpression(String relationName, FromExpression nextJoin){
-        this(relationName, new CartesianJoin(), nextJoin);
+    public EntityExpression(String name){
+        this.name=name;
     }
-
-    public FromExpression(String relationName,JoinType type, FromExpression join){}
 
     @Override
-    public Value execute(ExpressionContext expressionContext) {
-        return null;
+    public Value evaluate(Context ctx) throws ScrapeQLException {
+        return ctx.getEntitySet(name);
     }
-
 }

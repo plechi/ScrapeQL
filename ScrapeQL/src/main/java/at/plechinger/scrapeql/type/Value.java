@@ -22,10 +22,18 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.join;
+package at.plechinger.scrapeql.type;
+
+import java.text.ParseException;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class CartesianJoin implements JoinType {
+public interface Value<T> {
+
+    String getDataTypeName();
+
+    public String getStringValue();
+
+    public T getValue();
 }

@@ -24,16 +24,14 @@
 
 package at.plechinger.scrapeql.expression;
 
-
-import at.plechinger.scrapeql.expression.value.Value;
-
-import java.util.Set;
+import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.type.Value;
 
 /**
- * Created by lukas on 15.05.15.
+ * Created by lukas on 04.08.15.
  */
 public interface Expression {
 
-    public Value execute(ExpressionContext expressionContext);
-
+    Value evaluate(Context ctx) throws ScrapeQLException;
 }

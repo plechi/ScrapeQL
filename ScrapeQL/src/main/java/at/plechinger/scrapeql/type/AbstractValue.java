@@ -22,10 +22,33 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.join;
+package at.plechinger.scrapeql.type;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class LeftOuterJoin implements JoinType {
+public abstract class AbstractValue<T> implements Value<T> {
+
+    protected T value;
+
+    public AbstractValue(T value){
+        this.value=value;
+    }
+
+    protected AbstractValue(){}
+
+    @Override
+    public T getValue() {
+        return value;
+    }
+
+    @Override
+    public String getStringValue() {
+        return value.toString();
+    }
+
+    @Override
+    public String toString() {
+        return getStringValue();
+    }
 }

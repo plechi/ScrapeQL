@@ -22,10 +22,34 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.join;
+package at.plechinger.scrapeql.type;
+
+import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public interface JoinType {
+public class FloatValue extends AbstractParseableValue<Double> {
+
+    public static final String TYPE_NAME="FLOAT";
+
+    static{
+        patterns.add(Pattern.compile("^(\\d.\\d+)$"));
+    }
+
+    public FloatValue(String toParse) throws ParseException {
+        super(toParse);
+    }
+
+    @Override
+    protected Double parseMatch(Matcher matcher) {
+        return Double.parseDouble(matcher.group());
+    }
+
+    @Override
+    public String getDataTypeName() {
+        return TYPE_NAME;
+    }
 }

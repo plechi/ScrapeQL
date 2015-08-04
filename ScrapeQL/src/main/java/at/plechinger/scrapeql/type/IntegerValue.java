@@ -22,20 +22,34 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.type;
 
-import at.plechinger.scrapeql.expression.value.Value;
+import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class ColumnSelectExpression implements Expression {
+public class IntegerValue extends AbstractParseableValue<Long> {
 
-    public ColumnSelectExpression(String columnName){}
+    public static final String TYPE_NAME="INTEGER";
+
+    static{
+        patterns.add(Pattern.compile("^(\\d+)$"));
+    }
+
+    public IntegerValue(String toParse) throws ParseException {
+        super(toParse);
+    }
 
     @Override
-    public Value execute(ExpressionContext expressionContext) {
+    protected Long parseMatch(Matcher matcher) {
+        return Long.parseLong(matcher.group());
+    }
 
-        return null;
+    @Override
+    public String getDataTypeName() {
+        return TYPE_NAME;
     }
 }

@@ -22,48 +22,44 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.query;
+package at.plechinger.scrapeql.function;
 
-import at.plechinger.scrapeql.ScrapeParser;
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.relation.RelationFactory;
-import com.google.common.collect.Lists;
+import at.plechinger.scrapeql.ScrapeQLException;
+import com.google.common.collect.Sets;
 
-import java.util.*;
+import java.sql.SQLException;
+import java.util.Set;
 
 /**
- * Created by lukas on 18.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class Query {
+public class FunctionRepository {
 
-    private List<Expression> expressionList;
-    private List<DataContext> dataContexts= Lists.newLinkedList();
+    private static FunctionRepository functionRepository=null;
 
-    public Query select(Expression... expressions) {
-        expressionList= Arrays.asList(expressions);
-        return this;
+    public static FunctionRepository instance(){
+        if(functionRepository==null){
+            functionRepository=new FunctionRepository();
+        }
+
+        return functionRepository;
     }
 
-    public Query from(DataContext context) {
-        dataContexts.add(context);
-        return this;
+    private Set<Function> functions= Sets.newLinkedHashSet();
+
+    private FunctionRepository(){}
+
+    public void register(Function function){
+        functions.add(function);
     }
 
-    private DataContext findDataContext(String name){
-        for(DataContext context:dataContexts){
-            if(name.equals(context.getName())){
-                return context;
+    public Function getFunction(String name) throws ScrapeQLException{
+        for(Function function:functions){
+            if(function.getName().equals(name)){
+                return function;
             }
         }
-        throw new RuntimeException("Context does not exist: "+name);
+        throw new ScrapeQLException("Function "+name+" does not exist.");
     }
 
-
-    public Relation execute(){
-
-        Map<DataContext,List<Expression>> expressionContexts=new HashMap<>();
-
-        return null;
-    }
 }

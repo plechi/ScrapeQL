@@ -22,35 +22,28 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql;
+package at.plechinger.scrapeql.util;
 
-import at.plechinger.scrapeql.expression.*;
-import at.plechinger.scrapeql.query.DataContext;
-import at.plechinger.scrapeql.query.Query;
-import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.relation.RelationFactory;
-import com.google.common.base.Charsets;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.junit.Test;
+import com.google.common.collect.Lists;
 
-import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by lukas on 12.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class ExecutionTemplate {
+public class Map {
 
-    @Test
-    public void testQuery()throws Exception{
-
-        File f=new File("ScrapeQL/src/test/resources/TestQueries.html");
+    public static <F, T> List<T> map(List<F> fromList, MapFn<F, T> mapper) {
+        List<T> result = Lists.newArrayListWithCapacity(fromList.size());
+        for (F f : fromList) {
+            result.add(mapper.map(f));
+        }
+        return result;
     }
 
-
-    @Test
-    public void testRelation() throws Exception{
-
+    public interface MapFn<F, T> {
+        T map(F from);
     }
+
 }

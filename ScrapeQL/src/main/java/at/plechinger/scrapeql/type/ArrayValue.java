@@ -22,25 +22,38 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.type;
 
-import at.plechinger.scrapeql.expression.value.Value;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class RelationLoadExpression implements Expression{
+public class ArrayValue<T> extends AbstractValue<List<Value<T>>> {
 
-    public RelationLoadExpression(String name, List<Expression> expressions){
+    public static final String TYPE_NAME="ARRAY";
 
+    public ArrayValue(Value<T>... values){
+        this.value= Lists.newArrayList(values);
+    }
+    public ArrayValue(List<Value<T>> value){
+        this.value=value;
     }
 
-
+    @Override
+    public String getDataTypeName() {
+        return TYPE_NAME;
+    }
 
     @Override
-    public Value execute(ExpressionContext expressionContext) {
-        return null;
+    public String getStringValue() {
+        return String.format("  [%s]", Joiner.on(",\n  ").useForNull("NULL").join(value));
+    }
+
+    public Value<T> first(){
+        return value.get(0);
     }
 }

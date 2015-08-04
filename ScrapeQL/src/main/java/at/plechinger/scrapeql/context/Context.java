@@ -22,32 +22,26 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.context;
 
-import at.plechinger.scrapeql.expression.value.Value;
-import com.google.common.base.Optional;
+import at.plechinger.scrapeql.relation.Relation;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
-import java.util.Set;
+import java.util.Map;
 
 /**
- * Created by lukas on 18.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class AliasExpression implements Expression {
+public class Context {
+    private Map<String, Relation> relations = Maps.newLinkedHashMap();
 
-    private final Expression aliasExpression;
-    private final Optional<String> alias;
-
-    public AliasExpression(Expression aliasExpression, String alias) {
-        this.aliasExpression = aliasExpression;
-        this.alias = Optional.of(alias);
+    public void addRelation(String name, Relation relation) {
+        relations.put(name, relation);
     }
 
-    public Optional<String> getAlias(){
-        return alias;
-    }
-
-    @Override
-    public Value execute(ExpressionContext expressionContext) {
-        return aliasExpression.execute(expressionContext);
+    public Relation getRelation(String name) {
+        Preconditions.checkArgument(relations.containsKey(name));
+        return relations.get(name);
     }
 }

@@ -22,13 +22,26 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.value;
+package at.plechinger.scrapeql.function;
+
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.type.Value;
+
+import java.util.List;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class StringValue extends Value<String> {
-    public StringValue(String value) {
-        super(value);
+public abstract class AbstractFunction implements Function {
+
+    private String name;
+
+    public AbstractFunction(String name){
+        this.name=name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

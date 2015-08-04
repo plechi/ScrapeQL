@@ -24,26 +24,24 @@
 
 package at.plechinger.scrapeql.expression;
 
+import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.type.RelationValue;
 import at.plechinger.scrapeql.type.Value;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class ValueExpression implements Expression{
+public class RelationValueExpression implements Expression {
 
-    private Value value;
+    private String name;
 
-    public ValueExpression(Value value){
-        this.value=value;
+    public RelationValueExpression(String name){
+        this.name=name;
     }
 
     @Override
-    public Value evaluate(Context ctx) {
-        return value;
-    }
-
-    public String getType(){
-        return value.getDataTypeName();
+    public Value evaluate(Context ctx) throws ScrapeQLException {
+        return new RelationValue(ctx.getRelation(name));
     }
 }

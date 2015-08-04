@@ -22,28 +22,42 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression;
+package at.plechinger.scrapeql.loader.html;
 
-import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.loader.Entity;
+import at.plechinger.scrapeql.util.Map;
+import org.jsoup.nodes.Element;
+
+import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class ValueExpression implements Expression{
+public class HtmlEntity implements Entity<Element> {
 
-    private Value value;
+    private Element element;
 
-    public ValueExpression(Value value){
-        this.value=value;
+    public HtmlEntity(Element element){
+        this.element=element;
     }
 
     @Override
-    public Value evaluate(Context ctx) {
-        return value;
+    public List<Entity<Element>> select(String selector) {
+        return Map.map(element.select(selector), new Map.MapFn<Element, Entity<Element>>() {
+            @Override
+            public Entity<Element> map(Element from) {
+                return new HtmlEntity(from);
+            }
+        });
     }
 
-    public String getType(){
-        return value.getDataTypeName();
+    @Override
+    public Element getWrappedEntity() {
+        return element;
+    }
+
+    @Override
+    public String getStringValue() {
+        return element.text();
     }
 }

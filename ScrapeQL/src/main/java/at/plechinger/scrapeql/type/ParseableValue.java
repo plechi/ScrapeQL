@@ -22,10 +22,13 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.expression.join;
+package at.plechinger.scrapeql.type;
+
+import java.text.ParseException;
 
 /**
- * Created by lukas on 28.05.15.
+ * Created by lukas on 04.08.15.
  */
-public class RightOuterJoin implements JoinType {
+public interface ParseableValue<T> extends Value<T> {
+    public void setParsedValue(String string) throws ParseException;
 }

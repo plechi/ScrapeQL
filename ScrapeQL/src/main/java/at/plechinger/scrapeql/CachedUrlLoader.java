@@ -26,6 +26,8 @@ package at.plechinger.scrapeql;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -35,13 +37,14 @@ import java.util.concurrent.TimeUnit;
  *
  * @author lukas
  */
-public class HtmlLoader {
+@Slf4j
+public class CachedUrlLoader {
 
-    private static HtmlLoader loader = null;
+    private static CachedUrlLoader loader = null;
 
-    public static HtmlLoader getLoader() {
+    public static CachedUrlLoader getLoader() {
         if (loader == null) {
-            loader = new HtmlLoader();
+            loader = new CachedUrlLoader();
         }
         return loader;
     }
@@ -49,7 +52,7 @@ public class HtmlLoader {
     LoadingCache<URL, String> cache = CacheBuilder.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES).build(cacheLoader);
 
-    private HtmlLoader() {
+    private CachedUrlLoader() {
 
     }
 
@@ -58,6 +61,8 @@ public class HtmlLoader {
     }
 
     public String load(String url, boolean cached) {
+        log.debug("Load URL:"+url+" cached:"+cached);
+
         try {
             URL u=new URL(url);
             if (cached) {
