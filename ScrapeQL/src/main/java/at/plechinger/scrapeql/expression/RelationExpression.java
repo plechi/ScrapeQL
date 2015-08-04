@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * Created by lukas on 04.08.15.
  */
-public class RelationExpression implements Expression {
+public class RelationExpression implements Expression<Relation> {
 
     private List<Selector> selectors = Lists.newLinkedList();
 
@@ -72,7 +72,7 @@ public class RelationExpression implements Expression {
     }
 
     @Override
-    public Value evaluate(Context ctx) throws ScrapeQLException {
+    public Value<Relation> evaluate(Context ctx) throws ScrapeQLException {
         Entity entity = ValueConverter.toEntityValue(entityExpression.evaluate(ctx)).getValue();
 
         List<Entity> entities;

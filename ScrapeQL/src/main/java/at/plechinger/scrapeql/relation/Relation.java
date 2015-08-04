@@ -31,6 +31,8 @@ import com.google.common.collect.Table;
 import dnl.utils.text.table.TextTable;
 
 import javax.swing.table.AbstractTableModel;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,9 +42,15 @@ import java.util.Set;
  */
 public class Relation {
 
+    private Table<Integer, String, Value> table;
 
-    private Table<Integer, String, Value> table = HashBasedTable.create();
+    public Relation(){
+        table = HashBasedTable.create();
+    }
 
+    public Relation(Table<Integer, String, Value> table){
+        this.table=table;
+    }
 
     public Table<Integer, String, Value> makeTable(String col, List<Value> values) {
         Table<Integer, String, Value> table = HashBasedTable.create(values.size(), 1);
@@ -53,48 +61,49 @@ public class Relation {
     }
 
     public void addColumn(String name, List<Value> values) {
-        for(int i=0;i<values.size();i++){
-            table.put(i,name,values.get(i));
+        for (int i = 0; i < values.size(); i++) {
+            table.put(i, name, values.get(i));
         }
     }
 
+    public Relation join(Relation value) {
+        return new Relation(cartesian(table,value.table));
+    }
 
-    public void cartesianJoin(Table<Integer, String, Value> otherTable) {
+    private Table<Integer, String, Value> cartesian(Table<Integer, String, Value> table, Table<Integer, String, Value> otherTable) {
         Table<Integer, String, Value> newTable = HashBasedTable.create(table.rowKeySet().size() * otherTable.rowKeySet().size(),
                 table.columnKeySet().size() + otherTable.columnKeySet().size());
 
-        int row = 0;
-        for (Integer r1 : table.rowKeySet()) {
-            for (Integer r2 : otherTable.rowKeySet()) {
-                Map<String, Value> row1 = table.row(r1);
-                Map<String, Value> row2 = otherTable.row(r2);
+        if (table.size() > 0 && otherTable.size() > 0) {
+            System.out.println("join");
+            int row = 0;
+            for (Integer r1 : table.rowKeySet()) {
+                for (Integer r2 : otherTable.rowKeySet()) {
+                    Map<String, Value> row1 = table.row(r1);
+                    Map<String, Value> row2 = otherTable.row(r2);
 
-                for (String c : row1.keySet()) {
-                    newTable.put(row, c, row1.get(c));
-                }
+                    for (String c : row1.keySet()) {
+                        newTable.put(row, c, row1.get(c));
+                    }
 
-                for (String c : row2.keySet()) {
-                    newTable.put(row, c, row2.get(c));
+                    for (String c : row2.keySet()) {
+                        newTable.put(row, c, row2.get(c));
+                    }
+                    row++;
                 }
-                row++;
             }
+            return newTable;
+        } else if (table.size() == 0) {
+            return otherTable;
         }
-
-        table = newTable;
-    }
-
-    public Table<Integer, String, Value> getTable() {
         return table;
     }
-
 
     public Set<String> getColumns() {
         return table.columnKeySet();
     }
 
-    public String pretty() {
-
-
+    public String toPrettyString() {
         final List<String> cols = Lists.newArrayList(getColumns());
         TextTable tt = new TextTable(new AbstractTableModel() {
             @Override
@@ -117,8 +126,11 @@ public class Relation {
                 return cols.get(column);
             }
         });
-        tt.printTable();
 
-        return "";
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        tt.printTable(new PrintStream(os), 0);
+
+        return os.toString();
     }
+
 }

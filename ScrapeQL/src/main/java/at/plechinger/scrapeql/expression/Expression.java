@@ -31,7 +31,7 @@ import at.plechinger.scrapeql.type.Value;
 /**
  * Created by lukas on 04.08.15.
  */
-public interface Expression {
+public interface Expression<T> {
 
-    Value evaluate(Context ctx) throws ScrapeQLException;
+    Value<T> evaluate(Context ctx) throws ScrapeQLException;
 }

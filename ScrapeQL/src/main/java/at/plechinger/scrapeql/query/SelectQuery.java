@@ -32,11 +32,11 @@ import at.plechinger.scrapeql.expression.RelationExpression;
 import at.plechinger.scrapeql.expression.ValueExpression;
 import at.plechinger.scrapeql.function.FunctionRepository;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
+import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.relation.Selector;
 import at.plechinger.scrapeql.type.StringValue;
 import com.google.common.collect.Lists;
 
-import java.io.File;
 import java.text.ParseException;
 import java.util.List;
 
@@ -47,26 +47,32 @@ public class SelectQuery {
 
     private List<Expression> expressions = Lists.newLinkedList();
 
-    private List<RelationExpression> relations;
+    private List<RelationExpression> relations=Lists.newLinkedList();
 
     public SelectQuery(Expression... expressions) {
         this.expressions = Lists.newArrayList(expressions);
     }
 
     public SelectQuery from(RelationExpression... relations) {
-        this.relations = Lists.newArrayList(relations);
+        this.relations.addAll(Lists.newArrayList(relations));
         return this;
     }
 
     public void execute() throws ScrapeQLException, ParseException {
         Context context = new Context();
 
+        Relation finalRelation = new Relation();
+
         for (RelationExpression relex : relations) {
-            relex.evaluate(context);
+            System.out.println(relex.toString());
+            Relation value = relex.evaluate(context).getValue();
+            System.out.println("RELATION"+value.toPrettyString());
+            finalRelation=finalRelation.join(value);
+
+            System.out.println("fin"+finalRelation.toPrettyString());
         }
 
-        System.out.println(context.getRelation("tracks").pretty());
-
+        System.out.println(finalRelation.toPrettyString());
     }
 
     public static void main(String[] args) throws Exception {
@@ -76,9 +82,9 @@ public class SelectQuery {
         SelectQuery query = new SelectQuery();
 
         query.from(new RelationExpression(
-                        new Selector("td:eq(0)","time"),
-                        new Selector("td:eq(1)","title"),
-                        new Selector("td:eq(2","interpret")
+                        new Selector("td:eq(0)", "time"),
+                        new Selector("td:eq(1)", "title"),
+                        new Selector("td:eq(2", "interpret")
                 ).from(new FunctionExpression(
                         "LOAD_HTML",
                         new ValueExpression(
@@ -86,6 +92,17 @@ public class SelectQuery {
                         )
                 )
                         , new Selector(".tx-abanowonair-pi1 .contenttable tr")).as("tracks")
+        ).from(new RelationExpression(
+                        new Selector("td:eq(0)", "time"),
+                        new Selector("td:eq(1)", "title"),
+                        new Selector("td:eq(2", "interpret")
+                ).from(new FunctionExpression(
+                        "LOAD_HTML",
+                        new ValueExpression(
+                                new StringValue("http://soundportal.at/service/now-on-air/")
+                        )
+                )
+                        , new Selector(".tx-abanowonair-pi1 .contenttable tr")).as("tracks1")
         );
 
 
