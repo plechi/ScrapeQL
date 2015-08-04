@@ -26,15 +26,14 @@ package at.plechinger.scrapeql.query;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.expression.FunctionExpression;
-import at.plechinger.scrapeql.expression.RelationExpression;
-import at.plechinger.scrapeql.expression.ValueExpression;
+import at.plechinger.scrapeql.expression.*;
 import at.plechinger.scrapeql.function.FunctionRepository;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.relation.Selector;
 import at.plechinger.scrapeql.type.StringValue;
+import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.util.Timer;
 import com.google.common.collect.Lists;
 
 import java.text.ParseException;
@@ -47,7 +46,7 @@ public class SelectQuery {
 
     private List<Expression> expressions = Lists.newLinkedList();
 
-    private List<RelationExpression> relations=Lists.newLinkedList();
+    private List<RelationExpression> relations = Lists.newLinkedList();
 
     public SelectQuery(Expression... expressions) {
         this.expressions = Lists.newArrayList(expressions);
@@ -61,25 +60,57 @@ public class SelectQuery {
     public void execute() throws ScrapeQLException, ParseException {
         Context context = new Context();
 
-        Relation finalRelation = new Relation();
+        Relation joinRelation = new Relation();
 
+        Timer timer = new Timer();
         for (RelationExpression relex : relations) {
-            System.out.println(relex.toString());
+            timer.stop();
             Relation value = relex.evaluate(context).getValue();
-            System.out.println("RELATION"+value.toPrettyString());
-            finalRelation=finalRelation.join(value);
-
-            System.out.println("fin"+finalRelation.toPrettyString());
+            System.out.println("Fetched in " + timer.stop());
+            joinRelation = joinRelation.join(value);
+            System.out.println("joined in " + timer.stop());
         }
+
+        timer.stop();
+        List<StarExpression> starExpressions = Lists.newLinkedList();
+
+        for (Expression exp : expressions) {
+            if (exp.getClass().isAssignableFrom(StarExpression.class)) {
+                starExpressions.add(StarExpression.class.cast(exp));
+            }
+        }
+
+
+        //relational "projection"
+        Relation finalRelation = new Relation();
+        for (int row = 0; row < joinRelation.rows(); row++) {
+            context.setColumns(joinRelation.getRow(row));
+            for (Expression exp : expressions) {
+                if (!exp.getClass().isAssignableFrom(StarExpression.class)) {
+                    Value result = exp.evaluate(context);
+                    finalRelation.set(row, result);
+                }
+            }
+
+            for (StarExpression stex : starExpressions) {
+                for (String col : joinRelation.getColumns()) {
+                    if (stex.isVisible(col)) {
+                        finalRelation.set(row, col, joinRelation.getRow(row).get(col));
+                    }
+                }
+            }
+        }
+        context.clearColumns();
 
         System.out.println(finalRelation.toPrettyString());
     }
+
 
     public static void main(String[] args) throws Exception {
         FunctionRepository.instance().register(new HtmlLoaderFunction());
 
 
-        SelectQuery query = new SelectQuery();
+        SelectQuery query = new SelectQuery(new StarExpression("tracks"));
 
         query.from(new RelationExpression(
                         new Selector("td:eq(0)", "time"),

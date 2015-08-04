@@ -22,22 +22,27 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.expression;
 
-import java.text.ParseException;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.type.Value;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public interface Value<T> {
+public class VariableExpression implements Expression {
 
-    String getDataTypeName();
+    private String name;
 
-    public String getStringValue();
+    public VariableExpression(String name) {
+        this.name = name;
+    }
 
-    public T getValue();
-
-    String getVariableName();
-
-    void setVariableName(String name);
+    @Override
+    public Value evaluate(Context ctx) throws ScrapeQLException {
+        Value v=ctx.getColumn(name);
+        v.setVariableName(name);
+        return v;
+    }
 }

@@ -44,12 +44,12 @@ public class Relation {
 
     private Table<Integer, String, Value> table;
 
-    public Relation(){
+    public Relation() {
         table = HashBasedTable.create();
     }
 
-    public Relation(Table<Integer, String, Value> table){
-        this.table=table;
+    private Relation(Table<Integer, String, Value> table) {
+        this.table = table;
     }
 
     public Table<Integer, String, Value> makeTable(String col, List<Value> values) {
@@ -66,8 +66,12 @@ public class Relation {
         }
     }
 
+    public List<Value> getColumn(String name) {
+        return Lists.newArrayList(table.column(name).values());
+    }
+
     public Relation join(Relation value) {
-        return new Relation(cartesian(table,value.table));
+        return new Relation(cartesian(table, value.table));
     }
 
     private Table<Integer, String, Value> cartesian(Table<Integer, String, Value> table, Table<Integer, String, Value> otherTable) {
@@ -75,7 +79,6 @@ public class Relation {
                 table.columnKeySet().size() + otherTable.columnKeySet().size());
 
         if (table.size() > 0 && otherTable.size() > 0) {
-            System.out.println("join");
             int row = 0;
             for (Integer r1 : table.rowKeySet()) {
                 for (Integer r2 : otherTable.rowKeySet()) {
@@ -133,4 +136,24 @@ public class Relation {
         return os.toString();
     }
 
+    public int rows() {
+        return table.rowKeySet().size();
+    }
+
+    private int columns() {
+        return table.columnKeySet().size();
+    }
+
+    public Map<String, Value> getRow(int row) {
+        return table.row(row);
+    }
+
+    public void set(int row, Value result) {
+        String column = (result.getVariableName() != null) ? result.getVariableName() : "column_" + columns();
+        set(row, column, result);
+    }
+
+    public void set(int row, String col, Value value) {
+        table.put(row, col, value);
+    }
 }

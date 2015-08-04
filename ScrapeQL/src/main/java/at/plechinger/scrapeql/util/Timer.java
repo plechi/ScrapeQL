@@ -22,22 +22,20 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
-
-import java.text.ParseException;
+package at.plechinger.scrapeql.util;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public interface Value<T> {
+public class Timer {
 
-    String getDataTypeName();
+    private long time=System.currentTimeMillis();
+    private long stop;
 
-    public String getStringValue();
 
-    public T getValue();
-
-    String getVariableName();
-
-    void setVariableName(String name);
+    public long stop(){
+        stop=time;
+        time=System.currentTimeMillis();
+        return time-stop;
+    }
 }

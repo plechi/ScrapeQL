@@ -31,6 +31,8 @@ public abstract class AbstractValue<T> implements Value<T> {
 
     protected T value;
 
+    protected String variableName;
+
     public AbstractValue(T value){
         this.value=value;
     }
@@ -50,5 +52,15 @@ public abstract class AbstractValue<T> implements Value<T> {
     @Override
     public String toString() {
         return getStringValue();
+    }
+
+    @Override
+    public String getVariableName() {
+        return variableName;
+    }
+
+    @Override
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
     }
 }

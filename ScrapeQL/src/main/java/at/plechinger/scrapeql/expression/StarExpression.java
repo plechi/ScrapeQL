@@ -22,22 +22,31 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.expression;
 
-import java.text.ParseException;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.type.Value;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public interface Value<T> {
+public class StarExpression implements Expression {
 
-    String getDataTypeName();
+    private String prefix;
+    public StarExpression() {
+    }
 
-    public String getStringValue();
+    public StarExpression(String prefix){
+        this.prefix=prefix+".";
+    }
 
-    public T getValue();
+    public boolean isVisible(String columnName){
+        return prefix==null || columnName.startsWith(prefix);
+    }
 
-    String getVariableName();
-
-    void setVariableName(String name);
+    @Override
+    public Value evaluate(Context ctx) throws ScrapeQLException {
+        return null;
+    }
 }
