@@ -27,10 +27,10 @@ package at.plechinger.scrapeql.relation;
 import at.plechinger.scrapeql.type.Value;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
+import dnl.utils.text.table.TextTable;
 
-import java.util.LinkedHashMap;
+import javax.swing.table.AbstractTableModel;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,77 +40,85 @@ import java.util.Set;
  */
 public class Relation {
 
-    private List<ColumnDefinition> columns = Lists.newLinkedList();
+
+    private Table<Integer, String, Value> table = HashBasedTable.create();
+
+
+    public Table<Integer, String, Value> makeTable(String col, List<Value> values) {
+        Table<Integer, String, Value> table = HashBasedTable.create(values.size(), 1);
+        for (int i = 0; i < values.size(); i++) {
+            table.put(i, col, values.get(i));
+        }
+        return table;
+    }
 
     public void addColumn(String name, List<Value> values) {
-        columns.add(new ColumnDefinition(name, values));
-    }
-
-    public int size() {
-        int size = 1;
-        for (ColumnDefinition col : columns) {
-            size *= col.getValues().size();
+        for(int i=0;i<values.size();i++){
+            table.put(i,name,values.get(i));
         }
-        return size;
     }
 
-    private void join(Table<Integer, String, Value> table, Map<String, Value> row, int col) {
 
-        if (col >= columns.size()) {
-            int rowNum = table.rowKeySet().size();
+    public void cartesianJoin(Table<Integer, String, Value> otherTable) {
+        Table<Integer, String, Value> newTable = HashBasedTable.create(table.rowKeySet().size() * otherTable.rowKeySet().size(),
+                table.columnKeySet().size() + otherTable.columnKeySet().size());
 
-            for (Map.Entry<String, Value> entry : row.entrySet()) {
-                table.put(rowNum, entry.getKey(), entry.getValue());
+        int row = 0;
+        for (Integer r1 : table.rowKeySet()) {
+            for (Integer r2 : otherTable.rowKeySet()) {
+                Map<String, Value> row1 = table.row(r1);
+                Map<String, Value> row2 = otherTable.row(r2);
+
+                for (String c : row1.keySet()) {
+                    newTable.put(row, c, row1.get(c));
+                }
+
+                for (String c : row2.keySet()) {
+                    newTable.put(row, c, row2.get(c));
+                }
+                row++;
             }
-            return;
         }
 
-        ColumnDefinition column = columns.get(col);
-
-        for (Value val : column.getValues()) {
-            Map<String, Value> newMap = new LinkedHashMap<>(row);
-            newMap.put(column.getName(), val);
-            join(table, newMap, col + 1);
-        }
+        table = newTable;
     }
 
-    public Table<Integer, String, Value> joinTable() {
-        int rows = size();
-        int cells = columns.size();
-
-        Table<Integer, String, Value> result = HashBasedTable.create(rows, cells);
-
-        join(result, new LinkedHashMap<String, Value>(), 0);
-
-        return result;
+    public Table<Integer, String, Value> getTable() {
+        return table;
     }
 
-    private static class ColumnDefinition {
 
-        private String name;
-
-        private List<Value> values;
-
-        public ColumnDefinition(String name, List<Value> values) {
-            this.name = name;
-            this.values = values;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public List<Value> getValues() {
-            return values;
-        }
-
+    public Set<String> getColumns() {
+        return table.columnKeySet();
     }
 
-    public Set<String> getColumns(){
-        Set ret= Sets.newLinkedHashSet();
-        for(ColumnDefinition col:columns){
-            ret.add(col.getName());
-        }
-        return ret;
+    public String pretty() {
+
+
+        final List<String> cols = Lists.newArrayList(getColumns());
+        TextTable tt = new TextTable(new AbstractTableModel() {
+            @Override
+            public int getRowCount() {
+                return table.rowKeySet().size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return getColumns().size();
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                return table.row(rowIndex).get(cols.get(columnIndex));
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return cols.get(column);
+            }
+        });
+        tt.printTable();
+
+        return "";
     }
 }

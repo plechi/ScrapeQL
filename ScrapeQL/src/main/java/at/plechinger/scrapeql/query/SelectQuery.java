@@ -26,13 +26,17 @@ package at.plechinger.scrapeql.query;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.expression.*;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.expression.FunctionExpression;
+import at.plechinger.scrapeql.expression.RelationExpression;
+import at.plechinger.scrapeql.expression.ValueExpression;
 import at.plechinger.scrapeql.function.FunctionRepository;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
+import at.plechinger.scrapeql.relation.Selector;
 import at.plechinger.scrapeql.type.StringValue;
-import at.plechinger.scrapeql.type.Value;
 import com.google.common.collect.Lists;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.List;
 
@@ -40,57 +44,52 @@ import java.util.List;
  * Created by lukas on 04.08.15.
  */
 public class SelectQuery {
-/*
+
     private List<Expression> expressions = Lists.newLinkedList();
 
-    private LoaderExpression loader;
+    private List<RelationExpression> relations;
 
     public SelectQuery(Expression... expressions) {
         this.expressions = Lists.newArrayList(expressions);
     }
 
-    public SelectQuery from(LoaderExpression loader) {
-        this.loader = loader;
+    public SelectQuery from(RelationExpression... relations) {
+        this.relations = Lists.newArrayList(relations);
         return this;
     }
 
     public void execute() throws ScrapeQLException, ParseException {
-        Context ctx = new Context();
-        loader.evaluate(ctx);
+        Context context = new Context();
 
-        for (Expression expression : expressions) {
-            Value result = expression.evaluate(ctx);
-            System.out.println(result.getDataTypeName());
-            System.out.println(result.getStringValue());
+        for (RelationExpression relex : relations) {
+            relex.evaluate(context);
         }
+
+        System.out.println(context.getRelation("tracks").pretty());
 
     }
 
-    public static void main(String[] args) throws ParseException, ScrapeQLException {
+    public static void main(String[] args) throws Exception {
         FunctionRepository.instance().register(new HtmlLoaderFunction());
 
 
-        SelectQuery query = new SelectQuery(new SelectorExpression(new ValueExpression(new StringValue("a")),
-                new EntityExpression("test")),
-                new SelectorExpression(new ValueExpression(new StringValue("a")),
-                        new EntityExpression("test")));
+        SelectQuery query = new SelectQuery();
 
-
-        query.from(new LoaderExpression("test",
-                        new SelectorExpression(new ValueExpression(
-                                new StringValue(".toc ul.sectlevel0>li")
-                        ), new FunctionExpression(
-                                "LOAD_HTML",
-                                new ValueExpression(
-                                        new StringValue("http://docs.spring.io/spring-data/jpa/docs/1.8.x/reference/html/")
-                                )
-                        )
+        query.from(new RelationExpression(
+                        new Selector("td:eq(0)","time"),
+                        new Selector("td:eq(1)","title"),
+                        new Selector("td:eq(2","interpret")
+                ).from(new FunctionExpression(
+                        "LOAD_HTML",
+                        new ValueExpression(
+                                new StringValue("http://soundportal.at/service/now-on-air/")
                         )
                 )
+                        , new Selector(".tx-abanowonair-pi1 .contenttable tr")).as("tracks")
         );
 
 
         query.execute();
 
-    }*/
+    }
 }

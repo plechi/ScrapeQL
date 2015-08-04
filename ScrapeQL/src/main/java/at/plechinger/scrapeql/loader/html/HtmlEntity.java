@@ -58,6 +58,6 @@ public class HtmlEntity implements Entity<Element> {
 
     @Override
     public String getStringValue() {
-        return element.text();
+        return element.ownText();
     }
 }

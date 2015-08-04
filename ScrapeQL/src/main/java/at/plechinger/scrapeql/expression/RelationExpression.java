@@ -89,12 +89,20 @@ public class RelationExpression implements Expression {
             }
         };
 
+        String prefix = "";
+
+        if (name.isPresent()) {
+            prefix = name.get() + '.';
+        }
+
         Relation relation = new Relation();
-        for (Entity row : entities) {
-            for (Selector column : selectors) {
-                List<Entity> columnValues = row.select(column.getSelector());
-                relation.addColumn(column.getAlias(), Map.map(columnValues, entityValueMapFn));
+
+        for (Selector column : selectors) {
+            List<Entity> columnValues = Lists.newLinkedList();
+            for (Entity row : entities) {
+                columnValues.addAll(row.select(column.getSelector()));
             }
+            relation.addColumn(prefix + column.getAlias(), Map.map(columnValues, entityValueMapFn));
         }
         if (name.isPresent()) {
             ctx.addRelation(name.get(), relation);
