@@ -197,12 +197,15 @@ public class SelectQuery {
 
         QueryParser parser=new QueryParser();
 
-        SelectQuery qu=parser.parse("SELECT tracks.time, tracks.title, tracks.interpret " +
+        SelectQuery qu=parser.parse("SELECT tracks.time, tracks1.title, tracks.interpret " +
                 "FROM (" +
                    "RELATION $('td:eq(0)') AS time, " +
-                   "$('td:eq(1)') AS title, " +
                    "$('td:eq(2)') AS interpret " +
-                   "FROM load_html('http://soundportal.at/service/now-on-air/') $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks").get();
+                   "FROM load_html('http://soundportal.at/service/now-on-air/') $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks, " +
+                "(RELATION $('td:eq(0)') AS time, " +
+                "$('td:eq(1)') AS title " +
+                        "FROM load_html('http://soundportal.at/service/now-on-air/') $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks1 " +
+                "WHERE tracks.time IS tracks1.time").get();
 
         qu.execute();
 

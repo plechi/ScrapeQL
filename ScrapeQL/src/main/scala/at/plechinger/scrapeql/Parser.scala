@@ -39,15 +39,15 @@ import scala.util.parsing.combinator.JavaTokenParsers
 class ScrapeParser extends JavaTokenParsers {
 
   def query: Parser[SelectQuery] = KW_SELECT ~> repsep(expressionAndColumnSelect, ",") ~ KW_FROM ~ repsep(relation, ",") ~ opt(where) ^^ {
-    case c ~ _ ~ r ~ w => new SelectQuery(new ListBuffer ++ c).from(new ListBuffer ++ r)
+    case c ~ _ ~ r ~ w => new SelectQuery(new ListBuffer ++ c).from(new ListBuffer ++ r).where(w.getOrElse(null))
   }
 
   //Expressions
-  def expression: Parser[Expression] = function | valueExpression;
+  def expression: Parser[Expression] = function | valueExpression |columnSelect;
 
   def valueExpression: Parser[ValueExpression] = value ^^ (v => new ValueExpression(v));
 
-  def expressionAndColumnSelect: Parser[Expression] = expression | columnSelect | starSelect | starAll;
+  def expressionAndColumnSelect: Parser[Expression] = expression | starSelect | starAll;
 
   def columnSelect: Parser[VariableExpression] = identifier ^^ (s => new VariableExpression(s));
 
@@ -69,7 +69,7 @@ class ScrapeParser extends JavaTokenParsers {
 
   def where: Parser[Filter] = KW_WHERE ~> filter ^^ (f => f)
 
-  def filter: Parser[Filter] = and | or | equals | not;
+  def filter: Parser[Filter] = equals | and | or | not
 
   def and: Parser[AndFilter] = filter ~ KW_AND ~ filter ^^ { case f ~ _ ~ g => new AndFilter(f, g) }
 

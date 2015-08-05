@@ -49,7 +49,6 @@ public class EqualsFilter implements Filter {
         Value v2=two.evaluate(ctx);
 
         boolean result= v1.getValue().equals(v2.getValue());
-
         return result;
     }
 }
