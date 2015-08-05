@@ -27,28 +27,27 @@ package at.plechinger.scrapeql.filter;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.value.Value;
+import com.google.common.base.Optional;
+import scala.Option;
 
 /**
  * Created by lukas on 05.08.15.
  */
-public class EqualsFilter implements Filter {
+public class PredicateFilter implements Filter{
 
-    private Expression one;
-    private Expression two;
+    private Expression exp;
+    private Optional<Predicate> predicate;
 
-    public EqualsFilter(Expression one, Expression two) {
-        this.one = one;
-        this.two = two;
+    public PredicateFilter(Expression exp, Optional<Predicate> predicate) {
+        this.exp = exp;
+        this.predicate = predicate;
     }
 
     @Override
-    public boolean filter(Context ctx) throws ScrapeQLException{
-
-        Value v1=one.evaluate(ctx);
-        Value v2=two.evaluate(ctx);
-
-        boolean result= v1.getValue().equals(v2.getValue());
-        return result;
+    public boolean filter(Context ctx) throws ScrapeQLException {
+        if(predicate.isPresent()){
+            return predicate.get().check(ctx, exp);
+        }
+       return exp.evaluate(ctx).getValue().equals(Boolean.TRUE);
     }
 }

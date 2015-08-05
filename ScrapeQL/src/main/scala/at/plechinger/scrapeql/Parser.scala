@@ -28,12 +28,12 @@ import at.plechinger.scrapeql.expression._
 import at.plechinger.scrapeql.filter._
 import at.plechinger.scrapeql.query.SelectQuery
 import at.plechinger.scrapeql.relation.Selector
+import at.plechinger.scrapeql.util.Option2Optional
 import at.plechinger.scrapeql.value.{FloatValue, IntegerValue, StringValue, Value}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
 import scala.util.parsing.combinator.JavaTokenParsers
-
 
 
 class ScrapeParser extends JavaTokenParsers {
@@ -43,7 +43,7 @@ class ScrapeParser extends JavaTokenParsers {
   }
 
   //Expressions
-  def expression: Parser[Expression] = function | valueExpression |columnSelect;
+  def expression: Parser[Expression] = function | valueExpression | columnSelect;
 
   def valueExpression: Parser[ValueExpression] = value ^^ (v => new ValueExpression(v));
 
@@ -51,7 +51,7 @@ class ScrapeParser extends JavaTokenParsers {
 
   def columnSelect: Parser[VariableExpression] = identifier ^^ (s => new VariableExpression(s));
 
-  def starSelect: Parser[StarExpression] = "(.+)\\.\\*".r ^^ (s => new StarExpression(s.replaceAll("(.+)\\.\\*","$1")))
+  def starSelect: Parser[StarExpression] = star ^^ (s => new StarExpression(s.replaceAll("(.+)\\.\\*", "$1")))
 
   def starAll: Parser[StarExpression] = "*" ^^ (s => new StarExpression())
 
@@ -67,17 +67,21 @@ class ScrapeParser extends JavaTokenParsers {
 
   //where clause
 
-  def where: Parser[Filter] = KW_WHERE ~> filter ^^ (f => f)
+  def where: Parser[WhereClause] = KW_WHERE ~> chain  ^^ (f => f)
 
-  def filter: Parser[Filter] = equals | and | or | not
+  def filter:Parser[Filter]=predicateFilter
 
-  def and: Parser[AndFilter] = filter ~ KW_AND ~ filter ^^ { case f ~ _ ~ g => new AndFilter(f, g) }
+  def notFilter:Parser[NotFilter]=KW_NOT~> filter ^^(f=>new NotFilter(f));
 
-  def or: Parser[OrFilter] = filter ~ KW_OR ~ filter ^^ { case f ~ _ ~ g => new OrFilter(f, g) }
+  def predicateFilter:Parser[PredicateFilter]= expression ~opt(predicate) ^^{case e~p=>new PredicateFilter(e, Option2Optional.convert(p))}
 
-  def not: Parser[NotFilter] = KW_NOT ~> filter ^^ (n => new NotFilter(n))
+  def predicate:Parser[Predicate]=(equalsPredicate);
+  def equalsPredicate:Parser[EqualsPredicate]=(KW_IS|"="|"<>")~>expression ^^(e=>new EqualsPredicate(e));
 
-  def equals: Parser[EqualsFilter] = expression ~ (KW_IS | "=" | "<>") ~ expression ^^ { case e ~ _ ~ f => new EqualsFilter(e, f) }
+  def chain:Parser[WhereClause]=filter ~ opt(andChain|orChain) ^^{case f~c=>new WhereClause(f, Option2Optional.convert(c))};
+  def andChain:Parser[AndChain]="AND"~>filter^^(a=>new AndChain(a));;
+  def orChain:Parser[OrChain]="OR"~>filter^^(o=>new OrChain(o));
+
 
   //Relation
   def relation: Parser[RelationExpression] = "(" ~ KW_RELATION ~> relationSelectorList ~ KW_FROM ~ function ~
@@ -88,25 +92,29 @@ class ScrapeParser extends JavaTokenParsers {
 
   def relationSelectorList: Parser[List[Selector]] = repsep(relationSelector, ',');
 
-  def relationSelector: Parser[Selector] = "$('" ~ string ~ "')" ~ opt(KW_AS ~> identifier) ^^ {
+  def relationSelector: Parser[Selector] = "$(" ~ string ~ ")" ~ opt(KW_AS ~> identifier) ^^ {
     case _ ~ c ~ _ ~ e => new Selector(c, e)
   }
 
   //Values
   def value: Parser[Value[_]] = stringValue | decimalValue | intValue;
 
-  def stringValue: Parser[StringValue]=basicString | bigStringValue;
-  //def basicString:Parser[StringValue]=stringLiteral ^^(s=>new StringValue(s));
+  def stringValue: Parser[StringValue] = basicString | bigStringValue;
 
-  def basicString: Parser[StringValue] = "'" ~> string <~ "'" ^^ (s=>new StringValue(s));
-  def bigStringValue: Parser[StringValue]="TXT>>>"~>"""(?s).*?(?=<<<TXT)""".r<~"<<<TXT" ^^(s=>new StringValue(s));
+  def basicString: Parser[StringValue] = string ^^ (s => new StringValue(s));
+
+  def bigStringValue: Parser[StringValue] = bigtext <~ "<<<TXT" ^^ (s => new StringValue(s));
 
   def decimalValue: Parser[FloatValue] = floatingPointNumber ^^ (s => new FloatValue(s.toDouble));
+
   def intValue: Parser[IntegerValue] = wholeNumber ^^ (s => new IntegerValue(s.toLong));
 
   //terminal
-  private val identifier: Parser[String] = "[a-zA-z_\\.][a-zA-Z0-9_\\.]*".r;
-  private val string: Parser[String] = "(?s)(.*?(?:\\\\'|[^'])*)+".r;
+  private val identifier: Parser[String] = "[a-zA-z_][a-zA-Z0-9_\\.]*".r;
+  private val string: Parser[String] = """'((?s)(.*?(?:\\'|[^'])*)+)'""".r ^^ (s => s.substring(1, s.length - 1).replaceAll("\\\\(')","$1"));
+  private val bigtext="""TXT>>>((?s).*?)(?=<<<TXT)""".r
+  private val star="(.+)\\.\\*".r;
+
 
   private val KW_AS = "AS";
   private val KW_RELATION = "RELATION"
@@ -119,7 +127,15 @@ class ScrapeParser extends JavaTokenParsers {
   private val KW_IS = "IS"
 
 
-  def parse(s: String): ParseResult[SelectQuery] = {
-    parseAll(query, s)
+  def parse(text: String): SelectQuery = {
+    parseAll(query, text) match {
+      case Success(x, _) => return x
+      case NoSuccess(err, next) => {
+        throw new ScrapeQLException("failed to parse input " +
+          "(line " + next.pos.line + ", column " + next.pos.column + "):\n" +
+          err + "\n" +
+          next.pos.longString)
+      }
+    }
   }
 }

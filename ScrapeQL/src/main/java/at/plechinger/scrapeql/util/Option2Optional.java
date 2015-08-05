@@ -22,26 +22,19 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.filter;
+package at.plechinger.scrapeql.util;
 
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.context.Context;
+import com.google.common.base.Optional;
+import scala.Option;
 
 /**
- * Created by lukas on 05.08.15.
+ * Created by lukas on 06.08.15.
  */
-public class AndFilter implements Filter {
-
-    private Filter filter1;
-    private Filter filter2;
-
-    public AndFilter(Filter filter1, Filter filter2) {
-        this.filter1 = filter1;
-        this.filter2 = filter2;
-    }
-
-    @Override
-    public boolean filter(Context ctx) throws ScrapeQLException {
-        return filter1.filter(ctx) && filter2.filter(ctx);
+public class Option2Optional {
+    public static <T> Optional<T> convert(Option<T> option){
+        if(option.isEmpty()){
+            return Optional.absent();
+        }
+        return Optional.of(option.get());
     }
 }

@@ -63,4 +63,9 @@ public class StringFunctions {
             return 0;
         }
     }
+
+    @FunctionDefinition(value = "contains",strict = false)
+    public Boolean contains(String input, String contains){
+        return input.contains(contains);
+    }
 }

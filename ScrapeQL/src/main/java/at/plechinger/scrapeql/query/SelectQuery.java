@@ -31,6 +31,7 @@ import at.plechinger.scrapeql.expression.Expression;
 import at.plechinger.scrapeql.expression.RelationExpression;
 import at.plechinger.scrapeql.expression.StarExpression;
 import at.plechinger.scrapeql.filter.Filter;
+import at.plechinger.scrapeql.filter.WhereClause;
 import at.plechinger.scrapeql.function.FunctionRepository;
 import at.plechinger.scrapeql.function.impl.*;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
@@ -54,7 +55,7 @@ public class SelectQuery {
 
     private List<RelationExpression> relations = Lists.newLinkedList();
 
-    private Optional<Filter> where = Optional.absent();
+    private Optional<WhereClause> where = Optional.absent();
 
     public SelectQuery(Expression... expressions) {
         this.expressions = Lists.newArrayList(expressions);
@@ -74,8 +75,8 @@ public class SelectQuery {
         return this;
     }
 
-    public SelectQuery where(Filter filter) {
-        this.where = Optional.fromNullable(filter);
+    public SelectQuery where(WhereClause where) {
+        this.where = Optional.fromNullable(where);
         return this;
     }
 
@@ -131,10 +132,9 @@ public class SelectQuery {
             int column = 0;
             context.setColumns(joinRelation.getRow(row));
 
-            if (where.isPresent() && !where.get().filter(context)) {
+            if (where.isPresent() && !where.get().evaluate(context)) {
                 continue;
             }
-
 
             for (Expression exp : expressions) {
                 if (!exp.getClass().isAssignableFrom(StarExpression.class)) {
@@ -214,7 +214,7 @@ public class SelectQuery {
 
         ScrapeParser parser = new ScrapeParser();
 
-        String sql = "SELECT concat(lower(tracks.interpret),' test ', tracks1.title), tracks.time " +
+        String sql = "SELECT tracks.interpret, tracks1.title, tracks.time, tracks1.time " +
                 "FROM (" +
                 "RELATION $('td:eq(0)') AS time, " +
                 "$('td:eq(2)') AS interpret " +
@@ -222,9 +222,9 @@ public class SelectQuery {
                 "(RELATION $('td:eq(0)') AS time, " +
                 "$('td:eq(1)') AS title " +
                 "FROM load_html(url('http://soundportal.at/service/now-on-air/')) $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks1 " +
-                "WHERE tracks.time = tracks1.time";
+                "WHERE tracks.time = tracks1.time AND lower(tracks.interpret)='amy' OR lower(tracks.interpret)='ray'";
 
-        /*String sql= "SELECT *" +
+        /*String sql= "SELECT concat(test.li,' huhu\\' ',test.li)" +
                 " FROM (RELATION $('li') FROM load_html(TXT>>>\n" +
                 "<ul>\n" +
                 "   <li>test1</li>\n" +
@@ -233,7 +233,7 @@ public class SelectQuery {
                 "<<<TXT)) AS test";*/
 
 
-        SelectQuery qu = parser.parse(sql).get();
+        SelectQuery qu = parser.parse(sql);
 
         qu.execute();
 

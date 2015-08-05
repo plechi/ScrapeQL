@@ -26,22 +26,24 @@ package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.value.Value;
 
 /**
  * Created by lukas on 05.08.15.
  */
-public class OrFilter implements Filter {
+public class EqualsPredicate implements Predicate {
 
-    private Filter filter1;
-    private Filter filter2;
+    private Expression expression;
 
-    public OrFilter(Filter filter1, Filter filter2) {
-        this.filter1 = filter1;
-        this.filter2 = filter2;
+    public EqualsPredicate(Expression expression) {
+        this.expression = expression;
     }
 
     @Override
-    public boolean filter(Context ctx) throws ScrapeQLException {
-        return filter1.filter(ctx) || filter2.filter(ctx);
+    public boolean check(Context ctx, Expression exp) throws ScrapeQLException{
+        Value value1=expression.evaluate(ctx);
+        Value value2=exp.evaluate(ctx);
+        return value1.getValue().equals(value2.getValue());
     }
 }

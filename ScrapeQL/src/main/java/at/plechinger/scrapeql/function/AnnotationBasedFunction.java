@@ -147,8 +147,8 @@ public class AnnotationBasedFunction implements Function {
                     return new FloatValue(((Number) r).doubleValue());
                 case "Relation":
                     return new RelationValue((Relation)r);
-                case "Boolelan":
-                    return new IntegerValue((Boolean.TRUE.equals(r))?1:0);
+                case "Boolean":
+                    return new BooleanValue((Boolean)r);
                 case "Entity":
                     return new EntityValue((Entity) r);
                 case "Date":
