@@ -23,6 +23,7 @@
  */
 package at.plechinger.scrapeql;
 
+import at.plechinger.scrapeql.util.Timer;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -61,7 +62,7 @@ public class CachedUrlLoader {
     }
 
     public String load(String url, boolean cached) {
-        log.debug("Load URL:"+url+" cached:"+cached);
+
 
         try {
             URL u=new URL(url);
@@ -87,7 +88,6 @@ public class CachedUrlLoader {
                     builder.append('\n');
                 }
             }
-
             return builder.toString();
         }
     };

@@ -22,35 +22,21 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.loader.html;
-
-import at.plechinger.scrapeql.CachedUrlLoader;
-import at.plechinger.scrapeql.loader.Entity;
-import at.plechinger.scrapeql.loader.EntityLoaderFunction;
-import at.plechinger.scrapeql.value.EntityValue;
-import at.plechinger.scrapeql.value.StringValue;
-import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.ValueConverter;
-import com.google.common.base.Preconditions;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-
-import java.util.List;
+package at.plechinger.scrapeql.function;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class HtmlLoaderFunction extends EntityLoaderFunction {
+public abstract class AbstractBasicFunciton implements Function {
 
-    public static final String NAME = "LOAD_HTML";
+    private String name;
 
-    public HtmlLoaderFunction() {
-        super(NAME);
+    public AbstractBasicFunciton(String name){
+        this.name=name;
     }
 
     @Override
-    protected Entity loadEntity(String source) {
-        Element document = Jsoup.parse(source);
-        return new HtmlEntity(document);
+    public String getName() {
+        return name;
     }
 }

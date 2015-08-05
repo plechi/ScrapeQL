@@ -47,11 +47,11 @@ class ScrapeParser extends JavaTokenParsers {
 
   def valueExpression: Parser[ValueExpression] = value ^^ (v => new ValueExpression(v));
 
-  def expressionAndColumnSelect: Parser[Expression] = expression | starSelect | starAll;
+  def expressionAndColumnSelect: Parser[Expression] = starSelect | starAll | expression;
 
   def columnSelect: Parser[VariableExpression] = identifier ^^ (s => new VariableExpression(s));
 
-  def starSelect: Parser[StarExpression] = "*\\.[.]" ^^ (s => new StarExpression(s))
+  def starSelect: Parser[StarExpression] = "(.+)\\.\\*".r ^^ (s => new StarExpression(s.replaceAll("(.+)\\.\\*","$1")))
 
   def starAll: Parser[StarExpression] = "*" ^^ (s => new StarExpression())
 
@@ -95,11 +95,14 @@ class ScrapeParser extends JavaTokenParsers {
   //Values
   def value: Parser[Value[_]] = stringValue | decimalValue | intValue;
 
-  def stringValue: Parser[StringValue] = "'" ~> string <~ "'" ^^ (new StringValue(_));
+  def stringValue: Parser[StringValue]=basicString | bigStringValue;
+  //def basicString:Parser[StringValue]=stringLiteral ^^(s=>new StringValue(s));
 
-  def decimalValue: Parser[FloatValue] = "[-]?[0-9]+\\.[0-9]+".r ^^ (s => new FloatValue(s.toDouble));
+  def basicString: Parser[StringValue] = "'" ~> string <~ "'" ^^ (s=>new StringValue(s));
+  def bigStringValue: Parser[StringValue]="TXT>>>"~>"""(?s).*?(?=<<<TXT)""".r<~"<<<TXT" ^^(s=>new StringValue(s));
 
-  def intValue: Parser[IntegerValue] = "[1-9][0-9]*|0|-[1-9][0-9]*".r ^^ (s => new IntegerValue(s.toLong));
+  def decimalValue: Parser[FloatValue] = floatingPointNumber ^^ (s => new FloatValue(s.toDouble));
+  def intValue: Parser[IntegerValue] = wholeNumber ^^ (s => new IntegerValue(s.toLong));
 
   //terminal
   private val identifier: Parser[String] = "[a-zA-z_\\.][a-zA-Z0-9_\\.]*".r;
@@ -114,9 +117,8 @@ class ScrapeParser extends JavaTokenParsers {
   private val KW_OR = "OR"
   private val KW_NOT = "NOT"
   private val KW_IS = "IS"
-}
 
-class QueryParser extends ScrapeParser {
+
   def parse(s: String): ParseResult[SelectQuery] = {
     parseAll(query, s)
   }

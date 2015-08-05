@@ -84,7 +84,7 @@ public abstract class AbstractFunction implements Function{
         return p(type,true);
     }
 
-    protected abstract Value executeChecked(List<Value> parameters);
+    protected abstract Value executeChecked(List<Value> parameters) throws ScrapeQLException;
 
     @Override
     public String getName() {

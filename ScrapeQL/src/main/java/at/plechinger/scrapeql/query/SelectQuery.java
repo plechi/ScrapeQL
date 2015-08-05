@@ -24,29 +24,26 @@
 
 package at.plechinger.scrapeql.query;
 
-import at.plechinger.scrapeql.QueryParser;
 import at.plechinger.scrapeql.ScrapeParser;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.expression.*;
-import at.plechinger.scrapeql.filter.EqualsFilter;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.expression.RelationExpression;
+import at.plechinger.scrapeql.expression.StarExpression;
 import at.plechinger.scrapeql.filter.Filter;
 import at.plechinger.scrapeql.function.FunctionRepository;
-import at.plechinger.scrapeql.function.impl.Attr;
-import at.plechinger.scrapeql.function.impl.Concat;
-import at.plechinger.scrapeql.function.impl.DateFormat;
-import at.plechinger.scrapeql.function.impl.Lower;
+import at.plechinger.scrapeql.function.impl.*;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
 import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.relation.Selector;
-import at.plechinger.scrapeql.value.StringValue;
-import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.util.Map;
 import at.plechinger.scrapeql.util.Timer;
+import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created by lukas on 04.08.15.
@@ -57,7 +54,7 @@ public class SelectQuery {
 
     private List<RelationExpression> relations = Lists.newLinkedList();
 
-    private Optional<Filter> where=Optional.absent();
+    private Optional<Filter> where = Optional.absent();
 
     public SelectQuery(Expression... expressions) {
         this.expressions = Lists.newArrayList(expressions);
@@ -73,30 +70,49 @@ public class SelectQuery {
     }
 
     public SelectQuery from(List<RelationExpression> relations) {
-        this.relations=relations;
+        this.relations = relations;
         return this;
     }
 
-    public SelectQuery where(Filter filter){
-        this.where=Optional.fromNullable(filter);
+    public SelectQuery where(Filter filter) {
+        this.where = Optional.fromNullable(filter);
         return this;
     }
 
     public void execute() throws ScrapeQLException, ParseException {
-        Context context = new Context();
+        final Context context = new Context();
 
-        Relation joinRelation = new Relation();
+
+        List<Callable<Relation>> callables = Map.map(relations, new Map.MapFn<RelationExpression, Callable<Relation>>() {
+            @Override
+            public Callable<Relation> map(final RelationExpression from) {
+                return new Callable<Relation>() {
+                    @Override
+                    public Relation call() throws Exception {
+                        return from.evaluate(context).getValue();
+                    }
+                };
+            }
+        });
 
         Timer timer = new Timer();
-        for (RelationExpression relex : relations) {
-            timer.stop();
-            Relation value = relex.evaluate(context).getValue();
-            System.out.println("Fetched in " + timer.stop());
-            joinRelation = joinRelation.join(value);
-            System.out.println("joined in " + timer.stop());
+        Relation joinRelation = new Relation();
+        try {
+
+            ExecutorService executor = Executors.newFixedThreadPool(4);
+            List<Future<Relation>> results = executor.invokeAll(callables);
+            executor.shutdown();
+
+            for (Future<Relation> result : results) {
+                joinRelation=joinRelation.join(result.get());
+            }
+
+            System.out.println("fetch and join in" + timer.stop());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new ScrapeQLException("Error while loading relation " + e);
         }
 
-        timer.stop();
+
         List<StarExpression> starExpressions = Lists.newLinkedList();
 
         for (Expression exp : expressions) {
@@ -110,12 +126,12 @@ public class SelectQuery {
         Relation finalRelation = new Relation();
 
         timer.stop();
-        int finalRow=0;
+        int finalRow = 0;
         for (int row = 0; row < joinRelation.rows(); row++) {
             int column = 0;
             context.setColumns(joinRelation.getRow(row));
 
-            if(where.isPresent() && !where.get().filter(context)){
+            if (where.isPresent() && !where.get().filter(context)) {
                 continue;
             }
 
@@ -153,9 +169,10 @@ public class SelectQuery {
         FunctionRepository.instance().register(new DateFormat());
         FunctionRepository.instance().register(new Attr());
         FunctionRepository.instance().register(new Lower());
+        FunctionRepository.instance().register(new UrlFn());
 
 
-        SelectQuery query = new SelectQuery(
+        /*SelectQuery query = new SelectQuery(
                 new AliasExpression(
                 new FunctionExpression("date_format", new VariableExpression("tracks1.time"),
                         new ValueExpression(new StringValue("dd.MM.yyyy HH:mm:ss"))
@@ -193,19 +210,30 @@ public class SelectQuery {
         query.where(new EqualsFilter(new VariableExpression("tracks1.time"), new VariableExpression("tracks.time")
         ));
 
-        query.execute();
+        query.execute();*/
 
-        QueryParser parser=new QueryParser();
+        ScrapeParser parser = new ScrapeParser();
 
-        SelectQuery qu=parser.parse("SELECT tracks.time, tracks1.title, tracks.interpret " +
+        String sql = "SELECT tracks.* " +
                 "FROM (" +
-                   "RELATION $('td:eq(0)') AS time, " +
-                   "$('td:eq(2)') AS interpret " +
-                   "FROM load_html('http://soundportal.at/service/now-on-air/') $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks, " +
+                "RELATION $('td:eq(0)') AS time, " +
+                "$('td:eq(2)') AS interpret " +
+                "FROM load_html(url('http://soundportal.at/service/now-on-air/')) $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks, " +
                 "(RELATION $('td:eq(0)') AS time, " +
                 "$('td:eq(1)') AS title " +
-                        "FROM load_html('http://soundportal.at/service/now-on-air/') $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks1 " +
-                "WHERE tracks.time IS tracks1.time").get();
+                "FROM load_html(url('http://soundportal.at/service/now-on-air/')) $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks1 " +
+                "WHERE tracks.time = tracks1.time";
+
+        /*String sql= "SELECT *" +
+                " FROM (RELATION $('li') FROM load_html(TXT>>>\n" +
+                "<ul>\n" +
+                "   <li>test1</li>\n" +
+                "   <li>test2</li>\n" +
+                "</ul>" +
+                "<<<TXT)) AS test";*/
+
+
+        SelectQuery qu = parser.parse(sql).get();
 
         qu.execute();
 

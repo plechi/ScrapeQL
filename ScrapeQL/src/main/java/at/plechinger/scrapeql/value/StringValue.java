@@ -32,13 +32,13 @@ import java.util.regex.Pattern;
  */
 public class StringValue extends AbstractParseableValue<String> {
 
-    public static final String TYPE_NAME="STRING";
+    public static final String TYPE_NAME = "STRING";
 
-    static{
-        patterns.add(Pattern.compile("^(.*)$"));
+    static {
+        patterns.add(Pattern.compile(".*",Pattern.DOTALL));
     }
 
-    public StringValue(String toParse){
+    public StringValue(String toParse) {
         super(toParse);
     }
 

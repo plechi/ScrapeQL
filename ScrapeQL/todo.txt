@@ -1,0 +1,9 @@
+ - meaningful and different exceptions
+ - load functions by reflection & package name
+ - group functions
+ - annotation based functions
+   Write function in plain java, add annotation and system automatically converts values according to the parameters
+ - Check types before query execution
+ - improve load cache to reduce multiple loads of the same url when in different load threads.
+ - INNER and OUTER join
+ - order by column

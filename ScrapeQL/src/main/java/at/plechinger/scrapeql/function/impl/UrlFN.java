@@ -22,21 +22,38 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.function;
+package at.plechinger.scrapeql.function.impl;
+
+import at.plechinger.scrapeql.CachedUrlLoader;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.value.StringValue;
+import at.plechinger.scrapeql.value.Value;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public abstract class AbstractFunction implements Function {
-
-    private String name;
-
-    public AbstractFunction(String name){
-        this.name=name;
+public class UrlFn extends AbstractFunction {
+    public UrlFn() {
+        super("URL", p(StringValue.class));
     }
 
     @Override
-    public String getName() {
-        return name;
+    protected Value executeChecked(List<Value> parameters) throws ScrapeQLException{
+        StringValue val=param(0,parameters);
+
+        try{
+            URL url=new URL(val.getValue());
+            String document= CachedUrlLoader.getLoader().load(url.toString());
+            StringValue value=new StringValue(document);
+            value.setVariableName(String.format("url($s)",url.getHost()));
+            return value;
+
+        }catch (MalformedURLException malex){
+            throw new ScrapeQLException("Url is not well formatted.");
+        }
     }
 }

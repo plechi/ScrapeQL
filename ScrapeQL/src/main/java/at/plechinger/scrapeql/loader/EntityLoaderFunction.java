@@ -22,35 +22,30 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.loader.html;
+package at.plechinger.scrapeql.loader;
 
-import at.plechinger.scrapeql.CachedUrlLoader;
-import at.plechinger.scrapeql.loader.Entity;
-import at.plechinger.scrapeql.loader.EntityLoaderFunction;
+import at.plechinger.scrapeql.function.AbstractBasicFunciton;
+import at.plechinger.scrapeql.function.impl.AbstractFunction;
 import at.plechinger.scrapeql.value.EntityValue;
 import at.plechinger.scrapeql.value.StringValue;
 import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.ValueConverter;
-import com.google.common.base.Preconditions;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
 
 import java.util.List;
 
 /**
- * Created by lukas on 04.08.15.
+ * Created by lukas on 05.08.15.
  */
-public class HtmlLoaderFunction extends EntityLoaderFunction {
+public abstract class EntityLoaderFunction extends AbstractFunction {
 
-    public static final String NAME = "LOAD_HTML";
-
-    public HtmlLoaderFunction() {
-        super(NAME);
+    public EntityLoaderFunction(String name) {
+        super(name, p(StringValue.class));
     }
 
     @Override
-    protected Entity loadEntity(String source) {
-        Element document = Jsoup.parse(source);
-        return new HtmlEntity(document);
+    protected Value executeChecked(List<Value> parameters) {
+        StringValue val=param(0,parameters);
+        return new EntityValue(loadEntity(val.getValue()));
     }
+
+    protected abstract Entity loadEntity(String source);
 }
