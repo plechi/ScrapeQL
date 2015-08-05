@@ -26,19 +26,30 @@ package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.value.Value;
 
 /**
  * Created by lukas on 05.08.15.
  */
-public class Not implements Filter {
-    private Filter filter;
+public class EqualsFilter implements Filter {
 
-    public Not(Filter filter) {
-        this.filter = filter;
+    private Expression one;
+    private Expression two;
+
+    public EqualsFilter(Expression one, Expression two) {
+        this.one = one;
+        this.two = two;
     }
 
     @Override
-    public boolean filter(Context ctx) throws ScrapeQLException {
-        return !filter.filter(ctx);
+    public boolean filter(Context ctx) throws ScrapeQLException{
+
+        Value v1=one.evaluate(ctx);
+        Value v2=two.evaluate(ctx);
+
+        boolean result= v1.getValue().equals(v2.getValue());
+
+        return result;
     }
 }

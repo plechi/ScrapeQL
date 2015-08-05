@@ -22,46 +22,38 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.value;
 
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.loader.Entity;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
+import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class ValueConverter {
+public class ArrayValue<T> extends AbstractValue<List<Value<T>>> {
 
+    public static final String TYPE_NAME="ARRAY";
 
-    public static EntityValue toEntityValue(Value val) throws ScrapeQLException{
-        if(checkType(val, EntityValue.class)){
-            return EntityValue.class.cast(val);
-        }
-        throw new ScrapeQLException("Cannot convert "+val.getDataTypeName()+" to "+EntityValue.TYPE_NAME);
+    public ArrayValue(Value<T>... values){
+        this.value= Lists.newArrayList(values);
+    }
+    public ArrayValue(List<Value<T>> value){
+        this.value=value;
     }
 
-    public static ArrayValue toArrayValue(Value val){
-        if(checkType(val,ArrayValue.TYPE_NAME)){
-            return ArrayValue.class.cast(val);
-        }else{
-            return new ArrayValue(val);
-        }
+    @Override
+    public String getDataTypeName() {
+        return TYPE_NAME;
     }
 
-
-    public static boolean checkType(Value val, String type){
-        return val.getDataTypeName().equals(type);
+    @Override
+    public String getStringValue() {
+        return String.format("  [%s]", Joiner.on(",\n  ").useForNull("NULL").join(value));
     }
 
-    public static boolean checkType(Value val1, Value val2){
-        return checkType(val1, val2.getClass());
-    }
-
-    public static boolean checkType(Value val, Class<? extends Value> clazz){
-        return val.getClass().isAssignableFrom(EntityValue.class);
-    }
-
-    public static boolean checkTypeExact(Value val1, Value val2){
-        return checkType(val1, val2) && checkType(val1,val2.getDataTypeName());
+    public Value<T> first(){
+        return value.get(0);
     }
 }

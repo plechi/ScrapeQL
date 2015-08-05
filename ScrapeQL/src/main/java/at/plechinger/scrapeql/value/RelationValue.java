@@ -22,26 +22,29 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.filter;
+package at.plechinger.scrapeql.value;
 
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.relation.Relation;
+import com.google.common.base.Joiner;
 
 /**
- * Created by lukas on 05.08.15.
+ * Created by lukas on 04.08.15.
  */
-public class And implements Filter {
+public class RelationValue extends AbstractValue<Relation> {
 
-    private Filter filter1;
-    private Filter filter2;
+    public static final String TYPE_NAME = "RELATION";
 
-    public And(Filter filter1, Filter filter2) {
-        this.filter1 = filter1;
-        this.filter2 = filter2;
+    public RelationValue(Relation relation){
+        super(relation);
     }
 
     @Override
-    public boolean filter(Context ctx) throws ScrapeQLException {
-        return filter1.filter(ctx) && filter2.filter(ctx);
+    public String getDataTypeName() {
+        return TYPE_NAME;
+    }
+
+    @Override
+    public String getStringValue() {
+        return String.format("%s(%s)", TYPE_NAME, Joiner.on(',').join(value.getColumns()));
     }
 }

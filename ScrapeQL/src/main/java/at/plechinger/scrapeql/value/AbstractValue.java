@@ -22,34 +22,57 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.value;
 
-import java.text.ParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import at.plechinger.scrapeql.ScrapeQLException;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class StringValue extends AbstractParseableValue<String> {
+public abstract class AbstractValue<T> implements Value<T> {
 
-    public static final String TYPE_NAME="STRING";
+    protected T value;
 
-    static{
-        patterns.add(Pattern.compile("^(.*)$"));
+    protected String variableName;
+
+    public AbstractValue(T value){
+        this.value=value;
     }
 
-    public StringValue(String toParse){
-        super(toParse);
+    protected AbstractValue(){}
+
+    @Override
+    public T getValue() {
+        return value;
     }
 
     @Override
-    protected String parseMatch(Matcher matcher) {
-        return matcher.group();
+    public String getStringValue() {
+        return value.toString();
     }
 
     @Override
-    public String getDataTypeName() {
-        return TYPE_NAME;
+    public String toString() {
+        return getStringValue();
+    }
+
+    @Override
+    public String getVariableName() {
+        return variableName;
+    }
+
+    @Override
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+
+
+    @Override
+    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException {
+        if(!value.getClass().isAssignableFrom(clazz)){
+            throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
+        }
+
+        return clazz.cast(value);
     }
 }

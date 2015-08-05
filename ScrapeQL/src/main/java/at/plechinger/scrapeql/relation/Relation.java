@@ -24,7 +24,7 @@
 
 package at.plechinger.scrapeql.relation;
 
-import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.value.Value;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;

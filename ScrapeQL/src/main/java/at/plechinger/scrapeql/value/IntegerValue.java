@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.value;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
@@ -31,21 +31,25 @@ import java.util.regex.Pattern;
 /**
  * Created by lukas on 04.08.15.
  */
-public class FloatValue extends AbstractParseableValue<Double> {
+public class IntegerValue extends AbstractParseableValue<Long> {
 
-    public static final String TYPE_NAME="FLOAT";
+    public static final String TYPE_NAME="INTEGER";
 
     static{
-        patterns.add(Pattern.compile("^(\\d.\\d+)$"));
+        patterns.add(Pattern.compile("^(\\d+)$"));
     }
 
-    public FloatValue(String toParse) throws ParseException {
+    public IntegerValue(String toParse) throws ParseException {
         super(toParse);
     }
 
+    public IntegerValue(long value){
+        super(value,Long.toString(value));
+    }
+
     @Override
-    protected Double parseMatch(Matcher matcher) {
-        return Double.parseDouble(matcher.group());
+    protected Long parseMatch(Matcher matcher) {
+        return Long.parseLong(matcher.group());
     }
 
     @Override

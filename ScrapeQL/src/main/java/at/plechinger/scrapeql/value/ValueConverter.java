@@ -22,36 +22,45 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.value;
 
-import at.plechinger.scrapeql.loader.Entity;
-
-import java.util.Objects;
+import at.plechinger.scrapeql.ScrapeQLException;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class EntityValue extends AbstractValue<Entity> implements Value<Entity> {
+public class ValueConverter {
 
-    public static final String TYPE_NAME="ENTITY";
 
-    public EntityValue(Entity value) {
-        super(value);
+    public static EntityValue toEntityValue(Value val) throws ScrapeQLException{
+        if(checkType(val, EntityValue.class)){
+            return EntityValue.class.cast(val);
+        }
+        throw new ScrapeQLException("Cannot convert "+val.getDataTypeName()+" to "+EntityValue.TYPE_NAME);
     }
 
-    @Override
-    public String getDataTypeName() {
-        return TYPE_NAME;
+    public static ArrayValue toArrayValue(Value val){
+        if(checkType(val,ArrayValue.TYPE_NAME)){
+            return ArrayValue.class.cast(val);
+        }else{
+            return new ArrayValue(val);
+        }
     }
 
-    @Override
-    public String getStringValue() {
-        return value.getStringValue();
+
+    public static boolean checkType(Value val, String type){
+        return val.getDataTypeName().equals(type);
     }
 
-    @Override
-    public Entity getValue() {
-        return value;
+    public static boolean checkType(Value val1, Value val2){
+        return checkType(val1, val2.getClass());
     }
 
+    public static boolean checkType(Value val, Class<? extends Value> clazz){
+        return val.getClass().isAssignableFrom(EntityValue.class);
+    }
+
+    public static boolean checkTypeExact(Value val1, Value val2){
+        return checkType(val1, val2) && checkType(val1,val2.getDataTypeName());
+    }
 }

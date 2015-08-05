@@ -22,13 +22,24 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.value;
 
-import java.text.ParseException;
+import at.plechinger.scrapeql.ScrapeQLException;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public interface ParseableValue<T> extends Value<T> {
-    public void setParsedValue(String string) throws ParseException;
+public interface Value<T> {
+
+    String getDataTypeName();
+
+    public String getStringValue();
+
+    public T getValue();
+
+    String getVariableName();
+
+    void setVariableName(String name);
+
+    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException;
 }

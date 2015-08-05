@@ -25,7 +25,7 @@
 package at.plechinger.scrapeql.expression;
 
 import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.value.Value;
 
 /**
  * Created by lukas on 04.08.15.

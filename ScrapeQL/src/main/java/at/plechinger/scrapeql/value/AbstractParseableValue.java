@@ -22,38 +22,55 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.value;
 
-import java.text.ParseException;
+import com.google.common.collect.Lists;
+
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class IntegerValue extends AbstractParseableValue<Long> {
+public abstract class AbstractParseableValue<T> extends AbstractValue<T> implements ParseableValue<T> {
 
-    public static final String TYPE_NAME="INTEGER";
+    protected String originalValue;
 
-    static{
-        patterns.add(Pattern.compile("^(\\d+)$"));
+    protected static List<Pattern> patterns = Lists.newArrayList();
+
+    public AbstractParseableValue(String toParse) {
+        this.originalValue = toParse;
+       setParsedValue(toParse);
     }
 
-    public IntegerValue(String toParse) throws ParseException {
-        super(toParse);
+    public AbstractParseableValue(T value, String originalValue){
+        this.value=value;
+        this.originalValue=originalValue;
     }
 
-    public IntegerValue(long value){
-        super(value,Long.toString(value));
+    protected abstract T parseMatch(Matcher matcher);
+
+    @Override
+    public String getStringValue() {
+        return originalValue;
     }
 
     @Override
-    protected Long parseMatch(Matcher matcher) {
-        return Long.parseLong(matcher.group());
+    public void setParsedValue(String string) {
+
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(string);
+            if (matcher.matches()) {
+                value = parseMatch(matcher);
+                return;
+            }
+        }
+        throw new RuntimeException("Input String " + string + " cannot be converted to " + getDataTypeName() + " found.");
     }
 
     @Override
-    public String getDataTypeName() {
-        return TYPE_NAME;
+    public T getValue() {
+        return value;
     }
 }

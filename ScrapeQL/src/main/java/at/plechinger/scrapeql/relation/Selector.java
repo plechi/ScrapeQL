@@ -24,6 +24,8 @@
 
 package at.plechinger.scrapeql.relation;
 
+import scala.Option;
+
 /**
  * Created by lukas on 04.08.15.
  */
@@ -39,6 +41,14 @@ public class Selector {
     public Selector(String selector, String alias) {
         this.selector = selector;
         this.alias = alias;
+    }
+
+    public Selector(String selector, Option<String> alias) {
+        this.selector = selector;
+        if(alias.nonEmpty()){
+            this.alias = alias.get();
+        }
+
     }
 
     public String getSelector() {

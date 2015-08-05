@@ -22,41 +22,23 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.function.impl;
+package at.plechinger.scrapeql.filter;
 
-import at.plechinger.scrapeql.value.IntegerValue;
-import at.plechinger.scrapeql.value.StringValue;
-import at.plechinger.scrapeql.value.Value;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.context.Context;
 
 /**
- * Created by lukas on 04.08.15.
+ * Created by lukas on 05.08.15.
  */
-public class DateFormat extends AbstractFunction{
+public class NotFilter implements Filter {
+    private Filter filter;
 
-    public DateFormat() {
-        super("date_format",p(Value.class),p(StringValue.class));
+    public NotFilter(Filter filter) {
+        this.filter = filter;
     }
 
     @Override
-    protected Value executeChecked(List<Value> parameters) {
-        StringValue format=param(1,parameters);
-        Value toFormat=parameters.get(0);
-        Value returnValue;
-        try {
-            SimpleDateFormat sdf=new SimpleDateFormat(format.getValue());
-            Date parsed=sdf.parse(toFormat.getStringValue());
-            returnValue=new IntegerValue(parsed.getTime());
-
-        } catch (ParseException e) {
-            returnValue=toFormat;
-        }
-
-        returnValue.setVariableName(String.format("date_format(%s)",toFormat.getVariableName()));
-        return returnValue;
+    public boolean filter(Context ctx) throws ScrapeQLException {
+        return !filter.filter(ctx);
     }
 }

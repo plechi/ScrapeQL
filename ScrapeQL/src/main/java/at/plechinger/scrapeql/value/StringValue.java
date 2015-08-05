@@ -22,26 +22,33 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.value;
 
-import at.plechinger.scrapeql.ScrapeQLException;
-
-import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public interface Value<T> {
+public class StringValue extends AbstractParseableValue<String> {
 
-    String getDataTypeName();
+    public static final String TYPE_NAME="STRING";
 
-    public String getStringValue();
+    static{
+        patterns.add(Pattern.compile("^(.*)$"));
+    }
 
-    public T getValue();
+    public StringValue(String toParse){
+        super(toParse);
+    }
 
-    String getVariableName();
+    @Override
+    protected String parseMatch(Matcher matcher) {
+        return matcher.group();
+    }
 
-    void setVariableName(String name);
-
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException;
+    @Override
+    public String getDataTypeName() {
+        return TYPE_NAME;
+    }
 }

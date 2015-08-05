@@ -22,38 +22,13 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.value;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-
-import java.util.List;
+import java.text.ParseException;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class ArrayValue<T> extends AbstractValue<List<Value<T>>> {
-
-    public static final String TYPE_NAME="ARRAY";
-
-    public ArrayValue(Value<T>... values){
-        this.value= Lists.newArrayList(values);
-    }
-    public ArrayValue(List<Value<T>> value){
-        this.value=value;
-    }
-
-    @Override
-    public String getDataTypeName() {
-        return TYPE_NAME;
-    }
-
-    @Override
-    public String getStringValue() {
-        return String.format("  [%s]", Joiner.on(",\n  ").useForNull("NULL").join(value));
-    }
-
-    public Value<T> first(){
-        return value.get(0);
-    }
+public interface ParseableValue<T> extends Value<T> {
+    public void setParsedValue(String string) throws ParseException;
 }

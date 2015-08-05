@@ -24,10 +24,12 @@
 
 package at.plechinger.scrapeql.query;
 
+import at.plechinger.scrapeql.QueryParser;
+import at.plechinger.scrapeql.ScrapeParser;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.*;
-import at.plechinger.scrapeql.filter.Equals;
+import at.plechinger.scrapeql.filter.EqualsFilter;
 import at.plechinger.scrapeql.filter.Filter;
 import at.plechinger.scrapeql.function.FunctionRepository;
 import at.plechinger.scrapeql.function.impl.Attr;
@@ -37,8 +39,8 @@ import at.plechinger.scrapeql.function.impl.Lower;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.relation.Selector;
-import at.plechinger.scrapeql.type.StringValue;
-import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.value.StringValue;
+import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.util.Timer;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -61,8 +63,17 @@ public class SelectQuery {
         this.expressions = Lists.newArrayList(expressions);
     }
 
+    public SelectQuery(List<Expression> expressions) {
+        this.expressions = expressions;
+    }
+
     public SelectQuery from(RelationExpression... relations) {
         this.relations.addAll(Lists.newArrayList(relations));
+        return this;
+    }
+
+    public SelectQuery from(List<RelationExpression> relations) {
+        this.relations=relations;
         return this;
     }
 
@@ -179,10 +190,22 @@ public class SelectQuery {
                         , new Selector(".tx-abanowonair-pi1 .contenttable tr")).as("tracks1")
         );
 
-        query.where(new Equals(new VariableExpression("tracks1.time"),new VariableExpression("tracks.time")
+        query.where(new EqualsFilter(new VariableExpression("tracks1.time"), new VariableExpression("tracks.time")
         ));
 
         query.execute();
+
+        QueryParser parser=new QueryParser();
+
+        SelectQuery qu=parser.parse("SELECT tracks.time, tracks.title, tracks.interpret " +
+                "FROM (" +
+                   "RELATION $('td:eq(0)') AS time, " +
+                   "$('td:eq(1)') AS title, " +
+                   "$('td:eq(2)') AS interpret " +
+                   "FROM load_html('http://soundportal.at/service/now-on-air/') $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks").get();
+
+        qu.execute();
+
 
     }
 }

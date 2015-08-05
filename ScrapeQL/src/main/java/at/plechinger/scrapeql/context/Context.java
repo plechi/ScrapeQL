@@ -25,7 +25,7 @@
 package at.plechinger.scrapeql.context;
 
 import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 

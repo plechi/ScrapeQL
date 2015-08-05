@@ -22,57 +22,34 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.value;
 
-import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.loader.Entity;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public abstract class AbstractValue<T> implements Value<T> {
+public class EntityValue extends AbstractValue<Entity> implements Value<Entity> {
 
-    protected T value;
+    public static final String TYPE_NAME="ENTITY";
 
-    protected String variableName;
-
-    public AbstractValue(T value){
-        this.value=value;
+    public EntityValue(Entity value) {
+        super(value);
     }
 
-    protected AbstractValue(){}
-
     @Override
-    public T getValue() {
-        return value;
+    public String getDataTypeName() {
+        return TYPE_NAME;
     }
 
     @Override
     public String getStringValue() {
-        return value.toString();
+        return value.getStringValue();
     }
 
     @Override
-    public String toString() {
-        return getStringValue();
+    public Entity getValue() {
+        return value;
     }
 
-    @Override
-    public String getVariableName() {
-        return variableName;
-    }
-
-    @Override
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
-
-    @Override
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException {
-        if(!value.getClass().isAssignableFrom(clazz)){
-            throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
-        }
-
-        return clazz.cast(value);
-    }
 }

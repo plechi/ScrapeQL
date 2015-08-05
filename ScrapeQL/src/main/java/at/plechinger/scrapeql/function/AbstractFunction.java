@@ -24,11 +24,6 @@
 
 package at.plechinger.scrapeql.function;
 
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.type.Value;
-
-import java.util.List;
-
 /**
  * Created by lukas on 04.08.15.
  */

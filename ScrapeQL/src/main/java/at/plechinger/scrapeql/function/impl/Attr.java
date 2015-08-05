@@ -26,12 +26,11 @@ package at.plechinger.scrapeql.function.impl;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.function.Function;
-import at.plechinger.scrapeql.loader.Entity;
 import at.plechinger.scrapeql.loader.html.HtmlEntity;
-import at.plechinger.scrapeql.type.EntityValue;
-import at.plechinger.scrapeql.type.StringValue;
-import at.plechinger.scrapeql.type.Value;
-import at.plechinger.scrapeql.type.ValueConverter;
+import at.plechinger.scrapeql.value.EntityValue;
+import at.plechinger.scrapeql.value.StringValue;
+import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.ValueConverter;
 import com.google.common.base.Preconditions;
 
 import java.util.List;

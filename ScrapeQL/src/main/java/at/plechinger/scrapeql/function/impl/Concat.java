@@ -25,8 +25,8 @@
 package at.plechinger.scrapeql.function.impl;
 
 import at.plechinger.scrapeql.function.Function;
-import at.plechinger.scrapeql.type.StringValue;
-import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.value.StringValue;
+import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
@@ -55,7 +55,7 @@ public class Concat implements Function {
         }
 
         StringBuilder variableName = new StringBuilder("concat(");
-        Joiner.on(',').skipNulls().appendTo(variableName,cols);
+        Joiner.on(',').skipNulls().appendTo(variableName, cols);
         variableName.append(')');
 
         StringValue val = new StringValue(buffer.toString());

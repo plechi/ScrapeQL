@@ -29,10 +29,10 @@ import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.loader.Entity;
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.relation.Selector;
-import at.plechinger.scrapeql.type.EntityValue;
-import at.plechinger.scrapeql.type.RelationValue;
-import at.plechinger.scrapeql.type.Value;
-import at.plechinger.scrapeql.type.ValueConverter;
+import at.plechinger.scrapeql.value.EntityValue;
+import at.plechinger.scrapeql.value.RelationValue;
+import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.ValueConverter;
 import at.plechinger.scrapeql.util.Map;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * Created by lukas on 04.08.15.
  */
-public class RelationExpression implements Expression<Relation> {
+public class RelationExpression implements Expression {
 
     private List<Selector> selectors = Lists.newLinkedList();
 
@@ -54,6 +54,10 @@ public class RelationExpression implements Expression<Relation> {
 
     public RelationExpression(Selector... selectors) {
         this.selectors = Lists.newArrayList(selectors);
+    }
+
+    public RelationExpression(List<Selector> selectors){
+        this.selectors=selectors;
     }
 
     public RelationExpression as(String name) {

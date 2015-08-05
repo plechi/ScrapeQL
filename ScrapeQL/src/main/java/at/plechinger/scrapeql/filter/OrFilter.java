@@ -22,34 +22,26 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.type;
+package at.plechinger.scrapeql.filter;
 
-import java.text.ParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.context.Context;
 
 /**
- * Created by lukas on 04.08.15.
+ * Created by lukas on 05.08.15.
  */
-public class BooleanValue extends AbstractParseableValue<Boolean> {
+public class OrFilter implements Filter {
 
-    public static final String TYPE_NAME="BOOLEAN";
+    private Filter filter1;
+    private Filter filter2;
 
-    static{
-        patterns.add(Pattern.compile("^(true|false)$", Pattern.CASE_INSENSITIVE));
-    }
-
-    public BooleanValue(String toParse) throws ParseException {
-        super(toParse);
-    }
-
-    @Override
-    protected Boolean parseMatch(Matcher matcher) {
-        return Boolean.parseBoolean(matcher.group());
+    public OrFilter(Filter filter1, Filter filter2) {
+        this.filter1 = filter1;
+        this.filter2 = filter2;
     }
 
     @Override
-    public String getDataTypeName() {
-        return TYPE_NAME;
+    public boolean filter(Context ctx) throws ScrapeQLException {
+        return filter1.filter(ctx) || filter2.filter(ctx);
     }
 }

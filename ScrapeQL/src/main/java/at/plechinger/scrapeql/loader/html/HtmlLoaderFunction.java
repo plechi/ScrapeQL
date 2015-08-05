@@ -26,10 +26,10 @@ package at.plechinger.scrapeql.loader.html;
 
 import at.plechinger.scrapeql.CachedUrlLoader;
 import at.plechinger.scrapeql.function.Function;
-import at.plechinger.scrapeql.type.EntityValue;
-import at.plechinger.scrapeql.type.StringValue;
-import at.plechinger.scrapeql.type.Value;
-import at.plechinger.scrapeql.type.ValueConverter;
+import at.plechinger.scrapeql.value.EntityValue;
+import at.plechinger.scrapeql.value.StringValue;
+import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.ValueConverter;
 import com.google.common.base.Preconditions;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;

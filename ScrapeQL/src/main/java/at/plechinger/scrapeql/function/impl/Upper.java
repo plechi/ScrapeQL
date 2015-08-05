@@ -24,8 +24,8 @@
 
 package at.plechinger.scrapeql.function.impl;
 
-import at.plechinger.scrapeql.type.StringValue;
-import at.plechinger.scrapeql.type.Value;
+import at.plechinger.scrapeql.value.StringValue;
+import at.plechinger.scrapeql.value.Value;
 
 import java.util.List;
 
