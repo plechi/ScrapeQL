@@ -24,39 +24,43 @@
 
 package at.plechinger.scrapeql.function.impl;
 
+import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
 import at.plechinger.scrapeql.value.IntegerValue;
-import at.plechinger.scrapeql.value.StringValue;
-import at.plechinger.scrapeql.value.Value;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 /**
- * Created by lukas on 04.08.15.
+ * Created by lukas on 05.08.15.
  */
-public class DateFormat extends AbstractFunction{
+public class StringFunctions {
 
-    public DateFormat() {
-        super("date_format",p(Value.class),p(StringValue.class));
+    @FunctionDefinition(value = "lower",strict = false)
+    public String lower(String input){
+        return input.toLowerCase();
     }
 
-    @Override
-    protected Value executeChecked(List<Value> parameters) {
-        StringValue format=param(1,parameters);
-        Value toFormat=parameters.get(0);
-        Value returnValue;
+    @FunctionDefinition(value = "upper",strict = false)
+    public String upper(String input){
+        return input.toUpperCase();
+    }
+
+    @FunctionDefinition(value = "regex_replace",strict = false)
+    public String regexReplace(String input, String regex, String replace){
+        return input.replaceAll(regex, replace);
+    }
+
+    @FunctionDefinition(value = "date_format",strict = false)
+    public long dateFormat(String value, String format){
         try {
-            SimpleDateFormat sdf=new SimpleDateFormat(format.getValue());
-            Date parsed=sdf.parse(toFormat.getStringValue());
-            returnValue=new IntegerValue(parsed.getTime());
+            SimpleDateFormat sdf=new SimpleDateFormat(format);
+            Date parsed=sdf.parse(value);
+            return parsed.getTime();
 
         } catch (ParseException e) {
-            returnValue=toFormat;
+            return 0;
         }
-
-        returnValue.setVariableName(String.format("date_format(%s)",toFormat.getVariableName()));
-        return returnValue;
     }
 }

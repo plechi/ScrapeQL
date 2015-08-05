@@ -165,11 +165,11 @@ public class SelectQuery {
 
     public static void main(String[] args) throws Exception {
         FunctionRepository.instance().register(new HtmlLoaderFunction());
-        FunctionRepository.instance().register(new Concat());
-        FunctionRepository.instance().register(new DateFormat());
         FunctionRepository.instance().register(new Attr());
-        FunctionRepository.instance().register(new Lower());
         FunctionRepository.instance().register(new UrlFn());
+        FunctionRepository.instance().register(new Concat());
+
+        FunctionRepository.instance().registerFunctions(StringFunctions.class);
 
 
         /*SelectQuery query = new SelectQuery(
@@ -214,7 +214,7 @@ public class SelectQuery {
 
         ScrapeParser parser = new ScrapeParser();
 
-        String sql = "SELECT tracks.* " +
+        String sql = "SELECT concat(lower(tracks.interpret),' test ', tracks1.title), tracks.time " +
                 "FROM (" +
                 "RELATION $('td:eq(0)') AS time, " +
                 "$('td:eq(2)') AS interpret " +

@@ -45,4 +45,8 @@ public class ScrapeQLException extends Exception {
     public ScrapeQLException(String msg) {
         super(msg);
     }
+
+    public ScrapeQLException(String msg, Throwable nest) {
+        super(msg,nest);
+    }
 }

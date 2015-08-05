@@ -106,7 +106,7 @@ class ScrapeParser extends JavaTokenParsers {
 
   //terminal
   private val identifier: Parser[String] = "[a-zA-z_\\.][a-zA-Z0-9_\\.]*".r;
-  private val string: Parser[String] = "((?:\\\\'|[^'])*)".r;
+  private val string: Parser[String] = "(?s)(.*?(?:\\\\'|[^'])*)+".r;
 
   private val KW_AS = "AS";
   private val KW_RELATION = "RELATION"

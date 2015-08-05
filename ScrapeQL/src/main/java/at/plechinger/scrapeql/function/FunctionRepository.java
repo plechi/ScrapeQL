@@ -25,9 +25,14 @@
 package at.plechinger.scrapeql.function;
 
 import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
+import at.plechinger.scrapeql.function.impl.StringFunctions;
+import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.ValueConverter;
 import com.google.common.collect.Sets;
 
-import java.sql.SQLException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Set;
 
 /**
@@ -60,6 +65,24 @@ public class FunctionRepository {
             }
         }
         throw new ScrapeQLException("Function "+name+" does not exist.");
+    }
+
+
+    public void registerFunctions(Class<?> functionClass){
+        for(Method method:functionClass.getMethods()){
+            if(method.isAnnotationPresent(FunctionDefinition.class)){
+                try{
+                    register(new AnnotationBasedFunction(method));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        FunctionRepository.instance().registerFunctions(StringFunctions.class);
     }
 
 }

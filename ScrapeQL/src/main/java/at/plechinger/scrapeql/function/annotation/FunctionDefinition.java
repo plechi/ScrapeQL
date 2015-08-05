@@ -22,24 +22,21 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.function.impl;
+package at.plechinger.scrapeql.function.annotation;
 
-import at.plechinger.scrapeql.value.StringValue;
 import at.plechinger.scrapeql.value.Value;
 
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Created by lukas on 04.08.15.
+ * Created by lukas on 05.08.15.
  */
-public class Upper extends AbstractFunction {
-    public Upper() {
-        super("upper", p(StringValue.class));
-    }
-
-    @Override
-    protected Value executeChecked(List<Value> parameters) {
-        StringValue val=param(0,parameters);
-        return new StringValue(val.getValue().toUpperCase());
-    }
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface FunctionDefinition {
+    String value();
+    boolean strict() default true;
 }
