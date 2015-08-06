@@ -24,8 +24,57 @@
 
 package at.plechinger.scrapeql.parser;
 
+import at.plechinger.scrapeql.ScrapeParser;
+import at.plechinger.scrapeql.query.SelectQuery;
+import com.google.common.collect.Lists;
+import com.google.common.io.CharStreams;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Created by lukas on 07.08.15.
  */
+@RunWith(Parameterized.class)
 public class ParseTests {
+    private String statement;
+    private ScrapeParser parser = new ScrapeParser();
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> primeNumbers() throws IOException {
+
+        List<Object[]> parameters = Lists.newArrayList();
+
+        File testfile=new File("src/test/resources/parser/parsetests.sql");
+        if(!testfile.exists()){
+            testfile=new File("ScrapeQL/src/test/resources/parser/parsetests.sql");
+        }
+
+        String[] tests = CharStreams.toString(new FileReader(testfile)).replaceAll("\n"," ").split("(s?)(\\s*?;\\s*?)");
+
+        for (String statement : tests) {
+            parameters.add(new Object[]{statement.trim()});
+        }
+
+        return parameters;
+    }
+
+    public ParseTests(String statement) {
+        this.statement = statement;
+    }
+
+    @Test
+    public void testParse() {
+        System.out.println("Parse "+statement);
+        SelectQuery query = parser.parse(statement);
+        Assert.assertNotNull(query);
+    }
+
 }

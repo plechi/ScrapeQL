@@ -70,6 +70,8 @@ public class StringFunctions {
 
     @FunctionDefinition(value = "tag_text")
     public String tagText(HtmlEntity input) {
+
+        System.out.println("test"+input.getWrappedEntity().html());
         return input.getWrappedEntity().text();
     }
 }

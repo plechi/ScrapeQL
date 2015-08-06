@@ -185,21 +185,21 @@ public class SelectQuery {
                 "WHERE tracks.time=tracks1.time";*/
 
 
-        /*String sql="SELECT tag_text(wiki.key), tag_text(wiki.value) \n" +
+        String sql="SELECT tag_text(wiki.key), tag_text(wiki.value) \n" +
                 "FROM ( " +
-                "    LOAD $('th>*') AS key, $('td>*') AS value " +
+                "    LOAD $('th') AS key, $('td>*') AS value " +
                 "    FROM load_html(url('https://en.wikipedia.org/wiki/Java_(programming_language)'))" +
                 "    $('table.infobox>tbody>tr')" +
-                ") AS wiki";*/
+                ") AS wiki";
 
 
-        String sql = "SELECT test.li" +
+        /*String sql = "SELECT test.li" +
                 " FROM (LOAD $('li') FROM load_html(TXT>>>\n" +
                 "<ul>\n" +
                 "   <li>test1</li>\n" +
                 "   <li>test2</li>\n" +
                 "</ul>" +
-                "<<<TXT)) AS test";
+                "<<<TXT)) AS test";*/
 
 
         SelectQuery qu = parser.parse(sql);

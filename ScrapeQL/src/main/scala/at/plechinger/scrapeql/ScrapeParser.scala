@@ -97,9 +97,9 @@ class ScrapeParser extends JavaTokenParsers with PackratParsers {
 
   //Relation
   def relation: Parser[RelationExpression] = "(" ~ KW_LOAD ~> relationSelectorList ~ KW_FROM ~ function ~
-    opt(relationSelector) ~ ")" ~ opt(opt(KW_AS) ~ identifier) ^^ {
+    opt(relationSelector) ~ ")" ~ opt(opt(KW_AS) ~> identifier) ^^ {
     case l ~ _ ~ f ~ b ~ _ ~ i => new RelationExpression(new ListBuffer ++ l)
-      .from(f, b.getOrElse(null)).as(i.get._2)
+      .from(f, b.getOrElse(null)).as(i.getOrElse(null))
   };
 
   def relationSelectorList: Parser[List[Selector]] = repsep(relationSelector, ',');
