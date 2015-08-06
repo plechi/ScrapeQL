@@ -34,7 +34,6 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
  * @author lukas
  */
 @Slf4j
@@ -64,7 +63,7 @@ public class CachedUrlLoader {
 
 
         try {
-            URL u=new URL(url);
+            URL u = new URL(url);
             if (cached) {
                 return cache.get(u);
             }

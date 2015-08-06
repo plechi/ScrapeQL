@@ -41,12 +41,13 @@ public class RelationImpl<T> implements Relation<T> {
     private Set<String> columns = Sets.newLinkedHashSet();
 
 
-    public RelationImpl(){}
+    public RelationImpl() {
+    }
 
-    public RelationImpl(String startColumn, List<T> startValues){
-        for(T val:startValues){
-            Row<T> row=new RowImpl<>();
-            row.setValue(startColumn,val);
+    public RelationImpl(String startColumn, List<T> startValues) {
+        for (T val : startValues) {
+            Row<T> row = new RowImpl<>();
+            row.setValue(startColumn, val);
             rows.add(row);
         }
     }

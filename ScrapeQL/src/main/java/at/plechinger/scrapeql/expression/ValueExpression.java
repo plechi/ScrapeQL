@@ -25,19 +25,17 @@
 package at.plechinger.scrapeql.expression;
 
 import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.Value;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class ValueExpression implements Expression{
+public class ValueExpression implements Expression {
 
     private Value value;
 
-    public ValueExpression(Value value){
-        this.value=value;
+    public ValueExpression(Value value) {
+        this.value = value;
     }
 
     @Override
@@ -45,7 +43,7 @@ public class ValueExpression implements Expression{
         return value;
     }
 
-    public String getType(){
+    public String getType() {
         return value.getDataTypeName();
     }
 }

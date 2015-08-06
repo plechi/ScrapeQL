@@ -26,8 +26,6 @@ package at.plechinger.scrapeql.loader.html;
 
 import at.plechinger.scrapeql.loader.Entity;
 import at.plechinger.scrapeql.loader.EntityLoaderFunction;
-import at.plechinger.scrapeql.loader.Entity;
-import at.plechinger.scrapeql.loader.EntityLoaderFunction;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 

@@ -24,11 +24,8 @@
 
 package at.plechinger.scrapeql.function.impl;
 
-import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.CachedUrlLoader;
 import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.value.StringValue;
-import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.StringValue;
 import at.plechinger.scrapeql.value.Value;
 
@@ -46,16 +43,16 @@ public class UrlFn extends AbstractFunction {
 
     @Override
     protected Value executeChecked(List<Value> parameters) throws ScrapeQLException {
-        StringValue val=param(0,parameters);
+        StringValue val = param(0, parameters);
 
-        try{
-            URL url=new URL(val.getValue());
-            String document= CachedUrlLoader.getLoader().load(url.toString());
-            StringValue value=new StringValue(document);
-            value.setVariableName(String.format("url($s)",url.getHost()));
+        try {
+            URL url = new URL(val.getValue());
+            String document = CachedUrlLoader.getLoader().load(url.toString());
+            StringValue value = new StringValue(document);
+            value.setVariableName(String.format("url($s)", url.getHost()));
             return value;
 
-        }catch (MalformedURLException malex){
+        } catch (MalformedURLException malex) {
             throw new ScrapeQLException("Url is not well formatted.");
         }
     }

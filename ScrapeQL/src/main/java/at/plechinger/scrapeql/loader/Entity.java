@@ -31,6 +31,8 @@ import java.util.List;
  */
 public interface Entity<T> {
     List<Entity<T>> select(String selector);
+
     public T getWrappedEntity();
+
     String getStringValue();
 }

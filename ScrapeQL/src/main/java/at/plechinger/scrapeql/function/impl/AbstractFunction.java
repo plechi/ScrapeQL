@@ -25,9 +25,7 @@
 package at.plechinger.scrapeql.function.impl;
 
 import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.function.Function;
-import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.Value;
 import com.google.common.collect.Lists;
 
@@ -36,7 +34,7 @@ import java.util.List;
 /**
  * Created by lukas on 04.08.15.
  */
-public abstract class AbstractFunction implements Function{
+public abstract class AbstractFunction implements Function {
 
     protected final List<Param> params;
     protected final String name;
@@ -47,28 +45,28 @@ public abstract class AbstractFunction implements Function{
     }
 
     public void checkParameters(List<Value> parameters) throws ScrapeQLException {
-        int min=0;
-        int max=0;
-        int i=0;
-        for(Param p:params){
-            if(p.isRequired()){
+        int min = 0;
+        int max = 0;
+        int i = 0;
+        for (Param p : params) {
+            if (p.isRequired()) {
                 min++;
             }
             max++;
         }
 
-        if(!(min<=parameters.size() && parameters.size()<=max)){
-            throw new ScrapeQLException("Wrong parameter count "+getName());
+        if (!(min <= parameters.size() && parameters.size() <= max)) {
+            throw new ScrapeQLException("Wrong parameter count " + getName());
         }
 
         for (int j = 0; j < parameters.size(); j++) {
-            if(!params.get(j).getType().isAssignableFrom(parameters.get(j).getClass())){
-                throw new ScrapeQLException("Wrong parameter type "+i+" in "+getName()+": is "+parameters.get(j).getClass()+" should be "+params.get(j).getType());
+            if (!params.get(j).getType().isAssignableFrom(parameters.get(j).getClass())) {
+                throw new ScrapeQLException("Wrong parameter type " + i + " in " + getName() + ": is " + parameters.get(j).getClass() + " should be " + params.get(j).getType());
             }
         }
     }
 
-    protected <T> T param(int param, List<Value> params){
+    protected <T> T param(int param, List<Value> params) {
         return (T) params.get(param);
     }
 
@@ -78,12 +76,12 @@ public abstract class AbstractFunction implements Function{
         return executeChecked(parameters);
     }
 
-    protected static Param p(Class<? extends Value> type, boolean required){
+    protected static Param p(Class<? extends Value> type, boolean required) {
         return new Param(type, required);
     }
 
-    protected static Param p(Class<? extends Value> type){
-        return p(type,true);
+    protected static Param p(Class<? extends Value> type) {
+        return p(type, true);
     }
 
     protected abstract Value executeChecked(List<Value> parameters) throws ScrapeQLException;
@@ -93,9 +91,9 @@ public abstract class AbstractFunction implements Function{
         return name;
     }
 
-    protected static class Param{
+    protected static class Param {
         private Class<? extends Value> type;
-        private boolean required=true;
+        private boolean required = true;
 
 
         public Param(Class<? extends Value> type, boolean required) {

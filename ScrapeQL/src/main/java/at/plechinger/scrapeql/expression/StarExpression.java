@@ -27,7 +27,6 @@ package at.plechinger.scrapeql.expression;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.Value;
 
 /**
  * Created by lukas on 04.08.15.
@@ -35,15 +34,16 @@ import at.plechinger.scrapeql.value.Value;
 public class StarExpression implements Expression {
 
     private String prefix;
+
     public StarExpression() {
     }
 
-    public StarExpression(String prefix){
-        this.prefix=prefix+".";
+    public StarExpression(String prefix) {
+        this.prefix = prefix + ".";
     }
 
-    public boolean isVisible(String columnName){
-        return prefix==null || columnName.startsWith(prefix);
+    public boolean isVisible(String columnName) {
+        return prefix == null || columnName.startsWith(prefix);
     }
 
     @Override

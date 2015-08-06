@@ -24,7 +24,6 @@
 
 package at.plechinger.scrapeql.function;
 
-import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
 import at.plechinger.scrapeql.function.impl.StringFunctions;
@@ -38,40 +37,41 @@ import java.util.Set;
  */
 public class FunctionRepository {
 
-    private static FunctionRepository functionRepository=null;
+    private static FunctionRepository functionRepository = null;
 
-    public static FunctionRepository instance(){
-        if(functionRepository==null){
-            functionRepository=new FunctionRepository();
+    public static FunctionRepository instance() {
+        if (functionRepository == null) {
+            functionRepository = new FunctionRepository();
         }
 
         return functionRepository;
     }
 
-    private Set<Function> functions= Sets.newLinkedHashSet();
+    private Set<Function> functions = Sets.newLinkedHashSet();
 
-    private FunctionRepository(){}
+    private FunctionRepository() {
+    }
 
-    public void register(Function function){
+    public void register(Function function) {
         functions.add(function);
     }
 
-    public Function getFunction(String name) throws ScrapeQLException{
-        for(Function function:functions){
-            if(function.getName().toLowerCase().equals(name.toLowerCase())){
+    public Function getFunction(String name) throws ScrapeQLException {
+        for (Function function : functions) {
+            if (function.getName().toLowerCase().equals(name.toLowerCase())) {
                 return function;
             }
         }
-        throw new ScrapeQLException("Function "+name+" does not exist.");
+        throw new ScrapeQLException("Function " + name + " does not exist.");
     }
 
 
-    public void registerFunctions(Class<?> functionClass){
-        for(Method method:functionClass.getMethods()){
-            if(method.isAnnotationPresent(FunctionDefinition.class)){
-                try{
+    public void registerFunctions(Class<?> functionClass) {
+        for (Method method : functionClass.getMethods()) {
+            if (method.isAnnotationPresent(FunctionDefinition.class)) {
+                try {
                     register(new AnnotationBasedFunction(method));
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 

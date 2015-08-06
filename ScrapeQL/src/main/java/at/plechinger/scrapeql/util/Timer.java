@@ -29,13 +29,13 @@ package at.plechinger.scrapeql.util;
  */
 public class Timer {
 
-    private long time=System.currentTimeMillis();
+    private long time = System.currentTimeMillis();
     private long stop;
 
 
-    public long stop(){
-        stop=time;
-        time=System.currentTimeMillis();
-        return time-stop;
+    public long stop() {
+        stop = time;
+        time = System.currentTimeMillis();
+        return time - stop;
     }
 }

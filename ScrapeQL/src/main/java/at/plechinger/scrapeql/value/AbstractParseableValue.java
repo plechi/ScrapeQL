@@ -41,12 +41,12 @@ public abstract class AbstractParseableValue<T> extends AbstractValue<T> impleme
 
     public AbstractParseableValue(String toParse) {
         this.originalValue = toParse;
-       setParsedValue(toParse);
+        setParsedValue(toParse);
     }
 
-    public AbstractParseableValue(T value, String originalValue){
-        this.value=value;
-        this.originalValue=originalValue;
+    public AbstractParseableValue(T value, String originalValue) {
+        this.value = value;
+        this.originalValue = originalValue;
     }
 
     protected abstract T parseMatch(Matcher matcher);

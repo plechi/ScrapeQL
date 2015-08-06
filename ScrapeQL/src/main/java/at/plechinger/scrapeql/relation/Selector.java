@@ -45,7 +45,7 @@ public class Selector {
 
     public Selector(String selector, Option<String> alias) {
         this.selector = selector;
-        if(alias.nonEmpty()){
+        if (alias.nonEmpty()) {
             this.alias = alias.get();
         }
 

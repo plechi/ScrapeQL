@@ -29,7 +29,7 @@ import at.plechinger.scrapeql.ScrapeQLException;
 /**
  * Created by lukas on 04.08.15.
  */
-public interface Value<T>{
+public interface Value<T> {
 
     String getDataTypeName();
 

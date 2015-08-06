@@ -44,9 +44,9 @@ public abstract class ExpressionComparator implements Filter {
 
     @Override
     public boolean filter(Context ctx) throws ScrapeQLException {
-        Value first=one.evaluate(ctx);
-        Value second=two.evaluate(ctx);
-        return compare(first,second);
+        Value first = one.evaluate(ctx);
+        Value second = two.evaluate(ctx);
+        return compare(first, second);
     }
 
     protected abstract boolean compare(Value<?> one, Value<?> two) throws ScrapeQLException;

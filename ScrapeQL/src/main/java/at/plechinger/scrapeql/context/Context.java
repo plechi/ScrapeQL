@@ -26,8 +26,6 @@ package at.plechinger.scrapeql.context;
 
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -48,18 +46,18 @@ public class Context {
         return relations.get(name);
     }
 
-    private Map<String,Value> columns=Maps.newHashMap();
+    private Map<String, Value> columns = Maps.newHashMap();
 
-    public void setColumns(Map<String,Value> columns){
-        this.columns=columns;
+    public void setColumns(Map<String, Value> columns) {
+        this.columns = columns;
     }
 
-    public Value getColumn(String name){
-        Preconditions.checkArgument(columns.containsKey(name), "Column "+name+" does not exist."+columns.keySet());
+    public Value getColumn(String name) {
+        Preconditions.checkArgument(columns.containsKey(name), "Column " + name + " does not exist." + columns.keySet());
         return columns.get(name);
     }
 
     public void clearColumns() {
-        columns=Maps.newHashMap();
+        columns = Maps.newHashMap();
     }
 }

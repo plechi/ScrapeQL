@@ -33,9 +33,9 @@ import java.util.regex.Pattern;
  */
 public class FloatValue extends AbstractParseableValue<Double> {
 
-    public static final String TYPE_NAME="FLOAT";
+    public static final String TYPE_NAME = "FLOAT";
 
-    static{
+    static {
         patterns.add(Pattern.compile("^(\\d.\\d+)$"));
     }
 
@@ -43,8 +43,8 @@ public class FloatValue extends AbstractParseableValue<Double> {
         super(toParse);
     }
 
-    public FloatValue(Double value){
-        super(value,Double.toString(value));
+    public FloatValue(Double value) {
+        super(value, Double.toString(value));
     }
 
     @Override

@@ -25,7 +25,6 @@
 package at.plechinger.scrapeql.value;
 
 import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.relation.Relation;
 import com.google.common.base.Joiner;
 
 /**
@@ -35,7 +34,7 @@ public class RelationValue extends AbstractValue<Relation<Value>> {
 
     public static final String TYPE_NAME = "RELATION";
 
-    public RelationValue(Relation<Value> relation){
+    public RelationValue(Relation<Value> relation) {
         super(relation);
     }
 

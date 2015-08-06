@@ -25,7 +25,6 @@
 package at.plechinger.scrapeql.relation;
 
 import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.Value;
 
 import java.util.List;
 

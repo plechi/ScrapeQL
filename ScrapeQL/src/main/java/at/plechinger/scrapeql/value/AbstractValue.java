@@ -25,7 +25,6 @@
 package at.plechinger.scrapeql.value;
 
 import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.ScrapeQLException;
 
 /**
  * Created by lukas on 04.08.15.
@@ -36,11 +35,12 @@ public abstract class AbstractValue<T> implements Value<T> {
 
     protected String variableName;
 
-    public AbstractValue(T value){
-        this.value=value;
+    public AbstractValue(T value) {
+        this.value = value;
     }
 
-    protected AbstractValue(){}
+    protected AbstractValue() {
+    }
 
     @Override
     public T getValue() {
@@ -69,8 +69,8 @@ public abstract class AbstractValue<T> implements Value<T> {
 
     @Override
     public <S> S getValue(Class<S> clazz) throws ScrapeQLException {
-        if(!value.getClass().isAssignableFrom(clazz)){
-            throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
+        if (!value.getClass().isAssignableFrom(clazz)) {
+            throw new ScrapeQLException("Cannot cast " + value.getClass() + " to " + clazz);
         }
 
         return clazz.cast(value);

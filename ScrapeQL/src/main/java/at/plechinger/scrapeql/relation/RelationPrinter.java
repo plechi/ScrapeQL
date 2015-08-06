@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class RelationPrinter {
 
-    public static String getPrettyString(Relation relation){
+    public static String getPrettyString(Relation relation) {
 
         final List<String> cols = Lists.newArrayList(relation.getColumnNames());
         TextTable tt = new TextTable(new AbstractTableModel() {
@@ -53,7 +53,7 @@ public class RelationPrinter {
 
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
-                Relation.Row row=relation.getRow(rowIndex);
+                Relation.Row row = relation.getRow(rowIndex);
                 return row.getValue(getColumnName(columnIndex));
             }
 

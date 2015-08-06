@@ -24,7 +24,6 @@
 package at.plechinger.scrapeql;
 
 /**
- *
  * @author lukas
  */
 public class ScrapeQLException extends Exception {
@@ -47,6 +46,6 @@ public class ScrapeQLException extends Exception {
     }
 
     public ScrapeQLException(String msg, Throwable nest) {
-        super(msg,nest);
+        super(msg, nest);
     }
 }

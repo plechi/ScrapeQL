@@ -27,11 +27,7 @@ package at.plechinger.scrapeql.function;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
 import at.plechinger.scrapeql.function.annotation.Param;
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
-import at.plechinger.scrapeql.function.annotation.Param;
 import at.plechinger.scrapeql.loader.Entity;
-import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.value.*;
 import com.google.common.collect.Lists;
@@ -115,12 +111,12 @@ public class AnnotationBasedFunction implements Function {
         try {
             if (!(minParam <= callParams.size() && callParams.size() <= maxParam)) {
                 //if last is array
-                if(!Object[].class.isAssignableFrom(parameter.get(parameter.size()-1).getType())){
+                if (!Object[].class.isAssignableFrom(parameter.get(parameter.size() - 1).getType())) {
                     throw new ScrapeQLException("Wrong parameter count " + getName());
                 }
             }
 
-            Object[] methodParameter=new Object[callParams.size()];
+            Object[] methodParameter = new Object[callParams.size()];
 
             for (int j = 0; j < callParams.size(); j++) {
                 Para param = parameter.get(j);
@@ -130,13 +126,13 @@ public class AnnotationBasedFunction implements Function {
                     throw new ScrapeQLException("Wrong parameter type " + j + " in " + getName() + ": is " + callParam.getClass() + " should be " + param.type);
                 }
 
-                if(!functionDefinition.strict() && param.type.equals(String.class)){
-                    methodParameter[j]=callParam.getStringValue();
-                }else{
-                    methodParameter[j]=callParam.getValue();
+                if (!functionDefinition.strict() && param.type.equals(String.class)) {
+                    methodParameter[j] = callParam.getStringValue();
+                } else {
+                    methodParameter[j] = callParam.getValue();
                 }
             }
-            Object r = method.invoke(methodOwner,methodParameter);
+            Object r = method.invoke(methodOwner, methodParameter);
             switch (r.getClass().getSimpleName()) {
                 case "String":
                     return new StringValue((String) r);
@@ -149,13 +145,13 @@ public class AnnotationBasedFunction implements Function {
                 case "Double":
                     return new FloatValue(((Number) r).doubleValue());
                 case "Relation":
-                    return new RelationValue((Relation<Value>)r);
+                    return new RelationValue((Relation<Value>) r);
                 case "Boolean":
-                    return new BooleanValue((Boolean)r);
+                    return new BooleanValue((Boolean) r);
                 case "Entity":
                     return new EntityValue((Entity) r);
                 case "Date":
-                    return new IntegerValue(((Date)r).getTime());
+                    return new IntegerValue(((Date) r).getTime());
                 default:
                     throw new ScrapeQLException("Unknown datatype:" + r.getClass());
             }

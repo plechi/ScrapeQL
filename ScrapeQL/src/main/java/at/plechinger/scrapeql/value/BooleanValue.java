@@ -33,9 +33,9 @@ import java.util.regex.Pattern;
  */
 public class BooleanValue extends AbstractParseableValue<Boolean> {
 
-    public static final String TYPE_NAME="BOOLEAN";
+    public static final String TYPE_NAME = "BOOLEAN";
 
-    static{
+    static {
         patterns.add(Pattern.compile("^(true|false)$", Pattern.CASE_INSENSITIVE));
     }
 
@@ -43,7 +43,7 @@ public class BooleanValue extends AbstractParseableValue<Boolean> {
         super(toParse);
     }
 
-    public BooleanValue(Boolean bool){
+    public BooleanValue(Boolean bool) {
         super(bool, Boolean.toString(bool));
     }
 

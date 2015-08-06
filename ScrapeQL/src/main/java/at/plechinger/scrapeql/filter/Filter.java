@@ -26,13 +26,11 @@ package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.context.Context;
 
 /**
  * Created by lukas on 05.08.15.
  */
-public interface Filter{
+public interface Filter {
 
     public boolean filter(Context ctx) throws ScrapeQLException;
 }

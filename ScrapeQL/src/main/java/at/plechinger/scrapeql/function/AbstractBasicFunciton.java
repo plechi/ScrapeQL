@@ -31,8 +31,8 @@ public abstract class AbstractBasicFunciton implements Function {
 
     private String name;
 
-    public AbstractBasicFunciton(String name){
-        this.name=name;
+    public AbstractBasicFunciton(String name) {
+        this.name = name;
     }
 
     @Override

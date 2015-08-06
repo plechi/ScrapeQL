@@ -26,9 +26,7 @@ package at.plechinger.scrapeql.loader;
 
 import at.plechinger.scrapeql.function.impl.AbstractFunction;
 import at.plechinger.scrapeql.value.EntityValue;
-import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.StringValue;
-import at.plechinger.scrapeql.value.EntityValue;
 import at.plechinger.scrapeql.value.Value;
 
 import java.util.List;
@@ -44,7 +42,7 @@ public abstract class EntityLoaderFunction extends AbstractFunction {
 
     @Override
     protected Value executeChecked(List<Value> parameters) {
-        StringValue val=param(0,parameters);
+        StringValue val = param(0, parameters);
         return new EntityValue(loadEntity(val.getValue()));
     }
 

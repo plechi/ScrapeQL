@@ -34,7 +34,7 @@ import java.util.Set;
  */
 public class RowImpl<T> implements Relation.Row<T> {
 
-    private Map<String,T> columns= Maps.newLinkedHashMap();
+    private Map<String, T> columns = Maps.newLinkedHashMap();
 
     @Override
     public Map<String, T> getColumns() {
@@ -47,8 +47,8 @@ public class RowImpl<T> implements Relation.Row<T> {
     }
 
     @Override
-    public void setValue(String column,T value) {
-        columns.put(column,value);
+    public void setValue(String column, T value) {
+        columns.put(column, value);
     }
 
     @Override

@@ -26,13 +26,11 @@ package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.context.Context;
 
 /**
  * Created by lukas on 06.08.15.
  */
-public class TrueFilter implements Filter{
+public class TrueFilter implements Filter {
     @Override
     public boolean filter(Context ctx) throws ScrapeQLException {
         return true;

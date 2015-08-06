@@ -26,8 +26,6 @@ package at.plechinger.scrapeql.function.impl;
 
 import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
 import at.plechinger.scrapeql.loader.html.HtmlEntity;
-import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
-import at.plechinger.scrapeql.loader.html.HtmlEntity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,26 +36,26 @@ import java.util.Date;
  */
 public class StringFunctions {
 
-    @FunctionDefinition(value = "lower",strict = false)
-    public String lower(String input){
+    @FunctionDefinition(value = "lower", strict = false)
+    public String lower(String input) {
         return input.toLowerCase();
     }
 
-    @FunctionDefinition(value = "upper",strict = false)
-    public String upper(String input){
+    @FunctionDefinition(value = "upper", strict = false)
+    public String upper(String input) {
         return input.toUpperCase();
     }
 
-    @FunctionDefinition(value = "regex_replace",strict = false)
-    public String regexReplace(String input, String regex, String replace){
+    @FunctionDefinition(value = "regex_replace", strict = false)
+    public String regexReplace(String input, String regex, String replace) {
         return input.replaceAll(regex, replace);
     }
 
-    @FunctionDefinition(value = "date_format",strict = false)
-    public long dateFormat(String value, String format){
+    @FunctionDefinition(value = "date_format", strict = false)
+    public long dateFormat(String value, String format) {
         try {
-            SimpleDateFormat sdf=new SimpleDateFormat(format);
-            Date parsed=sdf.parse(value);
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            Date parsed = sdf.parse(value);
             return parsed.getTime();
 
         } catch (ParseException e) {
@@ -65,13 +63,13 @@ public class StringFunctions {
         }
     }
 
-    @FunctionDefinition(value = "contains",strict = false)
-    public Boolean contains(String input, String contains){
+    @FunctionDefinition(value = "contains", strict = false)
+    public Boolean contains(String input, String contains) {
         return input.contains(contains);
     }
 
     @FunctionDefinition(value = "tag_text")
-    public String tagText(HtmlEntity input){
+    public String tagText(HtmlEntity input) {
         return input.getWrappedEntity().text();
     }
 }

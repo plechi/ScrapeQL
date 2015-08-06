@@ -31,7 +31,7 @@ import at.plechinger.scrapeql.loader.Entity;
  */
 public class EntityValue extends AbstractValue<Entity> implements Value<Entity> {
 
-    public static final String TYPE_NAME="ENTITY";
+    public static final String TYPE_NAME = "ENTITY";
 
     public EntityValue(Entity value) {
         super(value);

@@ -28,7 +28,6 @@ import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.Expression;
 import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.Value;
 
 /**
  * Created by lukas on 06.08.15.
@@ -42,7 +41,7 @@ public class ExpressionFilter implements Filter {
 
     @Override
     public boolean filter(Context ctx) throws ScrapeQLException {
-        Value val=exp.evaluate(ctx);
+        Value val = exp.evaluate(ctx);
         return Boolean.TRUE.equals(val.getValue());
     }
 }

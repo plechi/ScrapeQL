@@ -29,9 +29,10 @@ package at.plechinger.scrapeql.value;
  */
 public class NullValue extends AbstractValue<String> {
 
-    public NullValue(){
+    public NullValue() {
         super("NULL");
     }
+
     @Override
     public String getDataTypeName() {
         return "NULL";

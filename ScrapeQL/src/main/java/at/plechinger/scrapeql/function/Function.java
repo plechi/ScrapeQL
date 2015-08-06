@@ -25,8 +25,6 @@
 package at.plechinger.scrapeql.function;
 
 import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.Value;
 
 import java.util.List;
@@ -37,5 +35,6 @@ import java.util.List;
 public interface Function {
 
     public String getName();
+
     public Value execute(List<Value> parameters) throws ScrapeQLException;
 }

@@ -31,18 +31,24 @@ import java.util.Set;
 /**
  * Created by lukas on 06.08.15.
  */
-public interface Relation<T> extends Iterable<Relation.Row<T>>{
+public interface Relation<T> extends Iterable<Relation.Row<T>> {
 
     Relation<T> union(Relation<T> other);
+
     Relation<T> intersect(Relation<T> other);
+
     Relation<T> difference(Relation<T> other);
+
     Relation<T> cartesian(Relation<T> other);
 
     int rows();
+
     int columns();
+
     Set<String> getColumnNames();
 
     Row<T> getRow(int row);
+
     void addRow(Row<T> row);
 
     List<T> getColumn(String name);
@@ -51,10 +57,13 @@ public interface Relation<T> extends Iterable<Relation.Row<T>>{
 
     void setValue(int row, String column, T value);
 
-    interface Row<T>{
-        Map<String,T> getColumns();
+    interface Row<T> {
+        Map<String, T> getColumns();
+
         T getValue(String column);
+
         void setValue(String column, T value);
+
         Set<String> getColumnNames();
     }
 }

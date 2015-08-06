@@ -28,11 +28,9 @@ import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.function.Function;
 import at.plechinger.scrapeql.loader.html.HtmlEntity;
 import at.plechinger.scrapeql.value.EntityValue;
-import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.StringValue;
-import at.plechinger.scrapeql.value.ValueConverter;
-import at.plechinger.scrapeql.value.EntityValue;
 import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.ValueConverter;
 import com.google.common.base.Preconditions;
 
 import java.util.List;
@@ -41,7 +39,7 @@ import java.util.List;
  * Created by lukas on 04.08.15.
  */
 public class Attr implements Function {
-    private static final String NAME="attr";
+    private static final String NAME = "attr";
 
     @Override
     public String getName() {
@@ -49,14 +47,14 @@ public class Attr implements Function {
     }
 
     @Override
-    public Value execute(List<Value> parameters) throws ScrapeQLException{
-        Preconditions.checkArgument(parameters.size()==2);
-        Value val=parameters.get(0);
-        Value attr=parameters.get(1);
+    public Value execute(List<Value> parameters) throws ScrapeQLException {
+        Preconditions.checkArgument(parameters.size() == 2);
+        Value val = parameters.get(0);
+        Value attr = parameters.get(1);
 
         Preconditions.checkArgument(ValueConverter.checkType(val, EntityValue.TYPE_NAME));
 
-        HtmlEntity ent=(HtmlEntity)val.getValue(HtmlEntity.class);
+        HtmlEntity ent = (HtmlEntity) val.getValue(HtmlEntity.class);
 
         return new StringValue(ent.getWrappedEntity().attr(attr.getStringValue()));
     }

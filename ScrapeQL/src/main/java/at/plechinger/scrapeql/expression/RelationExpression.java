@@ -30,15 +30,11 @@ import at.plechinger.scrapeql.loader.Entity;
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.relation.Selector;
 import at.plechinger.scrapeql.relation.ValueRelation;
-import at.plechinger.scrapeql.value.EntityValue;
-import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.RelationValue;
-import at.plechinger.scrapeql.value.ValueConverter;
 import at.plechinger.scrapeql.util.Mapper;
-import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.relation.Selector;
 import at.plechinger.scrapeql.value.EntityValue;
+import at.plechinger.scrapeql.value.RelationValue;
 import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.ValueConverter;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
@@ -61,8 +57,8 @@ public class RelationExpression implements Expression {
         this.selectors = Lists.newArrayList(selectors);
     }
 
-    public RelationExpression(List<Selector> selectors){
-        this.selectors=selectors;
+    public RelationExpression(List<Selector> selectors) {
+        this.selectors = selectors;
     }
 
     public RelationExpression as(String name) {
@@ -107,22 +103,22 @@ public class RelationExpression implements Expression {
         Relation<Value> relation = null;
 
 
-        for(Entity row:entities){
+        for (Entity row : entities) {
             System.out.println(row.getWrappedEntity());
-            Relation<Value> rowRelation=null;
-            for(Selector column:selectors){
-                Relation<Value> columnRelation=new ValueRelation(prefix + column.getAlias(), Mapper.map(row.select(column.getSelector()), entityValueMapFn));
+            Relation<Value> rowRelation = null;
+            for (Selector column : selectors) {
+                Relation<Value> columnRelation = new ValueRelation(prefix + column.getAlias(), Mapper.map(row.select(column.getSelector()), entityValueMapFn));
                 System.out.println("column:" + columnRelation.toString());
-                if(rowRelation!=null){
-                    rowRelation=rowRelation.cartesian(columnRelation);
-                }else{
-                    rowRelation=columnRelation;
+                if (rowRelation != null) {
+                    rowRelation = rowRelation.cartesian(columnRelation);
+                } else {
+                    rowRelation = columnRelation;
                 }
             }
 
-            if(relation!=null){
+            if (relation != null) {
                 relation.union(rowRelation);
-            }else{
+            } else {
                 relation = rowRelation;
             }
 

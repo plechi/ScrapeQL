@@ -34,13 +34,14 @@ import java.util.List;
  */
 public class ArrayValue<T> extends AbstractValue<List<Value<T>>> {
 
-    public static final String TYPE_NAME="ARRAY";
+    public static final String TYPE_NAME = "ARRAY";
 
-    public ArrayValue(Value<T>... values){
-        this.value= Lists.newArrayList(values);
+    public ArrayValue(Value<T>... values) {
+        this.value = Lists.newArrayList(values);
     }
-    public ArrayValue(List<Value<T>> value){
-        this.value=value;
+
+    public ArrayValue(List<Value<T>> value) {
+        this.value = value;
     }
 
     @Override
@@ -53,7 +54,7 @@ public class ArrayValue<T> extends AbstractValue<List<Value<T>>> {
         return String.format("  [%s]", Joiner.on(",\n  ").useForNull("NULL").join(value));
     }
 
-    public Value<T> first(){
+    public Value<T> first() {
         return value.get(0);
     }
 }

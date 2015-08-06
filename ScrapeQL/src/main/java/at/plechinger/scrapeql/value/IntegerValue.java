@@ -33,9 +33,9 @@ import java.util.regex.Pattern;
  */
 public class IntegerValue extends AbstractParseableValue<Long> {
 
-    public static final String TYPE_NAME="INTEGER";
+    public static final String TYPE_NAME = "INTEGER";
 
-    static{
+    static {
         patterns.add(Pattern.compile("^(\\d+)$"));
     }
 
@@ -43,8 +43,8 @@ public class IntegerValue extends AbstractParseableValue<Long> {
         super(toParse);
     }
 
-    public IntegerValue(long value){
-        super(value,Long.toString(value));
+    public IntegerValue(long value) {
+        super(value, Long.toString(value));
     }
 
     @Override

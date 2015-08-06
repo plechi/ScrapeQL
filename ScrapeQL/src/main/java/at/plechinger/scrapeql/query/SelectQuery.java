@@ -26,29 +26,21 @@ package at.plechinger.scrapeql.query;
 
 import at.plechinger.scrapeql.ScrapeParser;
 import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.expression.RelationExpression;
-import at.plechinger.scrapeql.expression.StarExpression;
-import at.plechinger.scrapeql.function.FunctionRepository;
-import at.plechinger.scrapeql.function.impl.Attr;
-import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.Expression;
 import at.plechinger.scrapeql.expression.RelationExpression;
 import at.plechinger.scrapeql.expression.StarExpression;
 import at.plechinger.scrapeql.filter.Filter;
 import at.plechinger.scrapeql.function.FunctionRepository;
+import at.plechinger.scrapeql.function.impl.Attr;
 import at.plechinger.scrapeql.function.impl.Concat;
 import at.plechinger.scrapeql.function.impl.StringFunctions;
 import at.plechinger.scrapeql.function.impl.UrlFn;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
-import at.plechinger.scrapeql.function.impl.Attr;
 import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.relation.TableRelation;
-import at.plechinger.scrapeql.util.Timer;
-import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.relation.RowImpl;
+import at.plechinger.scrapeql.relation.ValueRelation;
 import at.plechinger.scrapeql.util.Mapper;
-import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.relation.TableRelation;
 import at.plechinger.scrapeql.util.Timer;
 import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Optional;
@@ -99,7 +91,7 @@ public class SelectQuery {
         List<Callable<Relation<Value>>> callables = Mapper.map(relations, from -> () -> from.evaluate(context).getValue());
 
         Timer timer = new Timer();
-        Relation<Value> joinRelation=null;
+        Relation<Value> joinRelation = null;
         try {
 
             ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -107,11 +99,11 @@ public class SelectQuery {
             executor.shutdown();
 
             for (Future<Relation<Value>> result : results) {
-                System.out.println("result:"+result.get().toString());
-                if(joinRelation!=null){
-                    joinRelation=joinRelation.cartesian(result.get());
-                }else{
-                    joinRelation=result.get();
+                System.out.println("result:" + result.get().toString());
+                if (joinRelation != null) {
+                    joinRelation = joinRelation.cartesian(result.get());
+                } else {
+                    joinRelation = result.get();
                 }
             }
 
@@ -132,10 +124,9 @@ public class SelectQuery {
 
 
         //relational "projection"
-        TableRelation finalRelation = new TableRelation();
+        Relation<Value> finalRelation = new ValueRelation();
 
         timer.stop();
-        int finalRow = 0;
         for (int row = 0; row < joinRelation.rows(); row++) {
             int column = 0;
             context.setColumns(joinRelation.getRow(row).getColumns());
@@ -144,12 +135,14 @@ public class SelectQuery {
                 continue;
             }
 
+            Relation.Row<Value> currentRow=new RowImpl<>();
+
             for (Expression exp : expressions) {
                 if (!exp.getClass().isAssignableFrom(StarExpression.class)) {
                     Value result = exp.evaluate(context);
 
                     String columnName = (result.getVariableName() != null) ? result.getVariableName() : "column_" + column;
-                    finalRelation.set(finalRow, columnName, result);
+                    currentRow.setValue(columnName,result);
                     column++;
                 }
             }
@@ -157,17 +150,17 @@ public class SelectQuery {
             for (StarExpression stex : starExpressions) {
                 for (String col : joinRelation.getColumnNames()) {
                     if (stex.isVisible(col)) {
-                        finalRelation.set(finalRow, col, joinRelation.getRow(row).getValue(col));
+                        currentRow.setValue(col,joinRelation.getRow(row).getValue(col));
                         column++;
                     }
                 }
             }
-            finalRow++;
+            finalRelation.addRow(currentRow);
         }
         System.out.println("projected in " + timer.stop());
         context.clearColumns();
 
-        System.out.println(finalRelation.toPrettyString());
+        System.out.println(finalRelation.toString());
     }
 
 
@@ -200,7 +193,7 @@ public class SelectQuery {
                 ") AS wiki";*/
 
 
-        String sql= "SELECT test.li" +
+        String sql = "SELECT test.li" +
                 " FROM (LOAD $('li') FROM load_html(TXT>>>\n" +
                 "<ul>\n" +
                 "   <li>test1</li>\n" +

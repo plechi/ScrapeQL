@@ -35,7 +35,7 @@ public class StringValue extends AbstractParseableValue<String> {
     public static final String TYPE_NAME = "STRING";
 
     static {
-        patterns.add(Pattern.compile(".*",Pattern.DOTALL));
+        patterns.add(Pattern.compile(".*", Pattern.DOTALL));
     }
 
     public StringValue(String toParse) {
