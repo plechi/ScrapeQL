@@ -25,6 +25,7 @@
 package at.plechinger.scrapeql.value;
 
 import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.ScrapeQLException;
 
 /**
  * Created by lukas on 04.08.15.

@@ -25,7 +25,9 @@
 package at.plechinger.scrapeql.expression;
 
 import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.Value;
 
 /**

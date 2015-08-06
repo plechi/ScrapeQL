@@ -26,6 +26,8 @@ package at.plechinger.scrapeql.context;
 
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.relation.Relation;
+import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -35,13 +37,13 @@ import java.util.Map;
  * Created by lukas on 04.08.15.
  */
 public class Context {
-    private Map<String, Relation> relations = Maps.newLinkedHashMap();
+    private Map<String, Relation<Value>> relations = Maps.newLinkedHashMap();
 
-    public void addRelation(String name, Relation relation) {
+    public void addRelation(String name, Relation<Value> relation) {
         relations.put(name, relation);
     }
 
-    public Relation getRelation(String name) {
+    public Relation<Value> getRelation(String name) {
         Preconditions.checkArgument(relations.containsKey(name));
         return relations.get(name);
     }
@@ -53,7 +55,7 @@ public class Context {
     }
 
     public Value getColumn(String name){
-        Preconditions.checkArgument(columns.containsKey(name));
+        Preconditions.checkArgument(columns.containsKey(name), "Column "+name+" does not exist."+columns.keySet());
         return columns.get(name);
     }
 

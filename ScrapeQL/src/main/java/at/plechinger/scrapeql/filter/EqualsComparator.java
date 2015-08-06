@@ -26,6 +26,9 @@ package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.Value;
 
 
@@ -39,7 +42,7 @@ public class EqualsComparator extends ExpressionComparator {
     }
 
     @Override
-    protected boolean compare(Value one, Value two) throws ScrapeQLException{
+    protected boolean compare(Value one, Value two) throws ScrapeQLException {
 
         return one.getValue().equals(two.getValue());
     }

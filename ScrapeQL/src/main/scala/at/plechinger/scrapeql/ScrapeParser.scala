@@ -26,6 +26,9 @@ package at.plechinger.scrapeql
 
 import at.plechinger.scrapeql.expression._
 import at.plechinger.scrapeql.filter._
+import at.plechinger.scrapeql.expression._
+import at.plechinger.scrapeql.filter._
+import at.plechinger.scrapeql.value._
 import at.plechinger.scrapeql.query.SelectQuery
 import at.plechinger.scrapeql.relation.Selector
 import at.plechinger.scrapeql.value._

@@ -25,7 +25,9 @@
 package at.plechinger.scrapeql.function.impl;
 
 import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.function.Function;
+import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.Value;
 import com.google.common.collect.Lists;
 
@@ -44,7 +46,7 @@ public abstract class AbstractFunction implements Function{
         this.params = Lists.newArrayList(params);
     }
 
-    public void checkParameters(List<Value> parameters) throws ScrapeQLException{
+    public void checkParameters(List<Value> parameters) throws ScrapeQLException {
         int min=0;
         int max=0;
         int i=0;

@@ -22,29 +22,37 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.filter;
+package at.plechinger.scrapeql.relation;
 
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.Value;
+import com.google.common.collect.Maps;
 
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Created by lukas on 05.08.15.
+ * Created by lukas on 06.08.15.
  */
-public class GreaterThanComparator extends ExpressionComparator {
+public class RowImpl<T> implements Relation.Row<T> {
 
-    public GreaterThanComparator(Expression one, Expression two) {
-        super(one, two);
+    private Map<String,T> columns= Maps.newLinkedHashMap();
+
+    @Override
+    public Map<String, T> getColumns() {
+        return columns;
     }
 
     @Override
-    protected boolean compare(Value<?> one, Value<?> two) throws ScrapeQLException {
-        Comparable c1=one.getValue(Comparable.class);
-        Comparable c2=two.getValue(Comparable.class);
-        return c1.compareTo(c2)>0;
+    public T getValue(String column) {
+        return columns.get(column);
+    }
+
+    @Override
+    public void setValue(String column,T value) {
+        columns.put(column,value);
+    }
+
+    @Override
+    public Set<String> getColumnNames() {
+        return columns.keySet();
     }
 }

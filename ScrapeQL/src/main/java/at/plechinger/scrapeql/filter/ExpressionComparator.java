@@ -29,8 +29,6 @@ import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.Expression;
 import at.plechinger.scrapeql.value.Value;
 
-import java.util.Comparator;
-
 /**
  * Created by lukas on 06.08.15.
  */

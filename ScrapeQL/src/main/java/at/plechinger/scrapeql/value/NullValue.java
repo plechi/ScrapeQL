@@ -22,29 +22,18 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.filter;
-
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.Value;
-
+package at.plechinger.scrapeql.value;
 
 /**
- * Created by lukas on 05.08.15.
+ * Created by lukas on 06.08.15.
  */
-public class GreaterThanComparator extends ExpressionComparator {
+public class NullValue extends AbstractValue<String> {
 
-    public GreaterThanComparator(Expression one, Expression two) {
-        super(one, two);
+    public NullValue(){
+        super("NULL");
     }
-
     @Override
-    protected boolean compare(Value<?> one, Value<?> two) throws ScrapeQLException {
-        Comparable c1=one.getValue(Comparable.class);
-        Comparable c2=two.getValue(Comparable.class);
-        return c1.compareTo(c2)>0;
+    public String getDataTypeName() {
+        return "NULL";
     }
 }

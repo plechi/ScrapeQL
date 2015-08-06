@@ -25,7 +25,9 @@
 package at.plechinger.scrapeql.expression;
 
 import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.value.RelationValue;
 import at.plechinger.scrapeql.value.Value;
@@ -42,7 +44,7 @@ public class RelationValueExpression implements Expression {
     }
 
     @Override
-    public Value<Relation> evaluate(Context ctx) throws ScrapeQLException {
+    public Value<Relation<Value>> evaluate(Context ctx) throws ScrapeQLException {
         return new RelationValue(ctx.getRelation(name));
     }
 }

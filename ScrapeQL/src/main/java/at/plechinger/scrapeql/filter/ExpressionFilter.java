@@ -28,6 +28,7 @@ import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.Expression;
 import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.Value;
 
 /**
  * Created by lukas on 06.08.15.

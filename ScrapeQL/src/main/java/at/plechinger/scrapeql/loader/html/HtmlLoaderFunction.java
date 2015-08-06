@@ -24,18 +24,12 @@
 
 package at.plechinger.scrapeql.loader.html;
 
-import at.plechinger.scrapeql.CachedUrlLoader;
 import at.plechinger.scrapeql.loader.Entity;
 import at.plechinger.scrapeql.loader.EntityLoaderFunction;
-import at.plechinger.scrapeql.value.EntityValue;
-import at.plechinger.scrapeql.value.StringValue;
-import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.ValueConverter;
-import com.google.common.base.Preconditions;
+import at.plechinger.scrapeql.loader.Entity;
+import at.plechinger.scrapeql.loader.EntityLoaderFunction;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
-
-import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.

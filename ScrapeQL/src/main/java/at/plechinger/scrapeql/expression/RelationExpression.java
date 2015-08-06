@@ -29,11 +29,16 @@ import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.loader.Entity;
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.relation.Selector;
+import at.plechinger.scrapeql.relation.ValueRelation;
 import at.plechinger.scrapeql.value.EntityValue;
-import at.plechinger.scrapeql.value.RelationValue;
 import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.RelationValue;
 import at.plechinger.scrapeql.value.ValueConverter;
 import at.plechinger.scrapeql.util.Mapper;
+import at.plechinger.scrapeql.relation.Relation;
+import at.plechinger.scrapeql.relation.Selector;
+import at.plechinger.scrapeql.value.EntityValue;
+import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
@@ -76,7 +81,7 @@ public class RelationExpression implements Expression {
     }
 
     @Override
-    public Value<Relation> evaluate(Context ctx) throws ScrapeQLException {
+    public Value<Relation<Value>> evaluate(Context ctx) throws ScrapeQLException {
         Entity entity = ValueConverter.toEntityValue(entityExpression.evaluate(ctx)).getValue();
 
         List<Entity> entities;
@@ -99,15 +104,31 @@ public class RelationExpression implements Expression {
             prefix = name.get() + '.';
         }
 
-        Relation relation = new Relation();
+        Relation<Value> relation = null;
 
-        for (Selector column : selectors) {
-            List<Entity> columnValues = Lists.newLinkedList();
-            for (Entity row : entities) {
-                columnValues.addAll(row.select(column.getSelector()));
+
+        for(Entity row:entities){
+            System.out.println(row.getWrappedEntity());
+            Relation<Value> rowRelation=null;
+            for(Selector column:selectors){
+                Relation<Value> columnRelation=new ValueRelation(prefix + column.getAlias(), Mapper.map(row.select(column.getSelector()), entityValueMapFn));
+                System.out.println("column:" + columnRelation.toString());
+                if(rowRelation!=null){
+                    rowRelation=rowRelation.cartesian(columnRelation);
+                }else{
+                    rowRelation=columnRelation;
+                }
             }
-            relation.addColumn(prefix + column.getAlias(), Mapper.map(columnValues, entityValueMapFn));
+
+            if(relation!=null){
+                relation.union(rowRelation);
+            }else{
+                relation = rowRelation;
+            }
+
+            System.out.println("row:" + rowRelation.toString());
         }
+
         if (name.isPresent()) {
             ctx.addRelation(name.get(), relation);
         }

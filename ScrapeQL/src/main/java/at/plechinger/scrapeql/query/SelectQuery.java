@@ -26,16 +26,29 @@ package at.plechinger.scrapeql.query;
 
 import at.plechinger.scrapeql.ScrapeParser;
 import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.expression.RelationExpression;
+import at.plechinger.scrapeql.expression.StarExpression;
+import at.plechinger.scrapeql.function.FunctionRepository;
+import at.plechinger.scrapeql.function.impl.Attr;
+import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.Expression;
 import at.plechinger.scrapeql.expression.RelationExpression;
 import at.plechinger.scrapeql.expression.StarExpression;
 import at.plechinger.scrapeql.filter.Filter;
 import at.plechinger.scrapeql.function.FunctionRepository;
-import at.plechinger.scrapeql.function.impl.*;
+import at.plechinger.scrapeql.function.impl.Concat;
+import at.plechinger.scrapeql.function.impl.StringFunctions;
+import at.plechinger.scrapeql.function.impl.UrlFn;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
+import at.plechinger.scrapeql.function.impl.Attr;
 import at.plechinger.scrapeql.relation.Relation;
+import at.plechinger.scrapeql.relation.TableRelation;
+import at.plechinger.scrapeql.util.Timer;
+import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.util.Mapper;
+import at.plechinger.scrapeql.relation.Relation;
+import at.plechinger.scrapeql.relation.TableRelation;
 import at.plechinger.scrapeql.util.Timer;
 import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Optional;
@@ -83,32 +96,28 @@ public class SelectQuery {
         final Context context = new Context();
 
 
-        List<Callable<Relation>> callables = Mapper.map(relations, new Mapper.MapFn<RelationExpression, Callable<Relation>>() {
-            @Override
-            public Callable<Relation> map(final RelationExpression from) {
-                return new Callable<Relation>() {
-                    @Override
-                    public Relation call() throws Exception {
-                        return from.evaluate(context).getValue();
-                    }
-                };
-            }
-        });
+        List<Callable<Relation<Value>>> callables = Mapper.map(relations, from -> () -> from.evaluate(context).getValue());
 
         Timer timer = new Timer();
-        Relation joinRelation = new Relation();
+        Relation<Value> joinRelation=null;
         try {
 
             ExecutorService executor = Executors.newFixedThreadPool(4);
-            List<Future<Relation>> results = executor.invokeAll(callables);
+            List<Future<Relation<Value>>> results = executor.invokeAll(callables);
             executor.shutdown();
 
-            for (Future<Relation> result : results) {
-                joinRelation=joinRelation.join(result.get());
+            for (Future<Relation<Value>> result : results) {
+                System.out.println("result:"+result.get().toString());
+                if(joinRelation!=null){
+                    joinRelation=joinRelation.cartesian(result.get());
+                }else{
+                    joinRelation=result.get();
+                }
             }
 
             System.out.println("fetch and join in" + timer.stop());
         } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
             throw new ScrapeQLException("Error while loading relation " + e);
         }
 
@@ -123,13 +132,13 @@ public class SelectQuery {
 
 
         //relational "projection"
-        Relation finalRelation = new Relation();
+        TableRelation finalRelation = new TableRelation();
 
         timer.stop();
         int finalRow = 0;
         for (int row = 0; row < joinRelation.rows(); row++) {
             int column = 0;
-            context.setColumns(joinRelation.getRow(row));
+            context.setColumns(joinRelation.getRow(row).getColumns());
 
             if (where.isPresent() && !where.get().filter(context)) {
                 continue;
@@ -146,9 +155,9 @@ public class SelectQuery {
             }
 
             for (StarExpression stex : starExpressions) {
-                for (String col : joinRelation.getColumns()) {
+                for (String col : joinRelation.getColumnNames()) {
                     if (stex.isVisible(col)) {
-                        finalRelation.set(finalRow, col, joinRelation.getRow(row).get(col));
+                        finalRelation.set(finalRow, col, joinRelation.getRow(row).getValue(col));
                         column++;
                     }
                 }
@@ -172,7 +181,7 @@ public class SelectQuery {
 
         ScrapeParser parser = new ScrapeParser();
 
-        String sql = "SELECT tracks.interpret, tracks1.title, tracks.time, tracks1.time " +
+        /*String sql = "SELECT tracks.interpret, tracks1.title, tracks.time, tracks1.time " +
                 "FROM (" +
                 "LOAD $('td:eq(0)') AS time, " +
                 "$('td:eq(2)') AS interpret " +
@@ -180,15 +189,24 @@ public class SelectQuery {
                 "(LOAD $('td:eq(0)') AS time, " +
                 "$('td:eq(1)') AS title " +
                 "FROM load_html(url('http://soundportal.at/service/now-on-air/')) $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks1 " +
-                "WHERE tracks.time=tracks1.time";
+                "WHERE tracks.time=tracks1.time";*/
 
-        /*String sql= "SELECT concat(test.li,' huhu\\' ',test.li)" +
-                " FROM (RELATION $('li') FROM load_html(TXT>>>\n" +
+
+        /*String sql="SELECT tag_text(wiki.key), tag_text(wiki.value) \n" +
+                "FROM ( " +
+                "    LOAD $('th>*') AS key, $('td>*') AS value " +
+                "    FROM load_html(url('https://en.wikipedia.org/wiki/Java_(programming_language)'))" +
+                "    $('table.infobox>tbody>tr')" +
+                ") AS wiki";*/
+
+
+        String sql= "SELECT test.li" +
+                " FROM (LOAD $('li') FROM load_html(TXT>>>\n" +
                 "<ul>\n" +
                 "   <li>test1</li>\n" +
                 "   <li>test2</li>\n" +
                 "</ul>" +
-                "<<<TXT)) AS test";*/
+                "<<<TXT)) AS test";
 
 
         SelectQuery qu = parser.parse(sql);

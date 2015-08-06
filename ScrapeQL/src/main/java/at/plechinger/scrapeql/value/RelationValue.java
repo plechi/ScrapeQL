@@ -25,16 +25,17 @@
 package at.plechinger.scrapeql.value;
 
 import at.plechinger.scrapeql.relation.Relation;
+import at.plechinger.scrapeql.relation.Relation;
 import com.google.common.base.Joiner;
 
 /**
  * Created by lukas on 04.08.15.
  */
-public class RelationValue extends AbstractValue<Relation> {
+public class RelationValue extends AbstractValue<Relation<Value>> {
 
     public static final String TYPE_NAME = "RELATION";
 
-    public RelationValue(Relation relation){
+    public RelationValue(Relation<Value> relation){
         super(relation);
     }
 
@@ -45,6 +46,6 @@ public class RelationValue extends AbstractValue<Relation> {
 
     @Override
     public String getStringValue() {
-        return String.format("%s(%s)", TYPE_NAME, Joiner.on(',').join(value.getColumns()));
+        return String.format("%s(%s)", TYPE_NAME, Joiner.on(',').join(value.getColumnNames()));
     }
 }

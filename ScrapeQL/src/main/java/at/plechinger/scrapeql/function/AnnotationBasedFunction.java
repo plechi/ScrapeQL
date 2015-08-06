@@ -27,7 +27,11 @@ package at.plechinger.scrapeql.function;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
 import at.plechinger.scrapeql.function.annotation.Param;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
+import at.plechinger.scrapeql.function.annotation.Param;
 import at.plechinger.scrapeql.loader.Entity;
+import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.relation.Relation;
 import at.plechinger.scrapeql.value.*;
 import com.google.common.collect.Lists;
@@ -35,7 +39,6 @@ import lombok.Data;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -146,7 +149,7 @@ public class AnnotationBasedFunction implements Function {
                 case "Double":
                     return new FloatValue(((Number) r).doubleValue());
                 case "Relation":
-                    return new RelationValue((Relation)r);
+                    return new RelationValue((Relation<Value>)r);
                 case "Boolean":
                     return new BooleanValue((Boolean)r);
                 case "Entity":

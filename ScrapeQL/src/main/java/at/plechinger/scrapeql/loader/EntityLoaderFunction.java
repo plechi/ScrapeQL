@@ -24,10 +24,11 @@
 
 package at.plechinger.scrapeql.loader;
 
-import at.plechinger.scrapeql.function.AbstractBasicFunciton;
 import at.plechinger.scrapeql.function.impl.AbstractFunction;
 import at.plechinger.scrapeql.value.EntityValue;
+import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.StringValue;
+import at.plechinger.scrapeql.value.EntityValue;
 import at.plechinger.scrapeql.value.Value;
 
 import java.util.List;

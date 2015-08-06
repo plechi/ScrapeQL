@@ -27,6 +27,8 @@ package at.plechinger.scrapeql.function.impl;
 import at.plechinger.scrapeql.function.Function;
 import at.plechinger.scrapeql.value.StringValue;
 import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.StringValue;
+import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 

@@ -23,7 +23,6 @@
  */
 package at.plechinger.scrapeql;
 
-import at.plechinger.scrapeql.util.Timer;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;

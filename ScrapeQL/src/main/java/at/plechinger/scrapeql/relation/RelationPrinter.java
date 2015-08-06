@@ -22,57 +22,51 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.loader.html;
+package at.plechinger.scrapeql.relation;
 
-import at.plechinger.scrapeql.loader.Entity;
-import at.plechinger.scrapeql.loader.Entity;
-import at.plechinger.scrapeql.util.Mapper;
-import org.jsoup.nodes.Element;
+import com.google.common.collect.Lists;
+import dnl.utils.text.table.TextTable;
 
+import javax.swing.table.AbstractTableModel;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 /**
- * Created by lukas on 04.08.15.
+ * Created by lukas on 06.08.15.
  */
-public class HtmlEntity implements Entity<Element> {
+public class RelationPrinter {
 
-    private Element element;
+    public static String getPrettyString(Relation relation){
 
-    public HtmlEntity(Element element){
-        this.element=element;
-    }
-
-    @Override
-    public List<Entity<Element>> select(String selector){
-
-        List<Element> elements=element.select(selector);
-        System.out.println("elements for "+selector+" "+elements.size());
-
-        return Mapper.map(elements, new Mapper.MapFn<Element, Entity<Element>>() {
+        final List<String> cols = Lists.newArrayList(relation.getColumnNames());
+        TextTable tt = new TextTable(new AbstractTableModel() {
             @Override
-            public Entity<Element> map(Element from) {
-                return new HtmlEntity(from);
+            public int getRowCount() {
+                return relation.rows();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return relation.columns();
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Relation.Row row=relation.getRow(rowIndex);
+                return row.getValue(getColumnName(columnIndex));
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return cols.get(column);
             }
         });
-    }
 
-    @Override
-    public Element getWrappedEntity() {
-        return element;
-    }
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        tt.printTable(new PrintStream(os), 0);
 
-    @Override
-    public String getStringValue() {
-        return element.ownText();
-    }
+        return os.toString();
 
-    @Override
-    public String toString() {
-        return getStringValue();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return toString().equals(obj.toString());
     }
 }

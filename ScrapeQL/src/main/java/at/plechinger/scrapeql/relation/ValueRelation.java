@@ -22,29 +22,21 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.filter;
+package at.plechinger.scrapeql.relation;
 
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.expression.Expression;
 import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.Value;
 
+import java.util.List;
 
 /**
- * Created by lukas on 05.08.15.
+ * Created by lukas on 06.08.15.
  */
-public class GreaterThanComparator extends ExpressionComparator {
-
-    public GreaterThanComparator(Expression one, Expression two) {
-        super(one, two);
+public class ValueRelation extends RelationImpl<Value> implements Relation<Value> {
+    public ValueRelation() {
     }
 
-    @Override
-    protected boolean compare(Value<?> one, Value<?> two) throws ScrapeQLException {
-        Comparable c1=one.getValue(Comparable.class);
-        Comparable c2=two.getValue(Comparable.class);
-        return c1.compareTo(c2)>0;
+    public ValueRelation(String startColumn, List<Value> startValues) {
+        super(startColumn, startValues);
     }
 }

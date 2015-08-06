@@ -25,6 +25,8 @@
 package at.plechinger.scrapeql.function;
 
 import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.Value;
 
 import java.util.List;

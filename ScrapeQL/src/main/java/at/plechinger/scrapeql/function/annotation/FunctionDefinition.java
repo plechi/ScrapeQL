@@ -24,8 +24,6 @@
 
 package at.plechinger.scrapeql.function.annotation;
 
-import at.plechinger.scrapeql.value.Value;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

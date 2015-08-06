@@ -24,15 +24,13 @@
 
 package at.plechinger.scrapeql.function;
 
+import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
 import at.plechinger.scrapeql.function.impl.StringFunctions;
-import at.plechinger.scrapeql.value.Value;
-import at.plechinger.scrapeql.value.ValueConverter;
 import com.google.common.collect.Sets;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.Set;
 
 /**
