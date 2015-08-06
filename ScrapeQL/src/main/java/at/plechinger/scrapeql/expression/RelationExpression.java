@@ -33,7 +33,7 @@ import at.plechinger.scrapeql.value.EntityValue;
 import at.plechinger.scrapeql.value.RelationValue;
 import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.ValueConverter;
-import at.plechinger.scrapeql.util.Map;
+import at.plechinger.scrapeql.util.Mapper;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
@@ -86,7 +86,7 @@ public class RelationExpression implements Expression {
             entities = Lists.newArrayList(entity);
         }
 
-        final Map.MapFn<Entity, Value> entityValueMapFn = new Map.MapFn<Entity, Value>() {
+        final Mapper.MapFn<Entity, Value> entityValueMapFn = new Mapper.MapFn<Entity, Value>() {
             @Override
             public Value map(Entity from) {
                 return new EntityValue(from);
@@ -106,7 +106,7 @@ public class RelationExpression implements Expression {
             for (Entity row : entities) {
                 columnValues.addAll(row.select(column.getSelector()));
             }
-            relation.addColumn(prefix + column.getAlias(), Map.map(columnValues, entityValueMapFn));
+            relation.addColumn(prefix + column.getAlias(), Mapper.map(columnValues, entityValueMapFn));
         }
         if (name.isPresent()) {
             ctx.addRelation(name.get(), relation);

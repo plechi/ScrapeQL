@@ -22,28 +22,17 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.util;
+package at.plechinger.scrapeql.filter;
 
-import com.google.common.collect.Lists;
-
-import java.util.ArrayList;
-import java.util.List;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.context.Context;
 
 /**
- * Created by lukas on 04.08.15.
+ * Created by lukas on 06.08.15.
  */
-public class Map {
-
-    public static <F, T> List<T> map(List<F> fromList, MapFn<F, T> mapper) {
-        List<T> result = Lists.newArrayListWithCapacity(fromList.size());
-        for (F f : fromList) {
-            result.add(mapper.map(f));
-        }
-        return result;
+public class TrueFilter implements Filter{
+    @Override
+    public boolean filter(Context ctx) throws ScrapeQLException {
+        return true;
     }
-
-    public interface MapFn<F, T> {
-        T map(F from);
-    }
-
 }

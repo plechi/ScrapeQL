@@ -54,7 +54,7 @@ public class Attr implements Function {
 
         Preconditions.checkArgument(ValueConverter.checkType(val, EntityValue.TYPE_NAME));
 
-        HtmlEntity ent=(HtmlEntity)val.getDesiredValue(HtmlEntity.class);
+        HtmlEntity ent=(HtmlEntity)val.getValue(HtmlEntity.class);
 
         return new StringValue(ent.getWrappedEntity().attr(attr.getStringValue()));
     }

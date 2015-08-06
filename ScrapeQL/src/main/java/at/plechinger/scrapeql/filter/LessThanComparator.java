@@ -25,11 +25,23 @@
 package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.value.Value;
+
 
 /**
- * Created by lukas on 06.08.15.
+ * Created by lukas on 05.08.15.
  */
-public interface Chain {
-    public boolean evaluate(Context ctx, Filter filter) throws ScrapeQLException;
+public class LessThanComparator extends ExpressionComparator {
+
+    public LessThanComparator(Expression one, Expression two) {
+        super(one, two);
+    }
+
+    @Override
+    protected boolean compare(Value<?> one, Value<?> two) throws ScrapeQLException{
+        Comparable c1=one.getValue(Comparable.class);
+        Comparable c2=two.getValue(Comparable.class);
+        return c1.compareTo(c2)<0;
+    }
 }

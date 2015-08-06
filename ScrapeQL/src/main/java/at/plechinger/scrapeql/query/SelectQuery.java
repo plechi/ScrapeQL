@@ -31,12 +31,11 @@ import at.plechinger.scrapeql.expression.Expression;
 import at.plechinger.scrapeql.expression.RelationExpression;
 import at.plechinger.scrapeql.expression.StarExpression;
 import at.plechinger.scrapeql.filter.Filter;
-import at.plechinger.scrapeql.filter.WhereClause;
 import at.plechinger.scrapeql.function.FunctionRepository;
 import at.plechinger.scrapeql.function.impl.*;
 import at.plechinger.scrapeql.loader.html.HtmlLoaderFunction;
 import at.plechinger.scrapeql.relation.Relation;
-import at.plechinger.scrapeql.util.Map;
+import at.plechinger.scrapeql.util.Mapper;
 import at.plechinger.scrapeql.util.Timer;
 import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Optional;
@@ -55,7 +54,7 @@ public class SelectQuery {
 
     private List<RelationExpression> relations = Lists.newLinkedList();
 
-    private Optional<WhereClause> where = Optional.absent();
+    private Optional<Filter> where = Optional.absent();
 
     public SelectQuery(Expression... expressions) {
         this.expressions = Lists.newArrayList(expressions);
@@ -75,7 +74,7 @@ public class SelectQuery {
         return this;
     }
 
-    public SelectQuery where(WhereClause where) {
+    public SelectQuery where(Filter where) {
         this.where = Optional.fromNullable(where);
         return this;
     }
@@ -84,7 +83,7 @@ public class SelectQuery {
         final Context context = new Context();
 
 
-        List<Callable<Relation>> callables = Map.map(relations, new Map.MapFn<RelationExpression, Callable<Relation>>() {
+        List<Callable<Relation>> callables = Mapper.map(relations, new Mapper.MapFn<RelationExpression, Callable<Relation>>() {
             @Override
             public Callable<Relation> map(final RelationExpression from) {
                 return new Callable<Relation>() {
@@ -132,7 +131,7 @@ public class SelectQuery {
             int column = 0;
             context.setColumns(joinRelation.getRow(row));
 
-            if (where.isPresent() && !where.get().evaluate(context)) {
+            if (where.isPresent() && !where.get().filter(context)) {
                 continue;
             }
 
@@ -168,61 +167,20 @@ public class SelectQuery {
         FunctionRepository.instance().register(new Attr());
         FunctionRepository.instance().register(new UrlFn());
         FunctionRepository.instance().register(new Concat());
-
         FunctionRepository.instance().registerFunctions(StringFunctions.class);
 
-
-        /*SelectQuery query = new SelectQuery(
-                new AliasExpression(
-                new FunctionExpression("date_format", new VariableExpression("tracks1.time"),
-                        new ValueExpression(new StringValue("dd.MM.yyyy HH:mm:ss"))
-                ),"t1"),
-                new AliasExpression(
-                new FunctionExpression("date_format", new VariableExpression("tracks.time"),
-                        new ValueExpression(new StringValue("dd.MM.yyyy HH:mm:ss"))
-                ),"t2"),
-                new VariableExpression("tracks.title"),
-                new VariableExpression("tracks1.interpret")
-        );
-
-        query.from(new RelationExpression(
-                        new Selector("td:eq(0)", "time"),
-                        new Selector("td:eq(1)", "title")
-                ).from(new FunctionExpression(
-                        "LOAD_HTML",
-                        new ValueExpression(
-                                new StringValue("http://soundportal.at/service/now-on-air/")
-                        )
-                )
-                        , new Selector(".tx-abanowonair-pi1 .contenttable tr")).as("tracks")
-        ).from(new RelationExpression(
-                        new Selector("td:eq(0)", "time"),
-                        new Selector("td:eq(2", "interpret")
-                ).from(new FunctionExpression(
-                        "LOAD_HTML",
-                        new ValueExpression(
-                                new StringValue("http://soundportal.at/service/now-on-air/")
-                        )
-                )
-                        , new Selector(".tx-abanowonair-pi1 .contenttable tr")).as("tracks1")
-        );
-
-        query.where(new EqualsFilter(new VariableExpression("tracks1.time"), new VariableExpression("tracks.time")
-        ));
-
-        query.execute();*/
 
         ScrapeParser parser = new ScrapeParser();
 
         String sql = "SELECT tracks.interpret, tracks1.title, tracks.time, tracks1.time " +
                 "FROM (" +
-                "RELATION $('td:eq(0)') AS time, " +
+                "LOAD $('td:eq(0)') AS time, " +
                 "$('td:eq(2)') AS interpret " +
                 "FROM load_html(url('http://soundportal.at/service/now-on-air/')) $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks, " +
-                "(RELATION $('td:eq(0)') AS time, " +
+                "(LOAD $('td:eq(0)') AS time, " +
                 "$('td:eq(1)') AS title " +
                 "FROM load_html(url('http://soundportal.at/service/now-on-air/')) $('.tx-abanowonair-pi1 .contenttable tr')) AS tracks1 " +
-                "WHERE tracks.time = tracks1.time AND lower(tracks.interpret)='amy' OR lower(tracks.interpret)='ray'";
+                "WHERE tracks.time=tracks1.time";
 
         /*String sql= "SELECT concat(test.li,' huhu\\' ',test.li)" +
                 " FROM (RELATION $('li') FROM load_html(TXT>>>\n" +

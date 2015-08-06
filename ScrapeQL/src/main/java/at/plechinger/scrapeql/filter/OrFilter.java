@@ -26,26 +26,22 @@ package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
-import com.google.common.base.Optional;
 
 /**
  * Created by lukas on 05.08.15.
  */
-public class WhereClause {
+public class OrFilter implements Filter {
 
-    private Filter filter;
-    private Optional<Chain> next=Optional.absent();
+    private Filter filter1;
+    private Filter filter2;
 
-    public WhereClause(Filter filter, Optional<Chain> next) {
-        this.filter = filter;
-        this.next = next;
+    public OrFilter(Filter filter1, Filter filter2) {
+        this.filter1 = filter1;
+        this.filter2 = filter2;
     }
 
-    public boolean evaluate(Context ctx)throws ScrapeQLException{
-        if(next.isPresent()){
-            return next.get().evaluate(ctx, filter);
-        }
-        return filter.filter(ctx);
+    @Override
+    public boolean filter(Context ctx) throws ScrapeQLException {
+        return filter1.filter(ctx) || filter2.filter(ctx);
     }
-
 }

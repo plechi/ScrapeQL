@@ -25,29 +25,23 @@
 package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.Expression;
-import com.google.common.base.Optional;
-import scala.Option;
+import at.plechinger.scrapeql.value.Value;
+
 
 /**
  * Created by lukas on 05.08.15.
  */
-public class PredicateFilter implements Filter{
+public class GreaterThanComparator extends ExpressionComparator {
 
-    private Expression exp;
-    private Optional<Predicate> predicate;
-
-    public PredicateFilter(Expression exp, Optional<Predicate> predicate) {
-        this.exp = exp;
-        this.predicate = predicate;
+    public GreaterThanComparator(Expression one, Expression two) {
+        super(one, two);
     }
 
     @Override
-    public boolean filter(Context ctx) throws ScrapeQLException {
-        if(predicate.isPresent()){
-            return predicate.get().check(ctx, exp);
-        }
-       return exp.evaluate(ctx).getValue().equals(Boolean.TRUE);
+    protected boolean compare(Value<?> one, Value<?> two) throws ScrapeQLException{
+        Comparable c1=one.getValue(Comparable.class);
+        Comparable c2=two.getValue(Comparable.class);
+        return c1.compareTo(c2)>0;
     }
 }

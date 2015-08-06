@@ -25,7 +25,7 @@
 package at.plechinger.scrapeql.loader.html;
 
 import at.plechinger.scrapeql.loader.Entity;
-import at.plechinger.scrapeql.util.Map;
+import at.plechinger.scrapeql.util.Mapper;
 import org.jsoup.nodes.Element;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class HtmlEntity implements Entity<Element> {
 
     @Override
     public List<Entity<Element>> select(String selector) {
-        return Map.map(element.select(selector), new Map.MapFn<Element, Entity<Element>>() {
+        return Mapper.map(element.select(selector), new Mapper.MapFn<Element, Entity<Element>>() {
             @Override
             public Entity<Element> map(Element from) {
                 return new HtmlEntity(from);

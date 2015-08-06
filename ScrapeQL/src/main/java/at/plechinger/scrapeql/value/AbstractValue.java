@@ -66,9 +66,8 @@ public abstract class AbstractValue<T> implements Value<T> {
         this.variableName = variableName;
     }
 
-
     @Override
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException {
+    public <S> S getValue(Class<S> clazz) throws ScrapeQLException {
         if(!value.getClass().isAssignableFrom(clazz)){
             throw new ScrapeQLException("Cannot cast "+value.getClass()+" to "+clazz);
         }

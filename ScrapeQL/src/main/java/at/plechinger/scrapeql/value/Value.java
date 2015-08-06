@@ -29,7 +29,7 @@ import at.plechinger.scrapeql.ScrapeQLException;
 /**
  * Created by lukas on 04.08.15.
  */
-public interface Value<T> {
+public interface Value<T>{
 
     String getDataTypeName();
 
@@ -41,5 +41,5 @@ public interface Value<T> {
 
     void setVariableName(String name);
 
-    public <S> S getDesiredValue(Class<S> clazz) throws ScrapeQLException;
+    <S> S getValue(Class<S> requiredType) throws ScrapeQLException;
 }

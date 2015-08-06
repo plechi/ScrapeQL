@@ -27,10 +27,29 @@ package at.plechinger.scrapeql.filter;
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.value.Value;
+
+import java.util.Comparator;
 
 /**
- * Created by lukas on 05.08.15.
+ * Created by lukas on 06.08.15.
  */
-public interface Predicate {
-    boolean check(Context ctx, Expression exp) throws ScrapeQLException;
+public abstract class ExpressionComparator implements Filter {
+
+    protected Expression one;
+    protected Expression two;
+
+    public ExpressionComparator(Expression one, Expression two) {
+        this.one = one;
+        this.two = two;
+    }
+
+    @Override
+    public boolean filter(Context ctx) throws ScrapeQLException {
+        Value first=one.evaluate(ctx);
+        Value second=two.evaluate(ctx);
+        return compare(first,second);
+    }
+
+    protected abstract boolean compare(Value<?> one, Value<?> two) throws ScrapeQLException;
 }

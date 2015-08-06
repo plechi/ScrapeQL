@@ -22,19 +22,26 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.util;
+package at.plechinger.scrapeql.filter;
 
-import com.google.common.base.Optional;
-import scala.Option;
+import at.plechinger.scrapeql.ScrapeQLException;
+import at.plechinger.scrapeql.context.Context;
+import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.value.Value;
 
 /**
  * Created by lukas on 06.08.15.
  */
-public class Option2Optional {
-    public static <T> Optional<T> convert(Option<T> option){
-        if(option.isEmpty()){
-            return Optional.absent();
-        }
-        return Optional.of(option.get());
+public class ExpressionFilter implements Filter {
+    private Expression exp;
+
+    public ExpressionFilter(Expression exp) {
+        this.exp = exp;
+    }
+
+    @Override
+    public boolean filter(Context ctx) throws ScrapeQLException {
+        Value val=exp.evaluate(ctx);
+        return Boolean.TRUE.equals(val.getValue());
     }
 }

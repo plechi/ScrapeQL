@@ -28,18 +28,20 @@ import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 
 /**
- * Created by lukas on 06.08.15.
+ * Created by lukas on 05.08.15.
  */
-public class AndChain implements Chain {
+public class AndFilter implements Filter {
 
-    private Filter other;
+    private Filter filter1;
+    private Filter filter2;
 
-    public AndChain(Filter other) {
-        this.other = other;
+    public AndFilter(Filter filter1, Filter filter2) {
+        this.filter1 = filter1;
+        this.filter2 = filter2;
     }
 
     @Override
-    public boolean evaluate(Context ctx, Filter filter) throws ScrapeQLException {
-        return filter.filter(ctx) && other.filter(ctx);
+    public boolean filter(Context ctx) throws ScrapeQLException {
+        return filter1.filter(ctx) && filter2.filter(ctx);
     }
 }

@@ -28,22 +28,23 @@ import at.plechinger.scrapeql.expression._
 import at.plechinger.scrapeql.filter._
 import at.plechinger.scrapeql.query.SelectQuery
 import at.plechinger.scrapeql.relation.Selector
-import at.plechinger.scrapeql.util.Option2Optional
-import at.plechinger.scrapeql.value.{FloatValue, IntegerValue, StringValue, Value}
+import at.plechinger.scrapeql.value._
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
-import scala.util.parsing.combinator.JavaTokenParsers
+import scala.util.parsing.combinator.{JavaTokenParsers, PackratParsers}
 
 
-class ScrapeParser extends JavaTokenParsers {
+class ScrapeParser extends JavaTokenParsers with PackratParsers {
 
-  def query: Parser[SelectQuery] = KW_SELECT ~> repsep(expressionAndColumnSelect, ",") ~ KW_FROM ~ repsep(relation, ",") ~ opt(where) ^^ {
+  def query: Parser[SelectQuery] = KW_SELECT ~> repsep(expressionAndColumnSelect, ",") ~
+    KW_FROM ~ repsep(relation, ",") ~
+    opt(where) ^^ {
     case c ~ _ ~ r ~ w => new SelectQuery(new ListBuffer ++ c).from(new ListBuffer ++ r).where(w.getOrElse(null))
   }
 
   //Expressions
-  def expression: Parser[Expression] = function | valueExpression | columnSelect;
+  def expression: Parser[Expression] = valueExpression | function | columnSelect;
 
   def valueExpression: Parser[ValueExpression] = value ^^ (v => new ValueExpression(v));
 
@@ -67,24 +68,35 @@ class ScrapeParser extends JavaTokenParsers {
 
   //where clause
 
-  def where: Parser[WhereClause] = KW_WHERE ~> chain  ^^ (f => f)
+  def where: Parser[Filter] = KW_WHERE ~> predicate
 
-  def filter:Parser[Filter]=predicateFilter
+  private lazy val predicate: PackratParser[Filter] = "(" ~> predicate <~ ")" | junctor | expressionClause
 
-  def notFilter:Parser[NotFilter]=KW_NOT~> filter ^^(f=>new NotFilter(f));
+  private lazy val junctor = unaryJunctor | binaryJunctor
 
-  def predicateFilter:Parser[PredicateFilter]= expression ~opt(predicate) ^^{case e~p=>new PredicateFilter(e, Option2Optional.convert(p))}
+  private lazy val unaryJunctor = notClause;
+  private lazy val binaryJunctor = andClause | orClause;
 
-  def predicate:Parser[Predicate]=(equalsPredicate);
-  def equalsPredicate:Parser[EqualsPredicate]=(KW_IS|"="|"<>")~>expression ^^(e=>new EqualsPredicate(e));
+  private lazy val notClause: PackratParser[NotFilter] = KW_NOT ~> predicate ^^ (n => new NotFilter(n))
+  private lazy val andClause: PackratParser[AndFilter] = (predicate <~ KW_AND) ~ predicate ^^ { case p ~ q => new AndFilter(p, q) }
+  private lazy val orClause: PackratParser[OrFilter] = (predicate <~ KW_OR) ~ predicate ^^ { case p ~ q => new OrFilter(p, q) }
 
-  def chain:Parser[WhereClause]=filter ~ opt(andChain|orChain) ^^{case f~c=>new WhereClause(f, Option2Optional.convert(c))};
-  def andChain:Parser[AndChain]="AND"~>filter^^(a=>new AndChain(a));;
-  def orChain:Parser[OrChain]="OR"~>filter^^(o=>new OrChain(o));
+  private lazy val expressionClause = equals | singleExpression;
+  private lazy val singleExpression: PackratParser[ExpressionFilter] = expression ^^ (e => new ExpressionFilter(e))
+  private lazy val equals: PackratParser[EqualsComparator] = (expression <~ ("=" | "IS" | "<>")) ~ expression ^^ { case p ~ q => new EqualsComparator(p, q) }
+  private lazy val greaterThan: PackratParser[GreaterThanComparator] = (expression <~ (">")) ~ expression ^^ { case p ~ q => new GreaterThanComparator(p, q) }
+  private lazy val lessThan: PackratParser[LessThanComparator] = (expression <~ ("<")) ~ expression ^^ { case p ~ q => new LessThanComparator(p, q) }
 
+  private lazy val greaterOrEquals: PackratParser[Filter] = (expression <~ (">=")) ~ expression ^^ {
+    case p ~ q => new OrFilter(new GreaterThanComparator(p, q), new EqualsComparator(p, q))
+  }
+
+  private lazy val lessOrEquals: PackratParser[Filter] = (expression <~ ("<=" | "LE")) ~ expression ^^ {
+    case p ~ q => new OrFilter(new LessThanComparator(p, q), new EqualsComparator(p, q))
+  }
 
   //Relation
-  def relation: Parser[RelationExpression] = "(" ~ KW_RELATION ~> relationSelectorList ~ KW_FROM ~ function ~
+  def relation: Parser[RelationExpression] = "(" ~ KW_LOAD ~> relationSelectorList ~ KW_FROM ~ function ~
     opt(relationSelector) ~ ")" ~ opt(opt(KW_AS) ~ identifier) ^^ {
     case l ~ _ ~ f ~ b ~ _ ~ i => new RelationExpression(new ListBuffer ++ l)
       .from(f, b.getOrElse(null)).as(i.get._2)
@@ -97,7 +109,7 @@ class ScrapeParser extends JavaTokenParsers {
   }
 
   //Values
-  def value: Parser[Value[_]] = stringValue | decimalValue | intValue;
+  def value: Parser[Value[_]] = booleanValue | stringValue | decimalValue | intValue;
 
   def stringValue: Parser[StringValue] = basicString | bigStringValue;
 
@@ -109,15 +121,17 @@ class ScrapeParser extends JavaTokenParsers {
 
   def intValue: Parser[IntegerValue] = wholeNumber ^^ (s => new IntegerValue(s.toLong));
 
+  def booleanValue: Parser[BooleanValue] = ("TRUE" | "FALSE") ^^ (s => new BooleanValue(s))
+
   //terminal
   private val identifier: Parser[String] = "[a-zA-z_][a-zA-Z0-9_\\.]*".r;
-  private val string: Parser[String] = """'((?s)(.*?(?:\\'|[^'])*)+)'""".r ^^ (s => s.substring(1, s.length - 1).replaceAll("\\\\(')","$1"));
-  private val bigtext="""TXT>>>((?s).*?)(?=<<<TXT)""".r
-  private val star="(.+)\\.\\*".r;
+  private val string: Parser[String] = """'((?s)(.*?(?:\\'|[^'])*)+)'""".r ^^ (s => s.substring(1, s.length - 1).replaceAll("\\\\(')", "$1"));
+  private val bigtext = """TXT>>>((?s).*?)(?=<<<TXT)""".r
+  private val star = "(.+)\\.\\*".r;
 
 
   private val KW_AS = "AS";
-  private val KW_RELATION = "RELATION"
+  private val KW_LOAD = "LOAD"
   private val KW_FROM = "FROM"
   private val KW_SELECT = "SELECT"
   private val KW_WHERE = "WHERE"

@@ -57,7 +57,7 @@ public class ValueConverter {
     }
 
     public static boolean checkType(Value val, Class<? extends Value> clazz) {
-        return val.getClass().isAssignableFrom(EntityValue.class);
+        return val.getClass().isAssignableFrom(clazz);
     }
 
     public static boolean checkTypeExact(Value val1, Value val2) {

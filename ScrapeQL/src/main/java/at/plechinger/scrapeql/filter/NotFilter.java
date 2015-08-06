@@ -28,10 +28,9 @@ import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.context.Context;
 
 /**
- * Created by lukas on 06.08.15.
+ * Created by lukas on 05.08.15.
  */
 public class NotFilter implements Filter {
-
     private Filter filter;
 
     public NotFilter(Filter filter) {

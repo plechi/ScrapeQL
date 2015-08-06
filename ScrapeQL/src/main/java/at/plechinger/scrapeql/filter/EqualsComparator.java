@@ -25,25 +25,22 @@
 package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.context.Context;
 import at.plechinger.scrapeql.expression.Expression;
 import at.plechinger.scrapeql.value.Value;
+
 
 /**
  * Created by lukas on 05.08.15.
  */
-public class EqualsPredicate implements Predicate {
+public class EqualsComparator extends ExpressionComparator {
 
-    private Expression expression;
-
-    public EqualsPredicate(Expression expression) {
-        this.expression = expression;
+    public EqualsComparator(Expression one, Expression two) {
+        super(one, two);
     }
 
     @Override
-    public boolean check(Context ctx, Expression exp) throws ScrapeQLException{
-        Value value1=expression.evaluate(ctx);
-        Value value2=exp.evaluate(ctx);
-        return value1.getValue().equals(value2.getValue());
+    protected boolean compare(Value one, Value two) throws ScrapeQLException{
+
+        return one.getValue().equals(two.getValue());
     }
 }
