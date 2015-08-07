@@ -26,6 +26,7 @@ package at.plechinger.scrapeql.function.impl;
 
 import at.plechinger.scrapeql.function.annotation.FunctionDefinition;
 import at.plechinger.scrapeql.loader.html.HtmlEntity;
+import at.plechinger.scrapeql.value.Value;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,15 +64,18 @@ public class StringFunctions {
         }
     }
 
-    @FunctionDefinition(value = "contains", strict = false)
+    @FunctionDefinition(value = "str_contains", strict = false)
     public Boolean contains(String input, String contains) {
         return input.contains(contains);
     }
 
+    @FunctionDefinition(value = "str_length", strict = false)
+    public Integer length(String input) {
+        return input.length();
+    }
+
     @FunctionDefinition(value = "tag_text")
     public String tagText(HtmlEntity input) {
-
-        System.out.println("test"+input.getWrappedEntity().html());
         return input.getWrappedEntity().text();
     }
 }

@@ -70,27 +70,22 @@ class ScrapeParser extends JavaTokenParsers with PackratParsers {
 
   def where: Parser[Filter] = KW_WHERE ~> predicate
 
-  private lazy val predicate: PackratParser[Filter] = "(" ~> predicate <~ ")" | junctor | expressionClause
+  private lazy val predicate: PackratParser[Filter] = "(" ~> predicate <~ ")" |
+    equals | greaterThan | lessThan | greaterOrEquals | lessOrEquals | singleExpression |
+    notClause | andClause | orClause
 
-  private lazy val junctor = unaryJunctor | binaryJunctor
-
-  private lazy val unaryJunctor = notClause;
-  private lazy val binaryJunctor = andClause | orClause;
 
   private lazy val notClause: PackratParser[NotFilter] = KW_NOT ~> predicate ^^ (n => new NotFilter(n))
   private lazy val andClause: PackratParser[AndFilter] = (predicate <~ KW_AND) ~ predicate ^^ { case p ~ q => new AndFilter(p, q) }
   private lazy val orClause: PackratParser[OrFilter] = (predicate <~ KW_OR) ~ predicate ^^ { case p ~ q => new OrFilter(p, q) }
 
-  private lazy val expressionClause = equals | singleExpression;
   private lazy val singleExpression: PackratParser[ExpressionFilter] = expression ^^ (e => new ExpressionFilter(e))
   private lazy val equals: PackratParser[EqualsComparator] = (expression <~ ("=" | "IS" | "<>")) ~ expression ^^ { case p ~ q => new EqualsComparator(p, q) }
   private lazy val greaterThan: PackratParser[GreaterThanComparator] = (expression <~ (">")) ~ expression ^^ { case p ~ q => new GreaterThanComparator(p, q) }
   private lazy val lessThan: PackratParser[LessThanComparator] = (expression <~ ("<")) ~ expression ^^ { case p ~ q => new LessThanComparator(p, q) }
-
   private lazy val greaterOrEquals: PackratParser[Filter] = (expression <~ (">=")) ~ expression ^^ {
     case p ~ q => new OrFilter(new GreaterThanComparator(p, q), new EqualsComparator(p, q))
   }
-
   private lazy val lessOrEquals: PackratParser[Filter] = (expression <~ ("<=" | "LE")) ~ expression ^^ {
     case p ~ q => new OrFilter(new LessThanComparator(p, q), new EqualsComparator(p, q))
   }

@@ -37,12 +37,14 @@ import at.plechinger.scrapeql.value.Value;
 import at.plechinger.scrapeql.value.ValueConverter;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 /**
  * Created by lukas on 04.08.15.
  */
+@Slf4j
 public class RelationExpression implements Expression {
 
     private List<Selector> selectors = Lists.newLinkedList();
@@ -100,15 +102,14 @@ public class RelationExpression implements Expression {
             prefix = name.get() + '.';
         }
 
-        Relation<Value> relation = null;
+        Relation<Value> relation = new ValueRelation();
 
 
         for (Entity row : entities) {
-            System.out.println(row.getWrappedEntity());
             Relation<Value> rowRelation = null;
             for (Selector column : selectors) {
                 Relation<Value> columnRelation = new ValueRelation(prefix + column.getAlias(), Mapper.map(row.select(column.getSelector()), entityValueMapFn));
-                System.out.println("column:" + columnRelation.toString());
+               log.debug("column:\n" + columnRelation.toString());
                 if (rowRelation != null) {
                     rowRelation = rowRelation.cartesian(columnRelation);
                 } else {
@@ -116,13 +117,11 @@ public class RelationExpression implements Expression {
                 }
             }
 
-            if (relation != null) {
-                relation.union(rowRelation);
-            } else {
-                relation = rowRelation;
+            for(Relation.Row<Value> r:rowRelation){
+                relation.addRow(r);
             }
 
-            System.out.println("row:" + rowRelation.toString());
+            log.debug("row:\n" + rowRelation.toString());
         }
 
         if (name.isPresent()) {

@@ -22,25 +22,33 @@
  * THE SOFTWARE.
  */
 
-package at.plechinger.scrapeql.filter;
+package at.plechinger.scrapeql.util;
 
 import at.plechinger.scrapeql.ScrapeQLException;
-import at.plechinger.scrapeql.expression.Expression;
-import at.plechinger.scrapeql.util.ValueComparator;
 import at.plechinger.scrapeql.value.Value;
 
+import java.math.BigDecimal;
+import java.util.Comparator;
 
 /**
- * Created by lukas on 05.08.15.
+ * Created by lukas on 07.08.15.
  */
-public class GreaterThanComparator extends ExpressionComparator {
+public class ValueComparator {
 
-    public GreaterThanComparator(Expression one, Expression two) {
-        super(one, two);
+    public static int compare(Value<?> v1, Value<?> v2) throws ScrapeQLException{
+        Object o1=v1.getValue();
+        Object o2=v2.getValue();
+
+        if(is(Number.class,o1) && is(Number.class,o2)){
+            return new BigDecimal(o1.toString()).compareTo(new BigDecimal(o2.toString()));
+        }else if(o1.getClass().equals(o2.getClass()) && is(Comparable.class,o1)){
+            return v1.getValue(Comparable.class).compareTo(o2);
+        }
+
+        return o1.toString().compareTo(o2.toString());
     }
 
-    @Override
-    protected boolean compare(Value<?> one, Value<?> two) throws ScrapeQLException {
-        return ValueComparator.compare(one, two) > 0;
+    private static boolean is(Class<?> cls, Object o){
+        return cls.isAssignableFrom(o.getClass());
     }
 }

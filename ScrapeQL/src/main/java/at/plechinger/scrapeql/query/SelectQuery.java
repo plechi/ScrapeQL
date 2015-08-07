@@ -45,6 +45,7 @@ import at.plechinger.scrapeql.util.Timer;
 import at.plechinger.scrapeql.value.Value;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
 import java.util.List;
@@ -53,6 +54,7 @@ import java.util.concurrent.*;
 /**
  * Created by lukas on 04.08.15.
  */
+@Slf4j
 public class SelectQuery {
 
     private List<Expression> expressions = Lists.newLinkedList();
@@ -157,10 +159,10 @@ public class SelectQuery {
             }
             finalRelation.addRow(currentRow);
         }
-        System.out.println("projected in " + timer.stop());
+        log.debug("projected in " + timer.stop());
         context.clearColumns();
 
-        System.out.println(finalRelation.toString());
+        log.debug("FINAL:\n" + finalRelation.toString());
     }
 
 
@@ -185,12 +187,13 @@ public class SelectQuery {
                 "WHERE tracks.time=tracks1.time";*/
 
 
-        String sql="SELECT tag_text(wiki.key), tag_text(wiki.value) \n" +
+        String sql="SELECT tag_text(wiki.key), tag_text(wiki.value), concat(wiki.key, wiki.value) \n" +
                 "FROM ( " +
                 "    LOAD $('th') AS key, $('td>*') AS value " +
                 "    FROM load_html(url('https://en.wikipedia.org/wiki/Java_(programming_language)'))" +
                 "    $('table.infobox>tbody>tr')" +
-                ") AS wiki";
+                ") AS wiki " +
+                "WHERE str_length(regex_replace(tag_text(wiki.value),'\\W','')) > 0";
 
 
         /*String sql = "SELECT test.li" +

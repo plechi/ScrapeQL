@@ -26,6 +26,7 @@ package at.plechinger.scrapeql.loader.html;
 
 import at.plechinger.scrapeql.loader.Entity;
 import at.plechinger.scrapeql.util.Mapper;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
 
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.List;
 /**
  * Created by lukas on 04.08.15.
  */
+@Slf4j
 public class HtmlEntity implements Entity<Element> {
 
     private Element element;
@@ -45,7 +47,8 @@ public class HtmlEntity implements Entity<Element> {
     public List<Entity<Element>> select(String selector) {
 
         List<Element> elements = element.select(selector);
-        System.out.println("elements for " + selector + " " + elements.size());
+
+        log.debug("Selector $('"+selector+"') found "+elements.size()+" elements in '"+element.tag().getName()+"'");
 
         return Mapper.map(elements, new Mapper.MapFn<Element, Entity<Element>>() {
             @Override
@@ -67,7 +70,7 @@ public class HtmlEntity implements Entity<Element> {
 
     @Override
     public String toString() {
-        return getStringValue();
+        return element.ownText();
     }
 
     @Override

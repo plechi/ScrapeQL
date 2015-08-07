@@ -26,7 +26,9 @@ package at.plechinger.scrapeql.filter;
 
 import at.plechinger.scrapeql.ScrapeQLException;
 import at.plechinger.scrapeql.expression.Expression;
+import at.plechinger.scrapeql.util.ValueComparator;
 import at.plechinger.scrapeql.value.Value;
+import at.plechinger.scrapeql.value.ValueConverter;
 
 
 /**
@@ -40,8 +42,6 @@ public class LessThanComparator extends ExpressionComparator {
 
     @Override
     protected boolean compare(Value<?> one, Value<?> two) throws ScrapeQLException {
-        Comparable c1 = one.getValue(Comparable.class);
-        Comparable c2 = two.getValue(Comparable.class);
-        return c1.compareTo(c2) < 0;
+        return ValueComparator.compare(one,two) < 0;
     }
 }
