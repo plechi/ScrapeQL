@@ -1,9 +1,9 @@
 # ScrapeQL
 SQL-like query parser to extraxt and combine structured data from different sources like
- - HTML
- - CSV
- - JSON
- - SQL Databases
+ - HTML & XML
+ - CSV (not implemented yet)
+ - JSON (not implemented yet)
+ - SQL Databases (not implemented yet)
 
 #Why?
 
@@ -16,7 +16,7 @@ In general, it is better to use a dedicated API to process external data.
  - complex code to navigate though Data
  - many loops, ifs,...
 
-ScrapeQL gives you a powerful SQL-like query language, with makes fetching and combining data as simple as writing a database query.
+ScrapeQL gives you a powerful SQL-like query language and JQuery-like Selectors with makes fetching and combining data as simple as writing a database query.
 
 #Features v0.2 (2015-08-07)
 
