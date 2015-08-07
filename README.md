@@ -26,9 +26,9 @@ ScrapeQL gives you a powerful SQL-like query language, with makes fetching and c
 - Multiple threads for loading data (waits for the slowest before merging data)
 - Basic functions
 
-#Use
+#User guide
 
-Please take a look at the [User Guide](https://github.com/plechi/ScrapeQL/wiki) (old version)
+Please take a look at the [ScrapeQL Wiki](https://github.com/plechi/ScrapeQL/wiki)
 
 #Sample
 
