@@ -18,16 +18,13 @@ In general, it is better to use a dedicated API to process external data.
 
 ScrapeQL gives you a powerful SQL-like query language, with makes fetching and combining data as simple as writing a database query.
 
-#Features v0.2
+#Features v0.2 (2015-08-07)
 
-Working features (or in testing state)
- - Run queries from Java via DSL or String query
- - Run queries via command line `ScrapeQL-cli`
- - Rudimentary JDBC driver (just normal statements or prepared statements) `ScrapeQL-jdbc` **not available for v0.2 yet**
-
-Feature Backlog (work in progress):
- - group functions
- - jdbc driver
+- Run Queries
+- Cartesian product & where clause (INNER JOIN, CROSS JOIN, JOIN,...)
+    - There is a bug in the where clause parser when using AND, OR
+- Multiple threads for loading data (waits for the slowest before merging data)
+- Basic functions
 
 #Use
 
@@ -35,16 +32,57 @@ Please take a look at the [User Guide](https://github.com/plechi/ScrapeQL/wiki) 
 
 #Sample
 
-This is how it (could) look like (i call it ScrQL):
+Sample query:
 
 ```sql
-select tbl1.col, tbl2.col
-FROM (
-    RELATION $('li>a') as coll 
-    FROM load_html(url('htttp://www.example.com/') tbl1,
-(
-    RELATION $('h1') as col 
-    FROM load_html(TXT>><span>one</span<span>two</span><<TXT))
+SELECT tag_text(wiki.key) AS key, tag_text(wiki.value) AS value 
+FROM ( 
+    LOAD $('th') AS key, $('td>*') AS value 
+    FROM load_html(url('https://en.wikipedia.org/wiki/Java_(programming_language)'))
+    $('table.infobox>tbody>tr')
+) AS wiki 
+WHERE str_length(regex_replace(tag_text(wiki.value),'[\W]+','')) > 0
+```
+
+Result:
+```
++====================================================+
+| key                    | value                     |
+|====================================================|
+| Paradigm               | multi-paradigm            |
+| Paradigm               | object-oriented           |
+| Paradigm               | class-based               |
+| Paradigm               | structured                |
+| Paradigm               | imperative                |
+| Paradigm               | functional                |
+| Paradigm               | generic                   |
+| Paradigm               | reflective                |
+| Paradigm               | concurrent                |
+| Designed by            | James Gosling             |
+| Designed by            | Sun Microsystems          |
+| Developer              | Oracle Corporation        |
+| First appeared         | ; 20 years ago            |
+| First appeared         |  (1995)                   |
+| First appeared         | [1]                       |
+| Stable release         | [2]                       |
+| Stable release         | ; 24 days ago             |
+| Stable release         |  (2015-07-14)             |
+| Stable release         | [2]                       |
+| Preview release        | ; 6 months ago            |
+| Preview release        |  (2015-01-20)             |
+| Typing discipline      | Static, strong, safe      |
+| Typing discipline      | nominative                |
+| Typing discipline      | manifest                  |
+| Implementation language| C                         |
+| Implementation language| C++                       |
+| OS                     | Cross-platform            |
+| License                | GNU General Public License|
+| License                | Java Community Process    |
+| Filename extensions    | .class                    |
+| Filename extensions    | .jar                      |
+| Website                | Official Site             |
+| Website                | For Java Developers       |
++----------------------------------------------------+
 ```
 
 #Disclaimer
@@ -55,4 +93,5 @@ This is a proof of concept and WIP. It may not be suited for production envirome
 #Used tools
 
  - JSOUP for HTML parsing
- - Scala Parsers for parsing the queries
+ - Scala combination parsers for parsing the queries
+ - Utilities like Guave, Lombok,...
